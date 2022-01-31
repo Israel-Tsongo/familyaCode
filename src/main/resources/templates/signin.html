@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Login</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=5109094f4fe4d36cc6aaa13ded79fc55">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+      <link rel="stylesheet" href="assets/css/styleNav.css">
+    
+    <link rel="stylesheet" th:href="@{assets/css/styles.min.css}">
+</head>
+<body>
+           <nav class="navbar navbar-light navbar-expand-md fixed-top nav-classe" style="position: fixed;height:55px; background-color:rgb(78, 115, 223)" id="navbar-up">
+			        <div class="container-fluid"><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+			            <div class="collapse navbar-collapse" id="navcol-1">
+			                <ul class="nav navbar-nav" id="up-nav">
+			                    <li class="nav-item" role="presentation"><a class="nav-link active"  style="text-shadow: 1px 1px 1px rgba(200,200,200,0.5); font-weight:bold">Caisse Familya UCBC</a></li>
+			                    <li class="nav-item" role="presentation"  style="margin-left:60%"><a class="nav-link" th:href="@{/home}" style="font-weight:bold;padding-top:5px">Home</a></li>
+			                    <li class="nav-item " id="dropdown-button" style="margin-top:5px"><a th:href="@{/register}" style="font-weight:bold;padding-top:5px">Sign up</a> </li>			                       
+			                    
+			                </ul>
+			            </div>
+			        </div>
+   		  </nav>
+          <div class="row justify-content-center" style="height:600px;position:relative;margin-top:60px">
+            		<div class="col col-md-6 text-center">
+            				<form  th:action="@{/login}" method="post" >
+            				
+            							<h1 class="display-4 py-4" style="text-shadow: 2px 2px 2px black">Sign In</h1>
+            							<div class="alert alert-info text-center" th:if="${message}" th:text="${message}"></div>
+            							<div class="alert alert-danger text-center" th:if="${param.error}"> Invalid user name or password</div>
+            							<div class="alert alert-success text-center" th:if="${param.logout}"> You have been logout</div>
+            							
+            							<div class="form-row py-1">            									
+            									
+	            									<div class="input-group">
+	            											<div class="input-group-prepend">
+	            											      <span class="input-group-text">
+	            											            <i class="fa fa-user text-primary"></i>          											      
+	            											      
+	            											      </span>
+	            											
+	            											</div>
+	            									        <input type="email" class="form-control" name=email  placeholder="Email">
+	            									
+	            									</div>
+            								</div>
+            									<br>
+            									<div class="form-row py-1">
+            									<div class="input-group">
+	            											<div class="input-group-prepend">
+	            											      <span class="input-group-text">
+	            											            <i class="fa fa-lock text-primary"></i>          											      
+	            											      
+	            											      </span>
+	            											
+	            											</div>
+	            									       <input type="password" class="form-control" name="password" placeholder="Mot de passe" >    
+            									
+            									</div>            									           							
+            							
+            							</div>
+            							
+            							<div class="form-row py-1">
+            									<button type="submit" class="btn btn-primary btn-block"> Sign in</button>          							
+            							
+            							</div>           							
+            				
+            				
+            				</form>
+            				<div class="form-row py-1">
+            							<a th:href="@{/register}"  style="width:100%" ><button  class="btn btn-primary btn-dark"  style="width:100%"> Creer un compte familya </button>  </a>       							
+            							
+            				</div>
+            				
+            		
+            		
+            		</div>
+          
+          
+          </div>
+</body>
+</html>

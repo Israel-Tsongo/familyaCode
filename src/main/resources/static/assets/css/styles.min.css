@@ -1,0 +1,21 @@
+.btn-group-fab{position:fixed;width:50px;height:auto;right:20px;bottom:20px}.btn-group-fab div{position:relative;width:100%;height:auto}.btn-group-fab .btn{position:absolute;bottom:0;border-radius:50%;display:block;width:40px;height:40px;margin:4px auto}.btn-group-fab .btn-main{width:50px;height:50px;right:50%;margin-right:-25px;z-index:9}.btn-group-fab .btn-sub{bottom:0;z-index:8;right:50%;margin-right:-20px;-webkit-transition:2s;transition:.5s}.btn-group-fab.active .btn-sub:nth-child(2){bottom:60px}.btn-group-fab.active .btn-sub:nth-child(3){bottom:110px}.btn-group-fab.active .btn-sub:nth-child(4){bottom:160px}.btn-group-fab .btn-sub:nth-child(5){bottom:210px}.btn-group-fab.active .btn-sub:nth-child(6){bottom:260px}.form-control-user{border-radius:15px;height:50px;width:250px;margin-right:10px}.form-control-user-right{border-radius:10rem;height:50px;width:220px;margin-left:10px}.form-control-user-left{border-radius:10rem;height:50px;width:220px;margin-right:10px}.all-col-left{display:flex;justify-content:end;width:30px}all-col-left{display:flex;justify-content:end}#main-form{width:560px;height:auto;display:grid}#div-after-card-body,#horizotal-line,#main-div{width:100%}#input-div{width:100%;display:initial;height:600px}#main-card-body{height:auto;width:100%;display:flex;justify-content:center;border-radius:5rem}#body-div{margin-top:50px;width:100%;height:auto;display:flex;justify-content:center}.all-forms{width:525px}.btn-close{width:100%;margin:0 0 0px;border-radius:35px;height:80px}.btn-save,#updateButton{width:100%;margin:0 0 10px;border-radius:35px;border:3px;height:80px}#card-id{width:540px;height:auto;border-radius:5rem}#form-btn{width:100%;display:flex;justify-items:center;height:auto;margin:0 20px}#div-button{width:100%;display:flex;justify-items:center;height:110px}#modal-id .modal{width:1000px;background-color:red}.names{width:140px;height:50px;border-radius:10rem;font-size:.8rem}#container-div{width:600px}.tab-cells{width:200px}#tab-header{padding:0;font-size:15px;width:100%}#card-bottom-header{height:50px}#card-bottom-body{height:70px}#table-member{margin-top:0px}#brand-familya{text-shadow:2px 2px #000;font-size:16px}#membre-title{font-family:cursive;text-shadow:2px 2px #fff;font-weight:700}#card-member{margin-top:5px}.nav-link-items{width:220px;padding-left:20px}#copyright{text-shadow:1px 1px #00f;font-weight:600}#pagination{margin-right:5px}.col-contrat,.contrib-matric-col{width:150px}#datePaye,.col-capital,.col-extended{width:100px}.jumbot{padding:3px;height:2px;background-color:#d3d3ff;width:100%}#search-row{margin-top:0}.all-col{font-style:italic}#depense-matric-col,#interet-matric-col{width:140px}#row-total, .total-div{height:100px}#total-card{height:100%;position:absolute;width:40%;right:2%}#para-total{font-weight:700}#title-titre{font-weight:700;font-size:25px}#row-total{height:95px}#span-total{font-size:20px;font-weight:bolder;color:#00f}.para-total{font-size:18px;font-weight:700}#button-total{border-radius:12px 5px 15px;font-family:cursive;height:50px;border:2px solid;color:#f9f9f9;width:160px;padding:0;font-weight:700;box-shadow:2px 2px 2px #00f;border:none}#div-total{position:relative;height:45px;margin-top:auto}#title-total{font-size:20px;width:100px;font-weight:800;text-shadow:1px 2px #000}#total-content{padding-left:20px;position:absolute;right:0;width:260px;height:50px;margin:0 auto}
+
+
+table{
+	
+	
+	height:300px;
+	/*display: -moz-groupbox; */
+}
+tbody{
+	overflow-y:scroll;
+	height:200px;
+	
+	
+}
+
+ .total-div{
+ 
+ height:100px;
+ 
+ }

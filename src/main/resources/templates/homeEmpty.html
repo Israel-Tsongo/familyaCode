@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=5109094f4fe4d36cc6aaa13ded79fc55">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+      <link rel="stylesheet" href="assets/css/styleNav.css">
+    
+    <link rel="stylesheet" th:href="@{assets/css/styles.min.css}">
+</head>
+<body>
+           <nav class="navbar navbar-light navbar-expand-md fixed-top nav-classe" style="position: fixed;height:55px; background-color:rgb(78, 115, 223)" id="navbar-up">
+			        <div class="container-fluid"><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+			            <div class="collapse navbar-collapse" id="navcol-1">
+			                <ul class="nav navbar-nav" id="up-nav">
+			                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#" style="text-shadow: 1px 1px 1px rgba(200,200,200,0.5); font-weight:bold">Caisse Familya UCBC</a></li>
+			                    
+			                    <li class="nav-item " id="dropdown-button" style="margin-top:5px"><a th:href="@{/logout}" style="font-weight:bold;padding-top:5px">Logout</a> </li>			                       
+			                    
+			                </ul>
+			            </div>
+			        </div>
+   		  </nav>
+          <div class="row justify-content-center" style="position:relative;margin-top:60px">
+            		<div class="col col-md-12 text-center">
+            		         <h2 style="color: bleu" th:text="${'Bienvenu : '+usr.nom +' Votre  Numero Matricule est '+usr.matricule}"></h2>
+            		
+            		         <div style="height:200px"></div>
+            				<h1 style="font-weight:bold"> Veiller payer votre capital Initial enfin de confirmer votre appartenance a Familya </h1>
+            		
+            		</div>
+          
+          
+          </div>
+</body>
+</html>

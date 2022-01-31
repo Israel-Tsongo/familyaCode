@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Register - Brand</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=5109094f4fe4d36cc6aaa13ded79fc55">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
+    <link rel="stylesheet" href="assets/css/styles.min.css?h=c0a0bb215d07ff48c7013c7d7c4c0bbf">
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container" id="container-div">
+        <div class="card shadow-lg o-hidden border-0 my-5" style="height: auto;width: 100%;border-radius: .9rem;text-shadow: 0px 0px;">
+            <div class="card-body p-0" style="width: 100%;">
+                <div class="row">
+                    <div class="col">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h4 class="text-dark mb-4" style="text-shadow: 1px -2px 4px;">Creer un compte!</h4>
+                            </div>
+                            
+                            <form class="userForm" th:action="@{/register}" method="POST" th:object="${user}" >
+                            
+                                <div class="form-group row">
+                                    <div class="col-sm-4 mb-3 mb-sm-0">
+                                   			 <input class="form-control names" type="text" id="exampleFirstName" placeholder="Nom" name="nom" th:field="*{nom}" style="width: 145px;">
+                                    </div>
+                                    <div class="col-sm-4">
+                                    		<input class="form-control names" type="text" placeholder="PostNom" name="postnom" th:value="*{postnom}" style="width: 145px;">
+                                    </div>
+                                    <div class="col-sm-4">
+                                   			 <input class="form-control names" type="text" id="exampleFirstName" placeholder="PreNom" name="Prenom"  th:value="*{prenom}" style="width: 145px;">
+                                    </div>
+                                </div>
+                                <div class="form-group row" style="width: 100%;">
+                                    <div class="col-sm-6 mb-3 " style="padding-right: 0px;padding-left: 0px;width: 445px;">
+                                    			<input class="form-control form-control-user" type="email" id="exampleInputEmail" name="email" th:value="*{email}" aria-describedby="emailHelp" placeholder="Adresse Email" style=" /*width: 460px;*/margin-right: 0px;">
+                                    </div>
+                                    <div class="col-sm-6 mb-sm-0" style="padding-right: 0px;padding-left: 0px;width: 445px;">
+                                               <input class="form-control form-control-user" type="number" name="mobile" th:value="*{mobile}" id="phoneNumber"  placeholder="Numero de Telephone" style="/*width: 460px;*/margin-right: 0px;">
+                                    </div>
+                                    
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <input class="form-control form-control-user" type="password" id="examplePasswordInput" placeholder="Password" th:value="*{password}"name="password" style="width: 220px;">
+                                    </div>
+                                    <div class="col-sm-6">
+                                            <input class="form-control form-control-user" type="password" id="exampleRepeatPasswordInput" placeholder="Repeat Password" name="passwordRepeat" style="width: 220px;">
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-block text-white btn-user" type="submit">Register Account</button>
+                                <hr>
+                            </form>
+                            <div class="text-center">
+                            		<a class="small" href="forgot-password.html" style="text-shadow: 2px 2px 3px;"><br>Already have an account? Login!<br><br></a>
+                            
+                            </div>
+                            <span th:utext="${successMessage}"></span>
+                            <div class="alert alert-success alert-dismissible col-sm-12"
+                            th:if="${(bindingResult != null && bindingResult.getAllErrors() !=null)}">
+                            		<button type="button" class="close" data-dimiss="alert" aria-hidden="true">X</button>
+                                   
+                                  <ul th:each="data : ${bindingResult.getAllErrors()}">
+                                        <li th:text="${data.getObjectName()+ ' :: ' + data.getAllErrors()}"></li>                                            
+                                  </ul>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+    <script src="assets/js/script.min.js?h=9b20e2f15b170d8c8330230170292640"></script>
+     
+     
+     <script>
+     
+     function  setVariableUser()   {
+	       /*	idValue=-10;
+	       	
+	       	document.querySelector("#updateButton").style.display="none";
+	       	document.querySelector("#addButton").style.display="block";
+	       	*/
+	       	
+	       	$(document).ready(function(){ 
+	       		
+	       /*  $("#nom-field").val("");
+	    	  $("#matricule").val("");
+	    	  $("#capital-field").val("");
+	    	  $("#fonction-field").val("");
+	    	  $("#categorie-field").val("");
+	    	  $("#contrat-field").val(""); 
+	    	  */
+	    	 
+	    	
+	    	 
+	       	  // Add Button
+	       	console.log("Add Method");
+	       	  
+	       	 $("#addButton").unbind("click").click( function() { 
+         		
+	       		console.log(" Up Ajax Add Method");
+         		 
+         		 $.ajax({
+         				 url:"http://localhost:8080/indexPost",
+         				 type:"post",
+         				 data:{
+         					 nom:         $("#nom-field").val(),
+          	    	    	 matricule:  $("#matricule").val(),
+          	    	    	 capital:      $("#capital-field").val(),
+          	    	    	 fonction:    $("#fonction-field").val(),
+          	    	    	 categorie:  $("#categorie-field").val(),
+          	    	    	 contrat:     $("#contrat-field").val(),
+         					 
+         				      },
+         		 
+         		        success: function(data){
+         		        	
+         		        	    $("#containerMain").html(data);       		        	
+  	                    	   $("#addModal").modal("hide");
+  	                    	   idValue=-10;
+  	                    	  $("#div-total").load(location.href+ " #div-total");
+  	                    	  console.log("Add Method output");
+           	    	    	
+         		                      },       
+         		                      
+         		          error: function(error){
+         		        	  
+         		        	  alert("L'operation d'ajout a echouee");
+         		        	  
+         		                     }
+         		        } );
+         		       
+         		 
+                 		 $(".btn-close").click(function(){
+           		    	   
+           		    	   idValue=-10;
+           		    	   $("#nom-field").val('');
+           	    	    	$("#matricule").val('');
+           	    	    	$("#capital-field").val('');
+           	    	    	$("#fonction-field").val('');
+           	    	    	$("#categorie-field").val('');
+           	    	    	$("#contrat-field").val('');
+           		    	   
+   		       })
+         		 
+         		 
+         		
+         		});
+	       		
+	       		
+	       		
+	       	})
+	       	
+	       	
+	       	
+}
+     
+     
+     
+     
+     
+     </script>
+                           
+     
+     
+     
+     
+</body>
+
+</html>

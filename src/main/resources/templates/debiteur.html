@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+
+<head th:replace="fragments :: html_head"></head>
+
+<body id="page-top">
+    <div id="wrapper">
+     
+         <nav th:replace="fragments :: left_nav">
+         </nav>          
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+            
+                <nav th:replace="fragments :: centered_nav">
+                </nav> 
+               
+            <div class="container-fluid"id="containerMainInDeb" th:fragment="mainContainerInDeb">
+                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-dark mb-0" id="membre-title">Tout les Emprunts</h3>
+                </div>
+                
+                <script th:inline="javascript">                
+                
+						var pa=(function pages(){ var p=[[${pages}]]; return p ;}());											                
+						var errorList=(function errors(){ var error=[[${errorList}]];  return error; }());
+						$(document).ready(function(){
+							  $("#pageSize").val([[${currentSize}]]);			                    
+						  })		                    
+									                  
+			  </script>
+                <!-- Start: Chart -->
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow mb-12" id="card-center">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary font-weight-bold m-0">Liste des&nbsp; emprunts</h6>
+                                <div class="dropdown no-arrow">
+	                                <button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">
+	                                	<i class="fas fa-ellipsis-v text-gray-400"></i>
+	                                </button>
+	                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
+	                                      <p class="text-center dropdown-header">dropdown header:</p>
+	                                      <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
+	                                      <a class="dropdown-item" href="#">&nbsp;Another action</a>
+	                                      <div class="dropdown-divider"></div>
+	                                      <a class="dropdown-item" href="#">&nbsp;Something else here</a>
+	                                  </div>
+                                </div>
+                            </div>
+                            <div class="jumbotron jumbot" style="height: -100px;padding: 3px;"></div>
+                            <div class="card-body" id="card-member" style="margin: 0px;padding: 10px;">
+                                <div class="row" id="search-row">
+                                    <div class="col-md-4 text-nowrap">
+                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                        <label>Show&nbsp;<select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
+                                        <option value="5" >5</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="25">25</option>
+                                        </select>&nbsp;</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-nowrap">
+                                              <button id=""  th:onclick="montantARembourser([[${lst}]]);" class="btn btn-primary col " style="height:32px;width: 210px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Montant a rembourser</button>                                        
+                                         </div>
+                                    <div class="col-md-4 text-nowrap">
+                                        <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 300px; position:absolute;right:5%">
+                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by matricule">
+                                              <button id=searcher onclick ="searcherInDeb()" class="btn btn-primary col " style="height:32px;width: 120px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Chercher</button>                                        
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive" id="table-member">
+                                    <table class="table fixed-header" style=" overflow-x : scroll">
+                                        <thead>
+                                            <tr id="tab-header">
+                                                <th></th>
+                                                <th>Nom</th>
+                                                <th>Matricule</th>
+                                                <th >Somme</th>                                               
+                                                 <th>Taux</th>                                          
+                                                <th >dettePlusInteret</th>                                                
+                                                <th>Echeance</th>                                                
+                                                <th >DetteCourante</th>
+                                                <th >TypeInteret</th>
+                                                <th >Date emprunt</th>                                                
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="element:${lst}">
+                                                <td>
+                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isChecked([[${element.get(0)}]],[[${lst}]]);" class="idMember"  type="radio">
+                                                </td>
+                                                <td  th:text="${element.get(1)}" ></td>
+                                                <td  th:text="${element.get(2)}" ></td>
+                                                <td  th:text="${element.get(3)+' $'}" ></td>
+                                                <td  th:text="${element.get(4)+' %'}" ></td>
+                                                <td  th:text="${element.get(5) }" ></td>                                                
+                                                <td  th:text="${element.get(6)}" ></td>
+                                                <td  th:text="${element.get(7)}" ></td>
+                                                <td  th:text="${element.get(8)}" ></td>
+                                                <td  th:text="${element.get(9)}" ></td>
+                                                
+                                                
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="jumbotron jumbot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End: Chart -->
+                <div class="row">
+                    <div class="col">
+                    
+                         <div  th:fragment="pagination_card"  id="card-center-1" class="card shadow mb-12">
+                            <div id="div-total">
+                                <div class="d-inline" id="total-content" style="width:320px">
+                                    <p class="d-inline" id="title-total">TOTAL :&nbsp;</p><button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalDette+' $'}]]</button></div>
+                            </div>
+                            <div class="card-body"  id="card-bottom-body">
+                                <div class="row">
+                                    <div class="col-md-6 align-self-center">
+                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers" id="pagination">
+                                        
+                                            <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
+                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a    class="page-link"   th:onclick="'javascript:paginationInDeb('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
+                                                
+                                                <li class="page-item"><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link '}"  class="page-link"   th:onclick="'javascript:paginationInDeb('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
+                                                
+                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link"  th:onclick="'javascript:paginationInDeb('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer th:replace="fragments :: html_footer">
+       
+       </footer>
+    </div>
+    </div>
+    <div class="btn-group-fab"  role="group" aria-label="FAB Menu" >
+	<div>
+		<button type="button"  id="menuInDeb" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
+
+		<button type="button"  id="addBtnInDeb" th:onclick="javascript:setVariableAddInDeb([[${pages}]]);"  data-toggle="modal" data-target="#debiteurAddModal"  class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter"><i class="fa fa-plus"></i></button>
+		<button type="button"  id="updateBtnInDeb"  onclick="setVariableUpdateInDeb(idValue)" data-toggle="modal" data-target="#debiteurAddModal"  class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Mettre a jour"><i class="fa fa-refresh"></i></button>
+
+		<button type="button"    id="deleteBtnInDeb"  onclick="setVariableDeleteInDeb()"  class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Effacer"><i class="fa fa-remove"></i></button>
+	</div>
+</div> <div class="modal fade"  id="debiteurAddModal" role="dialog" tabindex="-1">
+    <div id="modal-id" style="max-width:580px" class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> </h4>
+             </div>
+            <div class="modal-body">
+                
+               
+    <div class="card"   id="card-id" style="height: auto;">
+        <div class="card-body" id="main-card-body">
+            <div id="div-after-card-body">
+                <div id="input-div" class="p-5" style="padding: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;">
+                    <div class="text-center" id="main-div">
+                        <h4 class="text-dark mb-4">Ajouter un nouveau Emprunt</h4>
+                    </div>
+                    <form id="main-form-debit" class="user">
+                        <div class="form-group row all-forms">
+                        
+                              <div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;">
+                                  <input type="text" class="form-control form-control-user-left" id="matricule-field" placeholder="Matricule" name="deb-matricule" />
+                            </div>                            
+                            <div class="col-auto col-sm-6 all-col-right" style="padding-right: 0px;padding-left: 0px;">                            
+                                <input type="text" class="form-control form-control-user-right" id="montant-field" placeholder="Montant" name="montant" />                                
+                            </div>
+                        </div>                        
+                        <div class="form-group row all-forms">
+                               <div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-right: 0px;padding-left: 0px;">
+                                    <input type="text" class="form-control form-control-user-left" id="echeance-field" placeholder="Echeance" name="echeance" />
+                               </div>
+                            <div class="col-sm-6 all-col all-col-right" style="padding-left: 0px;">
+                                   <!--   <input type="text" class="form-control form-control-user-right" id="taux-field" placeholder="Taux" name="taux" /> -->
+                                   
+                                    <select name="typeInteret" class="form-control form-control-user-right" id="typeInteret-field" >
+                                         
+                                         <option value="" disabled selected hidden >Type d'interet</option>
+                                         <option value="Constant">Constant</option>
+                                         <option value="Degressif">Degressif</option>
+                                    
+                                    </select>
+                                    
+                            </div>
+                        </div>
+                    </form>
+                    <div class="text-center" id="div-button">
+                        <div class="form-group d-flex flex-column align-items-center" id="form-btn">
+		                        <button id ="addButtonInDeb" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Ajouter</button>
+		                        <button  id="updateButtonInDeb" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Modifier</button>
+		                        <button class="btn btn-primary btn-block text-white btn-user btn-close" type="submit" data-dismiss="modal">Annuler</button>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+            
+            <div  class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>
+    <script src="assets/js/script.min.js?h=9b20e2f15b170d8c8330230170292640"></script>
+    
+    <script  th:inline="javascript" > 
+    
+                         var mainList;
+                         var idValue=-10;
+                         
+                         
+                         
+   function actions(type){
+   	
+  	 $(document).ready(function(){
+  		 
+ 		 		  var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
+   		   var w=window.open("http://localhost:8080/debiteur/generatePDF/"+keyWord, "_blank");
+ 		 		
+ 		 		   setTimeout(function(){
+ 		 			   
+ 		 			 //var a = w.document.createElement('A');
+ 					 //var filePath = w.location.href;
+ 					 // a.href = filePath;
+ 					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+ 					 // w.document.body.appendChild(a);
+ 					  //a.click();
+ 					  //w.document.body.removeChild(a);
+ 		 			   
+ 		 		   },600)
+		  
+	
+  		 
+  	 })
+  	 
+  	 
+   }                      
+   
+                         
+                         
+                         
+                         
+    
+   function errorFonction() {
+       if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
+          var messages="";
+          console.log("===>",errorList);
+          errorList.forEach((item,index)=>{messages+=item+"\n"; })
+                        		
+          alert(messages);
+                        		
+}	
+                           
+ }       
+                         
+                         
+    
+    function isChecked(x,list)   {
+    	idValue=x;   
+    	mainList=list;
+    	console.log("========"+x);
+	 
+ }  
+    
+    function paginationInDeb(page)   {
+    
+   	 $(document).ready(function(){
+   	       
+            // Pagination
+    	 
+       		 $.ajax({
+       				 url:"http://localhost:8080/debSearcher",
+       				 type:"post",
+       				 data:{
+       					 page:page,
+       					 keyWord:$("#keyWord").val(),
+       					 pagination:true,
+       				      },
+       		 
+       		        success: function(data){
+       		       	
+       		        	
+       		        	
+       		        	           $("#containerMainInDeb").html(data);       		        	
+	                    	       
+	                    	      $("#div-total").load(location.href+ " #div-total");	                    	     
+	                    	     
+       		           
+       		        	            console.log("Tout s'est bien passe");
+       		        	
+       		                      },        		          
+       		          error: function(error){
+       		        	  
+       		        	  alert("La Pagination n'a pas reussie")
+       		        	  
+       		                     }
+       		        } );
+       		 
+       	            });  
+   	
+	 
+}  
+    
+    function montantARembourser(list){
+		
+		 var list =list;
+		 
+	       list.forEach(function(element){ 
+	    	   
+	    	    if(element[0]==idValue){
+	    	    	
+ 	    	    	console.log( "From dataBase "+element[0]);
+ 	    	    	console.log( "From View "+idValue);	            	    	    	 
+ 	    	    	alert("Montant a Rembourser pour  la prochaine Echeance est " +element[10]);           	    	    	      	    	    	
+	    	    	
+	   	
+	    	          }
+	    	
+	       });
+		
+		//idValue=-10;
+	}
+     
+    //Page Size
+    
+    
+    
+    
+    // Page Size 
+    
+    function pageSize()	{
+    	$(document).ready(function(){
+    	       
+            // Pagination
+    	     console.log("Call",$("#pageSize").val(),);
+    	     
+       		 $("#pageSize").on('change',function(){
+       			 
+       			 
+       			 
+       			$.ajax({
+      				 url:"http://localhost:8080/debSearcher",
+      				 type:"post",
+      				 data:{
+      					 
+      					 pageOpera:0,
+      					 keyWord:$("#keyWord").val(),
+      					 pagination:false,
+      					 size:$("#pageSize").val(),
+      				      },
+      		 
+      		        success: function(data){
+      		       	
+      		        	
+			      		        	 $("#containerMainInDeb").html(data);
+			                 	     $("#div-total").load(location.href+ " #div-total");
+      		           
+      		        	             console.log("Tout s'est bien passe");
+      		        	
+      		                      },        		          
+      		          error: function(error){
+			       		        	
+      		        	  
+      		        	  alert("error in selecting")
+      		        	  
+      		                     }
+      		        } );
+       			 
+       			 
+       			 
+       			 
+       		 })
+       		 
+ });
+    	
+    }  	
+    	   
+    
+    
+    
+    function searcherInDeb()   {
+    	
+    	 $(document).ready(function(){
+    	       
+             // Search by matricule
+             
+        	 
+        		 $.ajax({
+        				 url:"http://localhost:8080/debSearcher",
+        				 type:"post",
+        				 data:{
+        					 keyWord:$("#keyWord").val(),
+        					 
+        				      },
+        		 
+        		        success: function(data){
+        		       	
+        		        	
+        		        	
+        		        	      $("#containerMainInDeb").html(data);
+ 	                    	      $("#div-total").load(location.href+ " #div-total");
+        		            
+        		        	      console.log("Tout s'est bien passe");
+        		        	
+        		                      },        		          
+        		          error: function(error){
+        		        	  
+        		        	      alert("L'operation de  recherche a echouee"+error);
+        		        	  
+        		                     }
+        		        } );
+        		 
+        	            });  
+    	
+	 
+ }    
+    
+    	function setVariableDeleteInDeb(){ 
+    	
+
+        $(document).ready(function(){
+       
+            // Delete Button
+            
+       	  
+       		 
+       		 $.ajax({
+       				 url:"http://localhost:8080/deteteDeb",
+       				 type:"post",
+       				 data:{
+       					 idDeb:idValue,
+       					 
+       				      },
+       		 
+       		        success: function(data){
+       		       	
+       		        	console.log("===="+data);
+       		                     $("#containerMainInDeb").html(data);        		        	
+	                    	        idValue=-10;
+	                    	     $("#div-total").load(location.href+ " #div-total");
+       		            
+       		        	console.log("Tout s'est bien passe");
+       		        	
+       		                      },        		          
+       		          error: function(error){
+       		        	  
+       		        	  alert("Echec d'effacement");
+       		        	  
+       		                     }
+       		        } );
+       		 
+       	            });  	             
+       	    
+       
+    	
+    	
+    	
+    }
+    
+          
+       
+       
+         
+          function  setVariableAddInDeb(pages)   {
+        	       	idValue=-10;
+        	       	$("#matricule-field").prop('disabled',false); 
+        	       	document.querySelector("#updateButtonInDeb").style.display="none";
+        	       	document.querySelector("#addButtonInDeb").style.display="block";
+        	       	
+        	       	
+        	       	$(document).ready(function(){ 
+        	       		
+        	         $("#matricule-field").val("");
+ 	    	    	  $("#montant-field").val("");
+ 	    	    	 $("#echeance-field").val("");
+	    	    	  $("#typeInteret-field").val("");
+ 	    	    	 
+ 	    	    	
+ 	    	    	 
+        	       	  // Add Button
+        	       	console.log("Add Method");
+        	       	  
+        	       	 $("#addButtonInDeb").unbind("click").click( function() { 
+                    		
+        	       		console.log(" Up Ajax Add Method");
+                    		 
+                    		 $.ajax({
+                    				 url:"http://localhost:8080/debPost",
+                    				 type:"post",
+                    				 data:{
+                    					 matricule:   $("#matricule-field").val(),
+                     	    	    	 montant:    $("#montant-field").val(),
+                     	    	    	 echeance:  $("#echeance-field").val(),
+                     	    	    	typeInteret: $("#typeInteret-field").val(),
+                     	    	    	 page:((pa.length-1) <= 0) ? 0:(pa.length-1),
+                    				      },
+                    		 
+                    		        success: function(data){
+                    		        	
+                    		        	    $("#containerMainInDeb").html(data);       		        	
+             	                    	   $("#debiteurAddModal").modal("hide");
+             	                    	   idValue=-10;
+             	                    	  $("#div-total").load(location.href+ " #div-total");
+             	                    	  errorFonction()
+             	                    	  console.log("Add Method output");
+                      	    	    	
+                    		                      },       
+                    		                      
+                    		          error: function(error){
+                    		        	  
+                    		        	  alert("L'operation d'ajout a echouee");
+                    		        	  
+                    		                     }
+                    		        } );
+                    		       
+                    		 
+		                    		 $(".btn-close").click(function(){
+		              		    	   
+		              		    	   idValue=-10;
+		              		    	    matricule:   $("#matricule-field").val("");
+                 	    	    	   montant:    $("#montant-field").val("");
+                 	    	    	   echeance:  $("#echeance-field").val("");
+		              		    	   typeInteret: $("#typeInteret-field").val("");
+		              		    	   
+              		       })
+                    		 
+                    		 
+                    		
+                    		});
+        	       		
+        	       		
+        	       		
+        	       	})
+        	       	
+        	       	
+        	       	
+     }
+         
+          function  setVariableUpdateInDeb(idValue)   {
+        		  
+        	        
+        	        document.querySelector("#addButtonInDeb").style.display="none";
+        	        document.querySelector("#updateButtonInDeb").style.display="block"; ;
+        	      
+        	          console.log("Update Method");
+        	         $(document).ready(function(){
+        	        	 
+        	        	//Update Button
+         	            
+                   
+                  	   
+                      	    	var list =mainList;
+                      	        
+                      	       list.forEach(function(element){ 
+                      	    	   
+                      	    	    if(element[0]==idValue){
+                      	    	    	console.log( "From dataBase "+element[0]);
+                      	    	    	console.log( "From View "+idValue);
+                      	    	    	
+                      	    	    	$("#matricule-field").val(element[2]);
+                      	    	    	$("#matricule-field").prop('disabled',true);
+                  	    	    	    $("#montant-field").val(element[3]);
+                  	    	    	    $("#echeance-field").val(element[6]);
+                      	    	    	$("#typeInteret-field").val(element[8]).change();
+                      	    	    	
+                      	    	    	
+                      	    	    	}
+                      	    	
+                      	       });
+                      	    	   $("#updateButtonInDeb").click( function(){   
+                                  	   console.log("Salut tout le monde in Update");
+                          	    	   $.ajax({
+                            				 url:"http://localhost:8080/updateDeb",
+                            				 type:"post",
+                            				 data:{
+                            					 idDeb:  idValue,
+                            					 matricule:   $("#matricule-field").val(),
+                      	    	    	        montant:    $("#montant-field").val(),
+                      	    	    	        echeance:  $("#echeance-field").val(),
+                      	    	    	      typeInteret: $("#typeInteret-field").val(),
+                           	    	    	    
+                            				      },
+                            		 
+                            		        success: function(data){
+                            		       	
+                            		        	          $("#containerMainInDeb").html(data);      		        	
+                 	                    	              $("#debiteurAddModal").modal("hide");  
+                 	                    	              $("#div-total").load(location.href+ " #div-total");
+                 	                    	             $("#main-form-debit").load(location.href+ " #main-form-debit");
+                                       	    	          idValue=-10;
+                                       	    	            $("#matricule-field").val('');
+                                    	    	    	    $("#montant-field").val('');
+                                    	    	    	    $("#echeance-field").val('');
+                                    	    	    	     $("#typeInteret-field").val('');
+                                    	    	    	  
+                            	        	
+                            		        	console.log("Tout s'est bien passe dans upda");
+                            		        	
+                            		                      },        		          
+                            		          error: function(error){
+                            		        	  
+                            		        	  alert("L'operation Modification a echouee");
+                            		        	  
+                            		                     }
+                            		        } )  
+                            		        
+                            		                                 		        
+                            		       $(".btn-close").click(function(){
+                            		    	   
+                            		    	   idValue=-10;
+                            		    	   
+                            	    	    	
+                            	    	     $("#matricule-field").val("");
+                         	    	    	  $("#montant-field").val("");
+                         	    	    	  $("#echeance-field").val("");
+                         	    	    	  $("#typeInteret-field").val("");
+                         	    	    	 
+                            		    	   
+                            		       })
+                            		       
+                      	    	   
+                      	    	   
+                      	    	   });   
+                      	    	 
+                        		 
+                      
+        	        	 
+        	        });
+        	        	
+          }
+    
+    
+    
+    
+    
+    
+    
+    </script>
+    
+    
+    
+    
+</body>
+
+</html>

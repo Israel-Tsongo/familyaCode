@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!--  Entete -->
+<head th:replace="fragments :: html_head"></head>
+
+
+		<body id="page-top">
+
+					    <div id="wrapper">           
+					                
+							        <nav th:replace="fragments :: left_nav">
+							         </nav>          
+							        <div class="d-flex flex-column" id="content-wrapper">
+									              <div id="content">
+									            
+									                     <nav th:replace="fragments :: centered_nav">
+									                     </nav> 
+									               
+									            <div class="container-fluid" id="mainContainerProfile" th:fragment="mainContainerProfile" >
+									                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+									                    <h3 class="text-dark mb-0" id="membre-title">Profiles des Membres</h3>
+									                </div>
+									                <script th:inline="javascript">                
+                
+											                   var pag=(function pages(){ var p=[[${pages}]]; return p ;}());											                
+											                   var errorList=(function errors(){ var error=[[${errorList}]];  return error; }());
+											                   
+															    $(document).ready(function(){
+																	  $("#pageSize").val([[${currentSize}]]);			                    
+																  })
+									                  
+									                </script>
+									                
+									                <!-- Table membre-->
+									                <p > [[${isToUpdate}]]</p>
+									                <div class="row">                 
+									                    <div class="col">
+									                        <div class="card shadow mb-12" id="card-center">
+									                            <div class="card-header d-flex justify-content-between align-items-center">
+									                                <h6 class="text-primary font-weight-bold m-0">Liste des&nbsp; profiles</h6>
+									                                <div class="dropdown no-arrow">
+										                                <button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">
+										                                	<i class="fas fa-ellipsis-v text-gray-400"></i>
+										                                </button>
+										                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
+										                                        <p class="text-center dropdown-header">dropdown header:</p>
+										                                        <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
+										                                        <a class="dropdown-item" href="#">&nbsp;Une autre action</a>
+										                                        <div class="dropdown-divider"></div>
+										                                        <a class="dropdown-item" href="#">Quelque chose d'autre ?</a>
+										                                 </div>
+									                                </div>
+									                            </div>
+									                            <div class="jumbotron jumbot" style="height: -100px;padding: 3px;"  ></div>
+									                            <div class="card-body" id="card-member" style="margin: 0px;padding: 10px;">
+									                                <div class="row" id="search-row">
+									                                
+									                                    <div class="col-md-4 text-nowrap">
+									                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+									                                        <label>Show&nbsp;<select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
+										                                        <option th:value="5" selected>5</option>
+										                                        <option th:value="10">10</option>
+										                                        <option th:value="15">15</option>
+										                                        <option th:value="20">20</option>
+									                                        </select>&nbsp;</label></div>
+									                                    </div>
+									                                    <div class="col-md-4 text-nowrap">
+									                                         <button id="detail-button"   onclick ="autreDetailsProfile()" class="btn btn-primary col " style="height:32px;width: 250px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold">Detail d'un Profile</button>                                        
+									                                    </div>									                                    
+									                                    <div class="col-md-4">
+									                                        <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 300px; position:absolute;right:5%">
+									                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by name">
+									                                              <button id=searcher onclick="searcher()" class="btn btn-primary col " style="height:32px;width: 120px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Chercher</button>                                        
+									                                        
+									                                        </div>
+									                                    </div>
+									                                </div>
+									                                
+									                                <div class="table-responsive" id="table-member">
+									                                   
+									                                    <table class="table  fixed-header" th:fragment="table-member">
+									                                        
+									                                        <thead>
+									                                           
+									                                            <tr id="tab-header">
+									                                                <th style="width: 0px;padding: 0px;padding-top: 0px;font-size: 0px;height: 10px;"></th>
+									                                                <th>Nom</th>
+									                                                <th>Matricule</th>
+									                                                <th>Adresse mail</th>
+									                                                <th>Numero </th>
+									                                                <th>Mot de passe</th>
+									                                                <th>Role</th>
+									                                                
+									                                            </tr>
+									                                        </thead>
+									                                        <tbody >
+									                                            
+									                                            <tr th:each="element:${lst}">
+									                                                 
+									                                               <td class="text-center" style="width: 36.8px;padding: 12px;font-size: 16px;border-width: 2px;">                                                 
+									                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInProfile([[${element.get(0)}]],[[${element.get(1)}]],[[${lst}]]);" class="iduser" type="radio" name="chk" style="margin-top: 0px;">                                                                                                  
+									                                             </td>
+									                                                <td class="all-col" th:text="${element.get(2)}" ></td>
+									                                                <td class="all-col" th:text="${element.get(3)}"></td>
+									                                                <td class="all-col" th:text="${element.get(4)}"></td>
+									                                                <td class="all-col" th:text="${element.get(5)}"></td>
+									                                                <td class="all-col" th:text="${#strings.substring(element.get(6), 0,#strings.length(element.get(6))/4) }"></td>
+									                                                <td class="all-col" th:text="${element.get(7) }"></td>
+									                                                 
+									                                            </tr>                                          
+									                                        </tbody>
+									                                    </table>
+									                                </div>
+									                                <div class="jumbotron jumbot"></div>
+									                            </div>
+									                        </div>
+									                        
+									                         <div id="card-center" class="card shadow mb-12">
+									                            
+									                            <div class="card-body" id="card-bottom-body">
+									                                <div class="row">
+									                                    <div class="col-md-6 align-self-center">
+									                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 8</p>
+									                                    </div>
+									                                    
+									                                    <div class="col-md-6">
+									                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers" id="pagination">
+									                                            
+									                                            <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
+									                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a    class="page-link"   th:onclick="'javascript:paginationInProfile('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
+									                                                
+									                                                <li class="page-item"><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link '}"  class="page-link"   th:onclick="'javascript:paginationInProfile('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
+									                                                
+									                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link"  th:onclick="'javascript:paginationInProfile('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
+									                                            </ul>
+									                                        </nav>
+									                                    </div>
+									                                </div>
+									                            </div>
+									                        </div>
+									                        
+									                        
+									                        
+									                        <!-- Pagination -->
+									                   
+									                    </div>
+									                    
+									                </div>
+									                
+									            </div>
+									            
+															            
+														
+									        </div>
+									                <!-- Footer -->
+									              <footer th:replace="fragments :: html_footer">       
+									              </footer>
+							   	   </div>        
+
+						</div>
+                          <div id="floating-button" class="btn-group-fab"  role="group" aria-label="FAB Menu" >
+									<div>
+										<button type="button" id="menu" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
+								
+										<!--  <button type="button"   id="addBtn" onclick="setNewUser()"  class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter utilisateur"><i class="fa fa-plus"></i></button> -->
+										<button  type="button" id="updateBtn"  onclick="UpdateUser(idValue)" data-toggle="modal" data-target="#addModalProfile" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Modifier les infos de l'utilisateur"><i class="fa fa-refresh"></i></button>
+								
+										<button type="button" id="deleteBtn"  onclick="deleteUser()" class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Supprimer"><i class="fa fa-remove"></i></button>
+									</div>
+							</div> 
+                       <!-- Teste pooooooooooooooooooooooooooo -->
+                       
+                       
+                        <div role="dialog" tabindex="-1" class="modal fade justify-content-center" id="autreDetailDuProfilModal"   style="max-width:800px;max-height:700px;position:absolute;left:20%;top:10%;transform:translate(-50,-50)" >
+				   <div class="modal-dialog" role="document">
+				        <div class="modal-content" id ="detailsModalContent" th:fragment="detailsModalContent" style="width:650px; " > 
+				            <div class="modal-header d-flex justify-content-center">
+				                <h4 class="modal-title text-center" style="font-family:cursive">Autres Details du Profile</h4>
+				            </div>
+				            <div class="modal-body" style="width: 650px;height: 500px;">
+				                <div class="card" style="width: 600px; height:480px; border-radius: 72px;">
+				                    <div class="card-body" style="height: 480px;width: inherit;border-radius: 70px;border: 0.9px solid rgb(125,165,205) ;">
+				                        <div class="box">          
+				                          
+  
+                    
+                            
+                                <div class="row justify-content-center">                                    
+                                    <div class="col-xl-12">                                        
+                                         <div class="row" >
+                                          <div class="col">
+	                                            <div class="d-flex justify-content-center align-items-center" style="text-align: center;height: 50px;">
+					                                <div class="d-flex justify-content-center" style="width: 40px;height: 40px;">
+					                                	<img class="rounded-circle img-fluid" th:src="@{/assets/img/1.png}" style="width: 40px;height: 40px;box-shadow: 2px 2px 6px rgb(51,108,166);" />
+					                                </div>
+					                            </div>
+					                            <div class="d-flex justify-content-center" style="height: auto ;width:100%;margin-bottom:20px">
+					                               <div style="height:auto;width:80%">
+			                                            <h4 style="text-align: center" th:text="${nom}"></h4>
+			                                         	<div class="row" >
+			                                         		<div class="col" >
+					                                         	<h5 style="text-align: center"  th:text="${''+'Matricule: '+matricule}"></h5>					                                        	
+				                                        	</div>
+				                                        	<div class="col" >					                                         	
+					                                        	<h5 style="text-align: center;" th:text="${''+'No: '+numero_fiche_adhesion}"></h5>
+				                                        	</div>
+				                                        </div>
+		                                        	</div>
+	                                        	</div>
+                                           </div>
+                                         </div>
+                                        <div class="row" >
+                                            <div class="col">
+                                                
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <div class="form-group text-left" >
+                                                                <label for="genre"><strong>Genre</strong></label>
+                                                                <select class="form-control" name="genre" id="genre"  >            								      
+					            								      <option value="" disabled selected hidden >Genre</option>
+					            								       <option th:selected="${genre =='M'}" value="M">Masculin </option>
+					            								      <option th:selected="${genre =='F'}" value="F">Feminin</option>            								    
+			            								    	</select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group text-left" >
+                                                                <label for="typePiece"><strong>Type de piece</strong><br></label>
+                                                                <select class="form-control" name="typePiece" id="typePiece" >            								      
+					            								      <option value="" disabled selected hidden >Type de piece</option>
+					            								      <option th:selected="${typePiece =='Carte_delecteur'}" value="Carte_delecteur">Carte d'electeur </option>
+					            								      <option th:selected="${typePiece =='Passeport'}" value="Passeport" >Passeport</option>            								    
+            								    				</select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group text-left" >
+                                                                <label for="NumeroPiece"><strong>N0 piece</strong><br></label>
+                                                                <input name="numeroPiece" id="numeroPiece" class="form-control" type="text" th:value="${numeroPiece}" style="border-radius: 10px;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="salaire"><strong>Salaire</strong><br></label>
+                                                                <input name="salaire" id="salaire" class="form-control" type="text" th:value="${salaire}"  style="border-radius: 10px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="retenu"><strong>Retenu</strong><br></label>
+                                                                <input name="retenu" id="retenu" class="form-control" type="text" th:value="${retenu}" style="border-radius: 10px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="adresse"><strong>Adresse</strong><br></label>
+                                                                <input name="adresse" id="adresse" class="form-control" type="text" th:value="${adresse}"  style="border-radius: 10px;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center" id="div-button" style="height:50px;margin-top:15px">
+													     <div class="form-group d-flex flex-column align-items-center" style="height:50px" id="form-btn">
+													           <button style="width:80%" onclick="updateAutreDetailsProfile()" id="updateOthersUserDetails" class="btn btn-primary btn-block text-white btn-user"  type="submit">Modifier</button>
+													           <button style="width:80%"  class="btn btn-primary btn-block text-white btn-user btn-close" type="button" data-dismiss="modal">Fermer</button>
+													           
+													      </div>
+													      
+												   </div> 
+                                                    
+                                                   
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                          
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        
+				                        <!--
+				                            <div class="d-flex justify-content-center align-items-center" style="text-align: center;height: 150px;">
+				                                <div class="d-flex justify-content-center" style="width: 124px;height: 115px;"><img class="rounded-circle img-fluid" th:src="@{/assets/img/1.png}" style="width: 117px;height: 113px;box-shadow: 2px 2px 6px rgb(51,108,166);" /></div>
+				                            </div>
+				                            <h3 class="name" style="text-align: center;font-size: 26px;color: rgb(16,125,234);"  th:text="${nom}" > </h3>
+				                            <p class="title" style="text-align: center;font-size: 15px;font-weight: 600;font-family:century Gothic"><span>Matricule :</span><span th:text="${matricule}" > 49389</span></p>
+				                            <div class="d-flex justify-content-center" >
+				                                <div class="d-flex justify-content-center align-items-center" style="font-style: italic;opacity: 1;height: 150px;width: 322px;">
+				                                    <div style="width: 300px;height: 140px;font-size: 18px;box-shadow: 1px 1px 5px 2px rgb(162,185,208);border-radius: 15px;background: #e5e6ea;color: rgb(4,5,6);font-family:century Gothic;font-weight:bold">
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col" style="width: 197px;"><span style="color: rgb(5,130,255);">Numero du fiche d'adhesion :</span></div>
+				                                            <div class="col" style="width: 186px;padding: 0px;"><span class="shadowClass" style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${numero_fiche_adhesion}"></span></div>
+				                                        </div>
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col"><span style="color: rgb(11,125,238);">Adresse :</span></div>
+				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${adresse }" ></span></div>
+				                                        </div>
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col"><span style="color: rgb(5,125,244);">Genre :</span></div>
+				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244); " th:text="${genre}"></span></div>
+				                                        </div>
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col"><span style="color: rgb(5,125,244);">Type de piece :</span></div>
+				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244); " th:text="${typePiece}"></span></div>
+				                                        </div>
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col"><span  style="color: rgb(8,126,244); " >Numero de la piece d'identite :</span></div>
+				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px rgb(8,126,244);" th:text="${numeroPiece}" ></span></div>
+				                                        </div>
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col"><span style="color: rgb(11,125,238);">Montant du salaire :</span></div>
+				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${salaire}" ></span></div>
+				                                        </div>
+				                                        <div class="row" style="width: 300px;margin: 0px;">
+				                                            <div class="col"><span style="color: rgb(11,125,238);">Pourcentage de retenu :</span></div>
+				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${retenu}" ></span></div>
+				                                        </div>
+				                                    </div>
+				                                </div>
+				                            </div>
+				                            -->
+				                        </div>
+				                    </div>
+				                </div>
+				            </div>	            
+				            
+				            <div class="modal-footer" style="height: 57px;">
+				               
+				            </div>
+				            
+				       	</div>
+				      </div>
+				   </div>
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       <!-- Teste pooooooooooooooooooooooooooo -->
+             
+                 
+                        <div   class="modal fade"  id="addModalProfile" role="dialog" tabindex="-1">
+    							<div id="modal-id" style="max-width:580px;" class="modal-dialog" role="document">
+       								     <div class="modal-content">
+           								 <div class="modal-header">
+               									<h4 class="modal-title"> </h4>
+               							 </div>
+            							<div class="modal-body">                
+               
+    											<div class="card"   id="card-id" style="height: auto;">
+       													 <div class="card-body" id="main-card-body">
+            													<div id="div-after-card-body">
+               															 <div id="input-div" class="p-5" style="padding: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;">
+                   																 <div class="text-center" id="main-div">
+                      																	  <h4 class="text-dark mb-4">Modifier Utilisateur</h4>
+                   																 </div>
+                   																 <form id="main-form" class="user" >
+                       																	 <div class="form-group row all-forms">
+                            																		<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;">
+                            																		       <input type="text" class="form-control form-control-user-left"  id="nom-field" placeholder="Nom" name="nom" />
+                            																		</div>
+                           																			 <div class="col-auto col-sm-6 all-col-right" style="padding-right: 0px;padding-left: 0px;">
+                           																					 <input type="text" class="form-control form-control-user-right" id="matricule" placeholder="Matricule" name="matricule" />
+                           																			 </div>
+                       																		</div>
+                       																		<div class="form-group row all-forms" style="width: 525px;">
+                            																			<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
+                            																			       <input type="email" class="form-control form-control-user-left" id="email-field" placeholder="Email" name="email" />
+                            																			  </div>
+                           																				<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
+                           																				       <input type="text" class="form-control form-control-user-right" id="mobile-field" placeholder="Numero de telephone" name="mobile" /></div>
+                     																					 </div>
+                        																	 <div class="form-group row all-forms">
+                           																				<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-right: 0px;padding-left: 0px;">
+                           																				        <input type="password" class="form-control form-control-user-left" id="password-field" placeholder="password" />
+                           																				  </div>
+                           																					<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">                           																					
+                           																					      <!--  <input type="text" class="form-control form-control-user-right" id="role-field" placeholder="Type de role" name="role" /> -->
+                           																					      <select name="role" class="form-control form-control-user-right" id="role-field" >
+																		                                    
+																			                                         	<option value="3" >SITE_USER</option>
+																			                                         	<option value="2">ADMIN_USER</option>
+																			                                         	
+																		                                    
+																		                                   		 </select>                         																					       
+                           																					       
+                           																					</div>
+                      																		  </div>                   																 
+                   																   </form> 
+	                   																         <div class="text-center" id="div-button">
+	                        																	     <div class="form-group d-flex flex-column align-items-center" id="form-btn">
+	                        																	           <button  id="updateButton" class="btn btn-primary btn-block text-white btn-user"  type="submit">Modifier</button>
+	                        																	           <button   class="btn btn-primary btn-block text-white btn-user btn-close" type="button" data-dismiss="modal">Annuler</button>
+	                        																	      </div>
+	                  																		  </div>               																	      
+                																	      
+                																       
+                															</div>
+                																   
+                                                                           </div>
+                                                                  </div>
+                                                          </div>
+                                                   </div>
+            
+                                                   <div  class="modal-footer">
+                                                   </div>
+                                                   </div>
+                                 </div>
+                        </div>
+                      
+                         
+                         <!--     Details Modal -->
+                         
+              
+    
+				   
+    
+    
+    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>   
+    <script src="assets/js/script.min.js?h=9b20e2f15b170d8c8330230170292640"></script>
+    
+   
+    
+    <script  th:inline="javascript" > 
+    
+		   var idRole=-10;
+           var idValue=-10;
+           var mainList;
+  
+  
+           
+  function actions(type){
+   	
+ 	 $(document).ready(function(){
+ 		 
+		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
+  		           var w=window.open("http://localhost:8080/profile/generatePDF/"+keyWord, "_blank");
+		 		
+		 		   setTimeout(function(){
+		 			   
+		 			 //var a = w.document.createElement('A');
+					 //var filePath = w.location.href;
+					 // a.href = filePath;
+					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+					 // w.document.body.appendChild(a);
+					  //a.click();
+					  //w.document.body.removeChild(a);
+		 			   
+		 		   },600)
+	   
+ 	 })
+ 	 
+ 	 
+  }           
+           
+           
+           
+    
+    function isCheckedInProfile(userId,roleId,list)   {
+    	
+    	idValue=userId;  
+    	idRole=roleId;
+    	mainList=list;
+    	console.log("========"+userId);
+	 
+ }  
+    
+    function autreDetailsProfile()   {
+        
+	      console.log( "Autre details du profile");
+  	 $(document).ready(function(){
+           
+  		 $.ajax({
+				 url:"http://localhost:8080/autreDetailsProfile",
+				 type:"post",
+				 data:{
+					 idUser:idValue,
+					 
+				      },
+		 
+		        success: function(data){
+		       	
+		        	
+		        		 console.log("data returned",data);
+		        	     $("#detailsModalContent").html(data);  
+		        	     $ ("#autreDetailDuProfilModal").modal("show");
+		        	              	     
+		            
+		        	console.log("Tout s'est bien passe");
+		        	
+		                      },        		          
+		          error: function(error){
+		        	  
+		        	  alert("L'operation de  recherche a echouee"+error);
+		        	  
+		                     }
+		        } );
+  		 
+	    
+		
+		});   
+
+}
+
+function updateAutreDetailsProfile()   {    
+    
+ $(document).ready(function(){
+
+
+	   
+	   $.ajax({
+	 url:"http://localhost:8080/updateOtherUserDetails",
+	 type:"post",
+	 data:{
+		 
+		  idUser:  idValue,		  
+		  genre:   $("#genre").val(),
+	      typePiece: $("#typePiece").val(),
+	      numeroPiece: $("#numeroPiece").val(),                           	    	    	      
+	      salaire: $("#salaire").val(),
+	      retenu:  $("#retenu").val(), 	    	      
+	      adresse: $("#adresse").val(),
+	      
+	      },
+
+    success: function(data){
+   	
+    	         
+     	     	$("#autreDetailDuProfilModal").modal("hide");   	         
+   	
+        },        		          
+     error: function(error){
+    	  
+    	  alert("L'operation Modification a echouee");
+    	  
+       }
+        
+    });
+	   
+	
+ 	});
+ 
+}
+    
+    function paginationInProfile(page)   {
+    
+   	 $(document).ready(function(){
+   	       
+            // Pagination
+    	 
+       		 $.ajax({
+       				 url:"http://localhost:8080/searchUser",
+       				 type:"post",
+       				 data:{
+       					 page:page,
+       					 keyWord:$("#keyWord").val(),
+       					 pagination:true,
+       				      },
+       		 
+       		        success: function(data){
+       		       	
+       		        	           $("#mainContainerProfile").html(data);               	      	                    	     
+	                    	     
+       		        	            console.log("Tout s'est bien passe");
+       		        	
+       		                      },        		          
+       		          error: function(error){
+       		        	  
+       		        	  alert("La Pagination n'a pas reussie")
+       		        	  
+       		                     }
+       		        } );
+       		 
+       	            });  
+   	
+	 
+}   
+    
+    
+    // Page Size 
+    
+    function pageSize()	{
+    	$(document).ready(function(){
+    	       
+            // Pagination
+    	     console.log("Call",$("#pageSize").val(),);
+    	     
+       		 $("#pageSize").on('change',function(){
+       			 
+       			 
+       			 
+       			$.ajax({
+      				 url:"http://localhost:8080/searchUser",
+      				 type:"post",
+      				 data:{
+      					 
+      					 pageOpera:0,
+      					 keyWord:$("#keyWord").val(),
+      					 pagination:false,
+      					 size:$("#pageSize").val(),
+      				      },
+      		 
+      		        success: function(data){
+      		       	
+      		        	
+		        	              $("#mainContainerProfile").html(data);     		        	
+
+      		           
+      		        	             console.log("Tout s'est bien passe");
+      		        	
+      		                      },        		          
+      		          error: function(error){
+			       		        	
+      		        	  
+      		        	  alert("error in selecting")
+      		        	  
+      		                     }
+      		        } );
+       			 
+       			 
+       			 
+       			 
+       		 })
+       		 
+ });
+    	
+    } 
+    
+    
+    
+    
+    
+    function searcher()   {
+    	
+    	 $(document).ready(function(){
+    	       
+             // Search by matricule
+             
+        	 
+        		 $.ajax({
+        				 url:"http://localhost:8080/searchUser",
+        				 type:"post",
+        				 data:{
+        					 keyWord:$("#keyWord").val(),
+        					 
+        				      },
+        		 
+        		        success: function(data){
+        		       	
+        		        	
+        		        	
+        		        	      $("#mainContainerProfile").html(data);      		        	
+ 	                    	       
+ 	                    	    
+        		            
+        		        	console.log("Tout s'est bien passe");
+        		        	
+        		                      },        		          
+        		          error: function(error){
+        		        	  
+        		        	  alert("L'operation de  recherche a echouee"+error);
+        		        	  
+        		                     }
+        		        } );
+        		 
+        	            });  
+    	
+	 
+ }    
+    
+    	function deleteUser(){ 
+    	
+
+        $(document).ready(function(){
+       
+            // Delete Button
+            
+       	  
+       		 
+       		 $.ajax({
+       				 url:"http://localhost:8080/deleteUser",
+       				 type:"post",
+       				 data:{
+       					 idUser:idValue,
+       					 
+       				      },
+       		 
+       		        success: function(data){
+       		       	
+       		        	console.log("===="+data);
+       		                     $("#mainContainerProfile").html(data);        		        	
+	                    	         idValue=-10;
+	                    	    
+       		            
+       		        	console.log("Tout s'est bien passe");
+       		        	
+       		                      },        		          
+       		          error: function(error){
+       		        	  
+       		        	  alert("Echec d'effacement");
+       		        	  
+       		                     }
+       		        } );
+       		 
+       	            });  	             
+       	    
+       
+    	
+    	
+    	
+    }
+    
+          
+       
+       
+         
+          function  setNewUser()   {
+        	       
+        	       	
+        	       	
+        	       	$(document).ready(function(){ 
+        	       		
+        	        
+        	       	
+                    		 
+                    		 $.ajax({
+                    				 url:"http://localhost:8080/register",
+                    				 type:"get",                    				 
+                    		 
+                    		        success: function(data){
+                    		        	
+                      	    	    	console.log("Add user Method Success");
+                    		                      },       
+                    		                      
+                    		          error: function(error){
+                    		        	  
+                    		        	  alert("L'operation d'ajout a echouee");
+                    		        	  
+                    		                     }
+                    		        } );
+                    		       
+                    		 
+		                    		
+		              		    	   
+              		       })
+                    		 
+                    
+        	       	
+        	       	
+     }
+         
+          function  UpdateUser(idValue)   {
+        		  
+        	        
+        	       // document.querySelector("#addButton").style.display="none";
+        	       // document.querySelector("#updateButton").style.display="block"; ;
+        	      
+        	          console.log("Update Method");
+        	         $(document).ready(function(){
+        	        	 
+        	        	//Update Button
+         	            
+                   
+                  	   
+                      	    	var list =mainList;
+                      	    	var currentPassword;
+                      	        
+                      	       list.forEach(function(element){ 
+                      	    	   
+                      	    	    if(element[0]==idValue){
+                      	    	    	console.log( "From dataBase "+element[0]);
+                      	    	    	console.log( "From View "+idValue);
+                      	    	    	 
+                      	    	    	$("#nom-field").val(element[2]);
+                      	    	    	$("#matricule").val(element[3]);
+                      	    	    	$("#matricule").prop('disabled',true);                      	    	    	
+                      	    	    	$("#email-field").val(element[4]);
+                      	    	    	$("#mobile-field").val(element[5]);
+                      	    	    	$("#password-field").val();
+                      	    	    	currentPassword=element[6];
+                      	    	    	$("#role-field").val(element[1]).change();
+                      	    	    	element[1]==1 || element[1]==2 ? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
+                      	    	    	
+                      	    	          }
+                      	    	
+                      	       });
+                      	    	   $("#updateButton").click( function(){   
+                                  	   console.log("Salut tout le monde in Update Usr");
+                          	    	   $.ajax({
+                            				 url:"http://localhost:8080/updateUserProf",
+                            				 type:"post",
+                            				 data:{
+                            					  idUser:  idValue,
+                            					  idRole: idRole,
+                            					  nom:       $("#nom-field").val(),
+                           	    	    	      matricule: $("#matricule").val(),
+                           	    	    	      email:     $("#email-field").val(),                           	    	    	      
+                           	    	    	      mobile:    $("#mobile-field").val(),
+                           	    	    	      password:  $("#password-field").val(),
+                           	    	    	      currentPassword:currentPassword,
+                           	    	    	      role:     $("#role-field").val(),
+                            				      },
+                            		 
+                            		        success: function(data){
+                            		       	
+                            		        	         $("#mainContainerProfile").html(data);      		        	
+                 	                    	              $("#addModalProfile").modal("hide");  
+                 	                    	              
+                 	                    	             $("#main-form").load(location.href+ " #main-form");
+                                       	    	          idValue=-10;
+                                       	    	          $("#nom-field").val('');
+                                    	    	    	  $("#matricule").val('');
+                                    	    	    	  $("#email-field").val('');
+                                    	    	    	  $("#mobile-field").val('');
+                                    	    	    	  $("#password-field").val('');
+                                    	    	    	  $("#role-field").val(''); 
+                            	        	
+                            		        	console.log("Tout s'est bien passe dans upda");
+                            		        	
+                            		                      },        		          
+                            		          error: function(error){
+                            		        	  
+                            		        	  alert("L'operation Modification a echouee");
+                            		        	  
+                            		                     }
+                            		        } )  
+                            		        
+                            		       $(".btn-close").click(function(){
+                            		    	   
+                            		    	   idValue=-10;
+                            		    	   $("#nom-field").val('');
+                            	    	    	$("#matricule").val('');
+                            	    	    	$("#email-field").val('');
+                            	    	    	$("#mobile-field").val('');
+                            	    	    	$("#password-field").val('');
+                            	    	    	$("#role-field").val('');
+                            		    	   
+                            		       })
+                            		       
+                      	    	   
+                      	    	   
+                      	    	   });   
+                      	    	 
+                        		 
+                      
+        	        	 
+        	        });
+        	        	
+          }
+    
+    
+          
+     
+    
+    
+    
+    
+    
+    </script>
+   
+     
+     
+</body>
+
+</html>

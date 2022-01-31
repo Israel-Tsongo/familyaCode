@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="fragments :: html_head"></head>
+
+<body id="page-top" >
+    <div id="wrapper">
+    
+        <nav th:replace="fragments :: left_nav">
+         </nav>
+         
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+            
+                 <nav th:replace="fragments :: centered_nav">
+                </nav>
+                
+            <div class="container-fluid" id="containerMainContrib" th:fragment="mainContainerContrib" >
+                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-dark mb-0" id="membre-title">Contributions des Membres</h3>
+                </div>
+                <script th:inline="javascript">
+                
+                
+                   var pa=(function pages(){ var p=[[${pages}]]; return p; }());
+                   var errorList=(function errors(){ var error=[[${errorList}]];return error; }());	   
+                   
+                   $(document).ready(function(){
+						  $("#pageSize").val([[${currentSize}]]);			                    
+					  })   
+                	
+                
+                </script>
+                <!-- Start: Chart -->
+                
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow mb-12" id="card-center">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary font-weight-bold m-0">Contributions</h6>
+                                <div class="dropdown no-arrow">
+                                	<button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">
+                                		<i class="fas fa-ellipsis-v text-gray-400"></i>
+                                	</button>
+                                    <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
+                                        <p class="text-center dropdown-header">dropdown header:</p>
+                                        	<a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)" >Exporter sous PDF</a>
+                                        	<a class="dropdown-item" href="#">Another action</a>
+                                        <div class="dropdown-divider">
+                                        </div>
+                                        	<a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="jumbotron jumbot" style="height: -100px;padding: 3px;"></div>
+                            <div class="card-body" id="card-member" style="margin: 0px;padding: 10px;">
+                                <div class="row" id="search-row">
+                                    <div class="col-md-4 text-nowrap">
+                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                        <label>Show&nbsp;<select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        </select>&nbsp;</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <p  th:text="${#request.getParameter('errorList')}">Aucune error</p>
+                                    
+                                    <div class="col-md-4 text-nowrap">
+                                         <button id="soldes-button" onclick ="soldeMembres()" class="btn btn-primary col " style="height:32px;width: 250px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Solde par membre</button>                                        
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 300px; position:absolute;right:5%">
+                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by matricule" >
+                                              <button id=searcher onclick ="searcherInContrib()" class="btn btn-primary col " style="height:32px;width: 120px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Chercher</button>                                        
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive" id="table-member" >
+                                    <table class="table fixed-header">
+                                        <thead>
+                                            <tr id="tab-header">
+                                                <th style="padding: 0px;width: 0px;"></th>
+                                                <th class="contrib-name-col">Nom</th>
+                                                <th class="contrib-matric-col">Matricule</th>
+                                                <th class="col-capital contrib-contrib-col">Contributions</th>
+                                                <th class="col-contrat contrib-datepaye-col">Date payement</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="element:${lst}">
+                                                <td style="padding: 12px;width: 36px;">
+                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInContrib([[${element.get(0)}]] , [[${lst}]])" type="radio">
+                                                
+                                                </td>                                                
+                                                <td class="tab-cells all-co contrib-name-col"  th:text="${element.get(1)}" >Israel Tsongo kikama&nbsp; &nbsp;&nbsp;</td>
+                                                <td class="all-col contrib-matric-col"  th:text="${element.get(2)}" >8080</td>
+                                                <td class="col-capital all-col contrib-matric-col"  th:text="${element.get(3)+' $'}" >$ 1000</td>
+                                                <td class="col-contrat all-col contrib-datepaye-col"  th:text="${element.get(4)}" >2021-04-05</td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                  <div class="table-responsive" id="tableMember">
+                                    <table class="table">
+                                        <thead>
+                                            <tr id="tab-header">
+                                                <th style="padding: 0px;width: 0px;"></th>
+                                                <th class="contrib-name-col">Nom</th>
+                                                <th class="contrib-matric-col">Matricule</th>
+                                                <th class="col-capital contrib-contrib-col">Capital Initial</th>
+                                                <th class="col-contrat contrib-datepaye-col">Contributions</th>
+                                                <th class="col-contrat contrib-datepaye-col">Solde total</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="element:${lstSolde}">
+                                                <td style="padding: 12px;width: 36px;">
+                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInContrib( [[${element.get(0)}]] , [[${lstOpera}]] );" type="checkbox">
+                                                
+                                                </td>                                                
+                                                <td class="tab-cells all-co contrib-name-col"  th:text="${element.get(1)}" ></td>
+                                                <td class="all-col contrib-matric-col"  th:text="${element.get(2)}" ></td>
+                                                <td class="col-capital all-col contrib-matric-col"  th:text="${element.get(3)+' $'}" ></td>
+                                                <td class="col-contrat all-col contrib-datepaye-col"  th:text="${element.get(4)+' $'}" ></td>
+                                               <td class="col-contrat all-col contrib-datepaye-col"  th:text="${element.get(5) + ' $'}" ></td>                                              
+                                              
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="jumbotron jumbot"></div>
+                            </div>
+                        </div>
+                        
+                       <div  th:fragment="pagination_card"  id="card-center-1" class="card shadow mb-12">
+                            <div id="div-total">
+                                <div class="d-inline" id="total-content" style="width:320px">
+                                    <p class="d-inline" id="title-total">TOTAL :&nbsp;</p><button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalContribution+' $'}]]</button></div>
+                            </div>
+                            <div class="card-body" id="card-bottom-body">
+                                <div class="row">
+                                    <div class="col-md-6 align-self-center">
+                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 7</p>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers pagin1" id="pagination">
+                                            <ul th:each ="page,status:${pages}" class="pagination pagin1" id="pagin">
+                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin1"><a class="page-link pagin1"  th:onclick="'javascript:paginationInContrib('+${currentPage-1}+')'"  aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
+                                                
+                                                <li th:class="${status.index==currentPage?' page-item active':'page-item pagin1'}" ><a class="page-link pagin1" th:onclick="'javascript:paginationInContrib('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
+                                                
+                                                <li   th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin1"><a class="page-link pagin1"  th:onclick="'javascript:paginationInContrib('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
+                                            </ul>
+                                            
+                                             <ul th:each ="page,status:${pagesSolde}" class="pagination pagin2" id="pagin">
+                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage-1}+')'"  aria-label="Previous"><span class="pagin2" aria-hidden="true">&laquo</span></a></li>
+                                                
+                                                <li th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}" ><a class="page-link pagin2" th:onclick="'javascript:paginationInContrib2('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
+                                                
+                                                <li   th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage+1}+')'"  aria-label="Next"><span class="pagin2" aria-hidden="true">&raquo</span></a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         
+                    </div>
+                    
+                </div>
+                <!-- End: Chart -->
+                
+                
+                
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        <footer th:replace="fragments :: html_footer">
+       
+       </footer>
+       
+       
+    </div>
+    </div>
+    <div  id="floating-button-contrib" class="btn-group-fab"  role="group" aria-label="FAB Menu" >
+	         <div>
+				<button type="button" id="menuInContrib" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
+		
+				<button type="button"  id="addBtnInContrib" th:onclick="javascript:setVariableAddInContrib([[${pages}]]);"   data-toggle="modal" data-target="#contribAddModal" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter"><i class="fa fa-plus"></i></button>
+				<button type="button" id="updateBtnInContrib"  onclick="setVariableUpdateInContrib(idValue)"  data-toggle="modal" data-target="#contribAddModal" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Mettre a jour"><i class="fa fa-refresh"></i></button>
+		
+				<button type="button" id="deleteBtnInContrib"  onclick="setVariableDeleteInContrib()"  class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Effacer"><i class="fa fa-remove"></i></button>
+	        </div>
+    </div> 
+
+<div class="modal fade"  id="contribAddModal" role="dialog" tabindex="-1">
+    <div id="modal-id" style="max-width:580px;max-height:600px" class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> </h4></div>
+            <div class="modal-body">
+                
+               
+    <div class="card" id="card-id" style="height: auto;">
+        <div class="card-body" id="main-card-body">
+            <div id="div-after-card-body">
+                <div id="input-div" class="p-5" style="padding: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;">
+                    <div class="text-center" id="main-div">
+                        <h4 class="text-dark mb-4">Ajouter une Contribution</h4>
+                    </div>
+                    <form id="main-form-contrib" class="user">
+                        
+                        <div class="form-group row all-forms" style="width: 525px;">
+                            <div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
+                            	<input type="text" class="form-control form-control-user-left" id="contrib-matricule-field" placeholder="Matricule" name="contrib-matricule" />
+                            </div>
+                            <div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
+                            	<input type="text" class="form-control form-control-user-right" id="contrib-field" placeholder="Contribution" name="contribution" />
+                            </div>
+                        </div>
+                        
+                    </form>
+                    <div class="text-center" id="div-button">
+                        <div class="form-group d-flex flex-column align-items-center" id="form-btn">
+	                        <button id ="addButtonInContrib" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Ajouter</button>
+	                        <button  id="updateButtonInContrib" class="btn btn-primary btn-block text-white btn-save btn-user" type="submit">Modifier</button>
+	                        <button  id="" class="btn btn-primary btn-block text-white btn-user btn-close" type="submit"  data-dismiss="modal">Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+            
+            <div  class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>    
+    <script src="assets/js/script.min.js?h=9b20e2f15b170d8c8330230170292640"></script>
+    
+    
+     <script  th:inline="javascript" > 
+     
+     var mainList;
+     var toggle=false;
+     var idValue=-10;
+     var currentTable="AllContributions";
+     
+     
+     
+     function actions(type){
+    	
+    	 $(document).ready(function(){
+    		 
+   		 		  var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
+	    		   var w=window.open("http://localhost:8080/contrib/generatePDF/"+currentTable+"/"+keyWord, "_blank");
+   		 		
+   		 		   setTimeout(function(){
+   		 			   
+   		 			 //var a = w.document.createElement('A');
+   					 //var filePath = w.location.href;
+   					 // a.href = filePath;
+   					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+   					 // w.document.body.appendChild(a);
+   					  //a.click();
+   					  //w.document.body.removeChild(a);
+   		 			   
+   		 		   },600)
+				  
+			
+    		 
+    	 })
+    	 
+    	 
+     }
+     
+     
+     
+     
+     
+  	 
+    function errorFonction() {
+     if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
+  		var messages="";
+  		console.log("===>",errorList);
+  		errorList.forEach((item,index)=>{messages+=item+"\n"; })  		
+  		alert(messages);
+  		
+     	}	
+     
+    }
+    
+     $(document).ready(function(){
+    	 
+    	 $(".pagin2").hide();
+    	
+	     document.querySelector("#tableMember").style.display="none";
+	     document.querySelector("#table-member").style.display="block";
+	     document.querySelector(".pagin2").style.display="none";
+	     document.querySelector(".pagin1").style.display="block";
+  	 
+     })
+                         
+	function setPages(pages)   {
+    	 
+    	allPages=pages;   
+    	
+    	console.log("========"+allPages);
+	 
+ }  				    
+    
+    
+    
+    function isCheckedInContrib(x,lst)   {
+    	 
+    	idValue=x;   
+    	mainList=lst;
+    	
+    	console.log("========"+x);
+    	console.log("========"+mainList);
+	 
+ }  
+    
+ function soldeMembres()   {
+    	
+    	
+    	
+    	if(toggle){
+    		
+    		currentTable="AllContributions";
+    		$("#table-member").show();
+    		$("#tableMember").hide();
+    		$("#solde-button").text("Voir le solde par membre")
+    		$(".pagin1").show();
+    		$(".pagin2").hide();
+    		$("#div-total").show();
+    		$("#interet").load(location.href+ " #interet");	
+    		$("#div-total").load(location.href+ " #div-total");
+    		$("#floating-button-contrib").show();
+    	}
+            if(!toggle){
+    		
+            currentTable="soldes";
+    		$("#table-member").hide();
+    		$("#tableMember").show();
+    		$("#div-total").hide();
+    		$("#solde-button").text("Voir Contribution des Membres")
+    		$(".pagin1").hide();
+    		$(".pagin2").show();
+    		$("#floating-button-contrib").hide();
+    		
+    		
+    	}
+          
+            toggle=!toggle;
+	 
+ }
+    
+ 
+    
+    function paginationInContrib(page)   {
+    
+   	 $(document).ready(function(){
+   	       
+            // Pagination
+    	 
+       		 $.ajax({
+       				 url:"http://localhost:8080/contribSearcher",
+       				 type:"post",
+       				 data:{
+       					 page:page,
+       					 keyWord:$("#keyWord").val(),
+       					 pagination:true,
+       				      },
+       		 
+       		        success: function(data){
+       		       	
+       		        	
+       		        	
+       		        	           $("#containerMainContrib").html(data);    		        	
+       		        	           $("#table-member").show();
+  		          		      	  $("#tableMember").hide();
+  		        	         	  $("#div-total").show() ;
+	                    	      $("#div-total-contrib").load(location.href+ " #div-total-contrib");	                    	     
+	                    	     
+	                    	      $(".pagin1").show();
+	 	                    	  $(".pagin2").hide();
+       		           
+       		        	            console.log("Tout s'est bien passe");
+       		        	
+       		                      },        		          
+       		          error: function(error){
+       		        	  
+       		        	  alert("La Pagination n'a pas reussie")
+       		        	  
+       		                     }
+       		        } );
+       		 
+       	            });  
+   	
+	 
+}   
+    
+    function paginationInContrib2(page)   {
+        
+      	 $(document).ready(function(){
+      	       
+               // Pagination
+       	 
+          		 $.ajax({
+          				 url:"http://localhost:8080/contribSearcher",
+          				 type:"post",
+          				 data:{
+          					 page:page,
+          					 keyWord:$("#keyWord").val(),
+          					 pagination:true,
+          				      },
+          		 
+          		        success: function(data){
+          		       	
+          		        	         $("#containerMainContrib").html(data); 
+          		        	         $("#table-member").hide();
+       		          		         $("#tableMember").show();
+       		        	             $("#div-total").hide() ;
+   	                    	       
+   	                    	      $("#div-total-contrib").load(location.href+ " #div-total-contrib");	                    	     
+   	                    	     
+   	                    	         $(".pagin2").show();
+	                    		     $(".pagin1").hide();
+          		        	            console.log("Tout s'est bien passe");
+          		        	
+          		                      },        		          
+          		          error: function(error){
+          		        	  
+          		        	  alert("La Pagination n'a pas reussie")
+          		        	  
+          		                     }
+          		        } );
+          		 
+          	            });  
+      	
+   	 
+   }   
+    
+ // Page Size 
+    
+    function pageSize()	{
+    	$(document).ready(function(){
+    	       
+            // Pagination
+    	     console.log("Call",$("#pageSize").val(),);
+    	     
+       		 $("#pageSize").on('change',function(){
+       			 
+       			 
+       			 
+       			$.ajax({
+      				 url:"http://localhost:8080/contribSearcher",
+      				 type:"post",
+      				 data:{
+      					 
+      					 pageOpera:0,
+      					 keyWord:$("#keyWord").val(),
+      					 pagination:false,
+      					 size:$("#pageSize").val(),
+      				      },
+      		 
+      		        success: function(data){
+      		       	
+      		        	
+	      		        	 $("#containerMainContrib").html(data);      		        	
+			        	     $("#table-member").show();
+			          		 $("#tableMember").hide();
+		        	         $("#div-total").show() ;
+		               	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+		               	     $(".pagin1").show();
+		               		 $(".pagin2").hide();
+      		        	
+      		                      },        		          
+      		          error: function(error){
+			       		        	
+      		        	  
+      		        	  alert("error in select")
+      		        	  
+      		                     }
+      		        } );
+       			 
+       			 
+       			 
+       			 
+       		 })
+       		 
+ });
+    	
+    }  	
+    	   
+    
+  
+    
+    
+    function searcherInContrib()   {
+    	
+    	 $(document).ready(function(){
+    	       
+             // Search by matricule
+             
+        	 
+        		 $.ajax({
+        				 url:"http://localhost:8080/contribSearcher",
+        				 type:"post",
+        				 data:{
+        					 keyWord:$("#keyWord").val(),
+        					 
+        				      },
+        		 
+        		        success: function(data){
+        		       	
+        		        	
+        		        	
+        		        	      $("#containerMainContrib").html(data);      		        	
+        		        	      $("#table-member").show();
+       		          		     $("#tableMember").hide();
+       		        	         $("#div-total").show() ;
+ 	                    	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+ 	                    	     
+ 	                    	    $(".pagin1").show();
+ 	                    		$(".pagin2").hide();
+        		            
+        		        	console.log("Tout s'est bien passe");
+        		        	
+        		                      },        		          
+        		          error: function(error){
+        		        	  
+        		        	  alert("L'operation de  recherche a echouee"+error);
+        		        	  
+        		                     }
+        		        } );
+        		 
+        	            });  
+    	
+	 
+ }    
+    
+    	function setVariableDeleteInContrib(){ 
+    	
+
+        $(document).ready(function(){
+       
+            // Delete Button
+            
+       		 $.ajax({
+       				 url:"http://localhost:8080/deteteContrib",
+       				 type:"post",
+       				 data:{
+       					 idContrib:idValue,
+       					 
+       				      },
+       		 
+       		        success: function(data){
+       		       	
+       		        	
+       		                     $("#containerMainContrib").html(data);  
+       		                    $("#tableMember").hide();
+               	                $("#table-member").show();
+	                    	        idValue=-10;
+	                    	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+	                    	     $(".pagin1").show();
+   	                    		$(".pagin2").hide();
+   	                    		
+       		        	       console.log("Tout s'est bien passe");
+       		        	       errorFonction();
+       		                      },        		          
+       		          error: function(error){
+       		        	  
+       		        	  alert("Echec d'effacement");
+       		        	  
+       		                     }
+       		        } );
+       		 
+       	            });  	             
+       	    
+       
+    	
+    	
+    	
+    }
+    
+          
+       
+       
+         
+          function  setVariableAddInContrib(pages)   {
+        	       	idValue=-10;
+        	       	
+        	       	document.querySelector("#updateButtonInContrib").style.display="none";
+        	       	document.querySelector("#addButtonInContrib").style.display="block";
+        	       	
+        	       	
+        	       	$(document).ready(function(){ 
+        	       		
+        	         $("#contrib-matricule-field").val("");
+ 	    	    	  $("#contrib-field").val("");
+ 	    	    	 
+ 	    	    	
+ 	    	    	 
+        	       	  // Add Button
+        	       	console.log("Add Method");
+        	       	  
+        	       	 $("#addButtonInContrib").unbind("click").click( function() { 
+                    		
+        	       		console.log(" Up Ajax Add Method");
+                    		 
+                    		 $.ajax({
+                    				 url:"http://localhost:8080/contribPost",
+                    				 type:"post",
+                    				 data:{
+                    					 matricule:    $("#contrib-matricule-field").val(),
+                     	    	    	 contribution:  $("#contrib-field").val(),
+                     	    	    	 page:((pa.length-1) <= 0) ? 0:(pa.length-1),
+                     	    	    	
+                    					 
+                    				      },
+                    		 
+                    		        success: function(data){
+                    		        	
+                    		        	    $("#containerMainContrib").html(data);       		        	
+             	                    	    $("#contribAddModal").modal("hide");
+             	                    	    $("#tableMember").hide();
+   	                    	                $("#table-member").show();
+             	                    	    idValue=-10;
+             	                    	    $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+             	                    	    console.log("Add success output");
+             	                    	    $(".pagin1").show();
+          	                    		    $(".pagin2").hide();
+          	                    		    
+          	                    		    errorFonction();
+          	                    		 
+                      	    	    	
+                    		                      },       
+                    		                      
+                    		          error: function(error){
+                    		        	  
+                    		        	   
+                    		        	  
+                    		        	  alert("L'operation d'ajout a echouee");
+                    		        	  
+                    		                     }
+                    		        } );
+                    		       
+                    		 
+		                    		 $(".btn-close").click(function(){
+		              		    	   
+		              		    	   idValue=-10;
+		              		    	 $("#contrib-matricule-field").val("");
+		        	    	    	  $("#contrib-field").val("");
+		              		    	   
+              		       })
+                    		 
+                    		 
+                    		
+                    		});
+        	       		
+        	       		
+        	       		
+        	       	})
+        	       	
+        	       	
+        	       	
+     }
+         
+          function  setVariableUpdateInContrib(idValue)   {
+        		  
+        	        
+        	        document.querySelector("#addButtonInContrib").style.display="none";
+        	        document.querySelector("#updateButtonInContrib").style.display="block"; ;
+        	      
+        	          console.log("Update Method");
+        	         $(document).ready(function(){
+        	        	 
+        	        	//Update Button
+         	            
+                   
+                  	   
+                      	    	var list =mainList;
+                      	        console.log(list);
+                      	       list.forEach(function(element){ 
+                      	    	   
+                      	    	    if(element[0]==idValue){
+                      	    	    	console.log( "From dataBase "+element[0]);
+                      	    	    	console.log( "From View "+idValue);
+                      	    	    	 
+                      	    	    	$("#contrib-matricule-field").val(element[2]);
+                      	    	    	$("#contrib-matricule-field").prop('disabled',true)
+                      	    	    	$("#contrib-field").val(element[3]);
+                      	    	    	
+                      	    	    	
+                      	    	    	
+                      	    	          }
+                      	    	
+                      	       });
+                      	    	   $("#updateButtonInContrib").click( function(){   
+                                  	   console.log("Salut tout le monde in Update");
+                          	    	   $.ajax({
+                            				 url:"http://localhost:8080/updateContrib",
+                            				 type:"post",
+                            				 data:{
+                            					 idContrib:  idValue,
+                            					 matricule:      $("#contrib-matricule-field").val(),
+                           	    	    	     contribution:  $("#contrib-field").val(),
+                           	    	    	    
+                            				      },
+                            		 
+                            		        success: function(data){
+                            		       	
+                            		        	          $("#containerMainContrib").html(data);      		        	
+                 	                    	              $("#contribAddModal").modal("hide");  
+                 	                    	             $("#tableMember").hide();
+                  	                    	              $("#table-member").show();
+                 	                    	              $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+                 	                    	             $("#main-form-contrib").load(location.href+ " #main-form-contrib");
+                                       	    	          idValue=-10;
+                                       	    	          $("#contrib-matricule-field").val('');
+                                    	    	    	  $("#contrib-field").val('');
+                                    	    	    	  
+                                    	    	    	  $(".pagin1").show();
+                           	                    		  $(".pagin2").hide();
+                                    	    	    	  
+                            	        	
+                            		        	console.log("Tout s'est bien passe dans upda");
+                            		        	
+                            		                      },        		          
+                            		          error: function(error){
+                            		        	  
+                            		        	  alert("L'operation Modification a echouee");
+                            		        	  
+                            		                     }
+                            		        } )  
+                            		        
+                            		       $(".btn-close").click(function(){
+                            		    	   
+                            		    	   idValue=-10;
+                            		    	   $("#contrib-matricule-field").val('');
+                            	    	    	$("#contrib-field").val('');
+                            	    	    	
+                            		    	   
+                            		       })
+                            		       
+                      	    	   
+                      	    	   
+                      	    	   });   
+                      	    	 
+                        		 
+                      
+        	        	 
+        	        });
+        	        	
+          }
+    
+    
+    
+    
+    
+    
+    
+    </script>
+    
+    
+    
+    
+</body>
+
+</html>
