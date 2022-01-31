@@ -135,14 +135,6 @@ public class RemboursementController {
 			if( memberRepo.getUserByMatricule(matricule)!=null && debiteurRepo.getDebiteurByMatricule(matricule)!=null ) {
 				
 				
-				       String date=debiteurRepo.getDebiteurDateByMatricule(matricule);
-			           
-			           int v=Integer.parseInt(date.toString().substring(5, 7));
-			           System.out.println(v);
-			           
-				       String currentDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-				       
-				       System.out.println("====================="+Integer.parseInt(currentDate.toString().substring(5,7)));				       
 				      
 				       
 				       Events e=new Events(matricule,  remboursement, new Date(),0.0 );
