@@ -32,11 +32,13 @@ public class Archive {
 	private String typeInteret;
 	private Date date_emprunt;
 	private String nom;
-	private double beneficeGenere;
+	private double beneficeGenere;	
+	private double sommePenalty;
+	
 		
 
 	public Archive(String nom, String enteredMatric, double sommeEmprunt, double duree_echeance, double taux, 
-			double dettePlusInteret, String typeInteret, Date date_emprunt,double beneficeGenere) {
+			double dettePlusInteret, String typeInteret, Date date_emprunt,double beneficeGenere,double formerPenalty) {
 		this.nom=nom;
 		this.sommeEmprunt = sommeEmprunt;
 		this.duree_echeance = duree_echeance;
@@ -127,6 +129,14 @@ public class Archive {
 
 	public void setBeneficeGenere(double beneficeGenere) {
 		this.beneficeGenere = beneficeGenere;
+	}
+
+	public double getSommePenalty() {
+		return sommePenalty;
+	}
+
+	public void setSommePenalty(double sommePenalty) {
+		this.sommePenalty = sommePenalty;
 	}
 
 	

@@ -1,6 +1,6 @@
 package org.sid.FamilyaProject.web;
 
-import java.io.FileInputStream;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,11 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.modelmapper.ModelMapper;
+
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
-import org.sid.FamilyaProject.entities.InteretParMembre;
+
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.entities.Payement;
@@ -20,14 +20,13 @@ import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,12 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 
 @Controller
 public class ContributionsController {
@@ -312,7 +306,7 @@ public class ContributionsController {
 	}
 	
 	
-	@GetMapping("contrib/generatePDF/{currentTable}/{keyWord}")
+	@GetMapping("/contrib/generatePDF/{currentTable}/{keyWord}")
 	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc,@PathVariable(name="currentTable") String currentTable) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();

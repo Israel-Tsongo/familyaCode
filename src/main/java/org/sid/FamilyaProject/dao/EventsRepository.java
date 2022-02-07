@@ -35,13 +35,13 @@ public interface EventsRepository extends JpaRepository<Events, Long>{
 	   @Query(value="SELECT   dette FROM events WHERE  entered_matricule = ?1", nativeQuery=true)	   
 		List<Double> getDetteByMatricule(String matric);
 	   
-	   @Query(value= "SELECT date_emprunt FROM events WHERE entered_matricule=:matricule", nativeQuery=true )
+	   @Query(value= "SELECT date_event FROM events WHERE entered_matricule=:matricule", nativeQuery=true )
 		public List<String> getDateEventByMatricule(@Param("matricule") String matricule);
 	   
 	   @Query(value="SELECT   montant_restant FROM events WHERE  entered_matricule = ?1", nativeQuery=true)
 		List<Double> getMontantRestantByMatricule(String matric);	   
 	   
-	   @Modifying
+	    @Modifying
 		@Transactional
 		@Query(value="UPDATE events e SET e.remboursement_courant =:montant, e.date_event=:date, e.entered_matricule=:matricule WHERE e.id_event=:idRemb",nativeQuery=true)
 		void updateRembourse(@Param("idRemb") Long idRemb,   @Param("matricule") String matricule, @Param("montant")  double montant, @Param("date") Date date );

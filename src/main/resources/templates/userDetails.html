@@ -130,7 +130,7 @@
 									                                            <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
 									                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a    class="page-link"   th:onclick="'javascript:paginationInProfile('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
 									                                                
-									                                                <li class="page-item"><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link '}"  class="page-link"   th:onclick="'javascript:paginationInProfile('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
+									                                                <li class="page-item" th:if="${(status.index+1)<=4} or ${status.index==currentPage}" ><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link '}"  class="page-link"   th:onclick="'javascript:paginationInProfile('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
 									                                                
 									                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link"  th:onclick="'javascript:paginationInProfile('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
 									                                            </ul>
@@ -504,7 +504,7 @@
 		                      },        		          
 		          error: function(error){
 		        	  
-		        	  alert("L'operation de  recherche a echouee"+error);
+		        	  alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
 		        	  
 		                     }
 		        } );
@@ -544,7 +544,7 @@ function updateAutreDetailsProfile()   {
         },        		          
      error: function(error){
     	  
-    	  alert("L'operation Modification a echouee");
+    	  alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
     	  
        }
         
@@ -567,7 +567,7 @@ function updateAutreDetailsProfile()   {
        				 data:{
        					 page:page,
        					 keyWord:$("#keyWord").val(),
-       					 pagination:true,
+       					 pagination:$("#keyWord").val()==""? true:false,
        				      },
        		 
        		        success: function(data){
@@ -616,16 +616,14 @@ function updateAutreDetailsProfile()   {
       		        success: function(data){
       		       	
       		        	
-		        	              $("#mainContainerProfile").html(data);     		        	
-
-      		           
-      		        	             console.log("Tout s'est bien passe");
+		        	              $("#mainContainerProfile").html(data);   		        	
+                                  console.log("Tout s'est bien passe");
       		        	
       		                      },        		          
       		          error: function(error){
 			       		        	
       		        	  
-      		        	  alert("error in selecting")
+      		        	  alert("Error du cote serveur")
       		        	  
       		                     }
       		        } );
@@ -710,23 +708,16 @@ function updateAutreDetailsProfile()   {
        		                      },        		          
        		          error: function(error){
        		        	  
-       		        	  alert("Echec d'effacement");
+       		        	  alert("Echec d'effacement cote serveur /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
        		                     }
        		        } );
        		 
        	            });  	             
-       	    
-       
-    	
-    	
-    	
+  	
     }
     
-          
-       
-       
-         
+        
           function  setNewUser()   {
         	       
         	       	
@@ -764,18 +755,12 @@ function updateAutreDetailsProfile()   {
          
           function  UpdateUser(idValue)   {
         		  
-        	        
-        	       // document.querySelector("#addButton").style.display="none";
-        	       // document.querySelector("#updateButton").style.display="block"; ;
-        	      
+        	     
         	          console.log("Update Method");
         	         $(document).ready(function(){
         	        	 
         	        	//Update Button
-         	            
-                   
-                  	   
-                      	    	var list =mainList;
+         	         	    	var list =mainList;
                       	    	var currentPassword;
                       	        
                       	       list.forEach(function(element){ 
@@ -833,7 +818,7 @@ function updateAutreDetailsProfile()   {
                             		                      },        		          
                             		          error: function(error){
                             		        	  
-                            		        	  alert("L'operation Modification a echouee");
+                            		        	  alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		                     }
                             		        } )  
@@ -853,21 +838,12 @@ function updateAutreDetailsProfile()   {
                       	    	   
                       	    	   
                       	    	   });   
-                      	    	 
-                        		 
-                      
-        	        	 
+      	        	 
         	        });
         	        	
           }
     
-    
-          
-     
-    
-    
-    
-    
+ 
     
     </script>
    

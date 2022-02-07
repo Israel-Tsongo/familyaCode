@@ -7,16 +7,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.sid.FamilyaProject.dao.ArchiveRepository;
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
+import org.sid.FamilyaProject.entities.Archive;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
-import org.sid.FamilyaProject.entities.Payement;
+
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,6 +50,8 @@ public class DebiteurController {
 	@Autowired
 	private OperationRepository operaRepo;
 	
+	@Autowired
+	private ArchiveRepository archiveRepo;
 	
 	@Autowired
 	private EventsRepository eventRepo;
@@ -68,6 +72,7 @@ public class DebiteurController {
 	 
 	    model.addAttribute("lst",trt.converter(debList));
 		model.addAttribute("pages",new int[debList.getTotalPages()]);
+		model.addAttribute("pagesArchive", new int[0]);
 		model.addAttribute("currentPage",page);
 		model.addAttribute("pageTitle","Debiteur");
 		model.addAttribute("totalDette",String.format("%.3f", totalEnDette));
@@ -87,7 +92,7 @@ public class DebiteurController {
 		 Traitement trt = new Traitement();
 		  
 		   
-		   if(pagin) {			   	
+		   if(pagin ||mc.isEmpty()) {			   	
 				
 			   Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
@@ -145,7 +150,7 @@ public class DebiteurController {
 		              Set<Debiteur>setDeb= new HashSet<Debiteur>();	
 		              setDeb.add(deb);
 		              membDeb.setDebiteurs(setDeb);
-		              deb.setMember(membDeb);	           
+		              deb.setMember(membDeb);         
 	              
 				      debitRepo.save(deb);
 					  operaRepo.save(new Operation("Un membre de matricule "+matricule+" s'est Empruntee une somme de "+montant+" $" ,new Date()));	
@@ -286,6 +291,42 @@ public class DebiteurController {
 
 		       return  trt.generatePDF(searchdebList, jasperFilePath, map, fileName);
 	   
+	}
+	
+	
+	
+	@PostMapping(path="/archive")
+	public ModelAndView archive(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+		
+		 Traitement trt = new Traitement();
+		  
+		   
+		   if(pagin||mc.isEmpty()) {			   	
+				
+			   Page <List<List<Object>>> debList =archiveRepo.getArchiveList(PageRequest.of(page,size));			
+			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
+			   ModelAndView mv = new ModelAndView();		           
+	           mv.addObject("lstArchive", trt.converter(debList));
+	           mv.addObject("pagesArchive", new int[debList.getTotalPages()]);	
+	           mv.addObject("currentPage",page);
+	           mv.addObject("totalCapitaux", String.format("%.3f", totalEnDette));  
+	           mv.addObject("keyWord", mc);
+			   mv.setViewName("/debiteur::mainContainerInDeb");
+	           return  mv;
+		   }else {
+			   Page <Archive> searchArchivList =archiveRepo.findByEnteredMatricContains(mc,PageRequest.of(page,size));			
+			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
+			       ModelAndView mv = new ModelAndView("/debiteur::mainContainerInDeb");		           
+		             mv.addObject("lstArchive", trt.searchArchivConverter(searchArchivList));
+		             mv.addObject("pagesArchive", new int[searchArchivList.getTotalPages()]);	
+		             mv.addObject("currentPage",page);
+		             mv.addObject("currentSize",size);	
+		             mv.addObject("totalCapitaux",String.format("%.3f", totalEnDette));  
+		             mv.addObject("keyWord", mc);
+		
+		             return  mv;
+		   
+		   }
 	}
 	
 	

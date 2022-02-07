@@ -45,28 +45,26 @@ public class InteretParMembre {
 	
 	public void partageInteret(InteretParMembreRepository interetRepo, EventsRepository eventRepo,DepenseRepository depenseRepo, MemberRepository memberRepo,ArchiveRepository archivRepo, List<String> errorList ) {
 		     
-		     double interetTotalDansArchive;
-		     
+		     double interetTotalDansArchive;		     
 		     double interetTotal  = 0.00;
 		     double totalDepense =0.00;
 		     double interetPartageable=0.00;
 		     double totalCapitauxInitiaux=0.00;
 		     double capitalInitialParMembre=0.00;
 		     double  interetParChacun=0.00;
-		    Member currentMember=null;
+		     double sommePenalite=0.00;
+		     Member currentMember=null;
 		     List<List<Object>> listCapitaux;
 		     
 		        // interetTotalDansRembourse =eventRepo.getTotalGeneretedBenefitByAllMember() !=null ? eventRepo.getTotalGeneretedBenefitByAllMember():0;		         
 		         interetTotalDansArchive=archivRepo.totalBenefitInArchive()!=null ? archivRepo.totalBenefitInArchive():0;
-		        
-		         interetTotal=interetTotalDansArchive;
+		         sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
+
+		         interetTotal=(interetTotalDansArchive+sommePenalite);
 		         totalDepense=depenseRepo.getTotalOutgo() !=null? depenseRepo.getTotalOutgo() : 0;
 		         listCapitaux=memberRepo.getCapitalInitialParMembre();		         
-		  	    totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0 ;
-
-		         
-		        
-		         interetPartageable=(interetTotal-totalDepense);
+		  	    totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? memberRepo.getTotalCapitauxInitiaux() : 0 ;
+                interetPartageable=(interetTotal-totalDepense);
 		         
 		         System.out.println("++++++++++++ interetPartageable :"+interetPartageable);
 		         System.out.println("++++++++++++ interetTotal:"+interetTotal);
@@ -76,7 +74,7 @@ public class InteretParMembre {
 		        	 
 				         for(List<Object> obj : listCapitaux) {
 				        	 Traitement trt= new Traitement();
-				        	 InteretParMembre interetInstance=new  InteretParMembre();
+				        	 InteretParMembre interetInstance=new InteretParMembre();
 				        	      
 				        	 Set<InteretParMembre> setInteret =new HashSet<InteretParMembre> ();
 								

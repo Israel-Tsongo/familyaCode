@@ -63,9 +63,6 @@ public class MemberController {
 	   
 	   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
        
-	    
-		
-
 	    model.addAttribute("lst",trt.converter(MemberList));
 		model.addAttribute("pages",new int[MemberList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
@@ -268,9 +265,6 @@ public class MemberController {
     	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
     	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
     	
-    	
-	
-		
 		 ModelAndView modelAndView=null ;
 		 modelAndView = new ModelAndView("/index::detailModalContent");		
 		 

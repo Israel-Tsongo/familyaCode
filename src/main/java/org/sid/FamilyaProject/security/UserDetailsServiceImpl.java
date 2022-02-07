@@ -35,14 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 					
 					 private ModelMapper modelMapper;
 					
-					/*
-					
-					public UserDetailsServiceImpl(UserRepository userRepository,ModelMapper modelMapper) {
-						  this.modelMapper=modelMapper;
-						  this.userRepository=userRepository;
-						
-					} */
-					 
+										 
 					
 					
 					public UserDetailsServiceImpl(ModelMapper modelMapper) {

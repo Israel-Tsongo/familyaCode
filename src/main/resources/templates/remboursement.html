@@ -59,7 +59,7 @@
 	                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
 	                                        <label>Show&nbsp;
 	                                        <select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
-			                                        <option value="5" selected>5</option>
+			                                        <option value="5" selected >5</option>
 			                                        <option value="10">10</option>
 			                                        <option value="15">15</option>
 			                                        <option value="20">20</option>	                                        
@@ -131,7 +131,7 @@
                                             <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
                                                  <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a    class="page-link"   th:onclick="'javascript:paginationInRembourse('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
                                                 
-                                                <li class="page-item"><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link'}"  class="page-link"   th:onclick="'javascript:paginationInRembourse('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
+                                                <li class="page-item" th:if="${(status.index+1)<=4} or ${status.index==currentPage}"><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link'}"  class="page-link"   th:onclick="'javascript:paginationInRembourse('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
                                                 
                                                 <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link"  th:onclick="'javascript:paginationInRembourse('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
                                             </ul>
@@ -279,26 +279,23 @@
    	 $(document).ready(function(){
    	       
             // Pagination
-    	 
+          
+            
+    	  console.log("pagination rembourse");
        		 $.ajax({
        				 url:"http://localhost:8080/rembourseSearcher",
        				 type:"post",
        				 data:{
        					 page:page,
        					 keyWord:$("#keyWord").val(),
-       					 pagination:true,
+       					 pagination: $("#keyWord").val()==""? true:false,
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	
-       		        	
-       		        	          $("#containerMainInRembourse").html(data);       		        	
-	                    	       
+       		        	          $("#containerMainInRembourse").html(data);     		        	
 	                    	      $("#div-total").load(location.href+ " #div-total");	                    	     
-	                    	     
-       		           
-       		        	            console.log("Tout s'est bien passe");
+	                    	      console.log("Pagination reussie");
        		        	
        		                      },        		          
        		          error: function(error){
@@ -379,8 +376,7 @@
         				 url:"http://localhost:8080/rembourseSearcher",
         				 type:"post",
         				 data:{
-        					 keyWord:$("#keyWord").val(),
-        					 
+        					 keyWord:$("#keyWord").val(),        					 
         				      },
         		 
         		        success: function(data){
@@ -435,7 +431,7 @@
        		                      },        		          
        		          error: function(error){
        		        	  
-       		        	  alert("Echec d'effacement");
+       		        	  alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
        		                     }
        		        } );
@@ -515,7 +511,7 @@
                     		                      
                     		          error: function(error){
                     		        	  
-                    		        	  alert("L'operation de remboursement a echouee");
+                    		        	  alert(" Erreur du cte serveur lors du remboursement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                     		        	  
                     		                     }
                     		        } );
@@ -601,7 +597,7 @@
                             		                      },        		          
                             		          error: function(error){
                             		        	  
-                            		        	  alert("L'operation Modification a echouee");
+                            		        	  alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		                     }
                             		        } )  

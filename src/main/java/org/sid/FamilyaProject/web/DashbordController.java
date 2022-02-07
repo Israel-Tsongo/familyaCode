@@ -109,6 +109,9 @@ public class DashbordController {
 				   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
 				   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
 				   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;	   
+			       
+				   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
+				   
 				   double interetNet=(interetGeneral-totalDepense);			   
 				   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;
 				   double soldeTotal= (totalCapitauxInitiaux +totalContribution);
@@ -166,6 +169,7 @@ public class DashbordController {
 			    mv.addObject("totalContribution",String.format("%.3f", totalContribution));
 			    mv.addObject("totalDepense",String.format("%.3f", totalDepense));
 			    mv.addObject("totalInteret",String.format("%.3f", interetGeneral));
+			    mv.addObject("sommePenalite",String.format("%.3f", sommePenalite));
 			    mv.addObject("interetNet",String.format("%.3f", interetNet));
 			    mv.addObject("totalDette",String.format("%.3f", totalDette));	
 	 		  	

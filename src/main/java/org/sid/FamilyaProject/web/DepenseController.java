@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
 import org.sid.FamilyaProject.dao.DepenseRepository;
-import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.entities.Depense;
-import org.sid.FamilyaProject.entities.Member;
-import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import net.sf.jasperreports.engine.JRException;
 
 
@@ -32,11 +27,6 @@ import net.sf.jasperreports.engine.JRException;
 public class DepenseController {
 	
 	
-	
-	
-
-	@Autowired
-	private MemberRepository memberRepo;
 	
 	@Autowired
 	private DepenseRepository depRepo;
@@ -120,13 +110,8 @@ public class DepenseController {
 		ModelAndView mv=null ;
 		 
 		try {
-			
-			
-				
 		
 		 depRepo.save(new Depense(depenseMontant,motif, new Date()));
-					  
-		
 			
 		}catch(Exception exc) {			
 		    errorList.add("Une erreur s'est produite lors de l'enregistrement d une nouvelle depense");
@@ -208,7 +193,7 @@ public class DepenseController {
 	}
 	
 	
-	@GetMapping("depense/generatePDF/{keyWord}")
+	@GetMapping("/depense/generatePDF/{keyWord}")
 	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();

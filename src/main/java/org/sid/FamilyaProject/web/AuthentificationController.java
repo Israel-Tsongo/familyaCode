@@ -1,7 +1,5 @@
 package org.sid.FamilyaProject.web;
 
-
-import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -11,18 +9,13 @@ import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
-import org.sid.FamilyaProject.dao.UserRepository;
-import org.sid.FamilyaProject.metier.Traitement;
-import org.sid.FamilyaProject.security.MyUserDetails;
+
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
 import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -31,7 +24,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -172,12 +165,13 @@ public class AuthentificationController {
 			
 			
 			if(authentication !=null) {
+				
 				email= authentication.getName();
 				usr= userDetailsService.getUserByEmail(email);
 				matricule=usr.getMatricule();
-				currentRoles=usr.getRoles();
-				
+				currentRoles=usr.getRoles();				
 				modelAndView.addObject("user",usr);
+				
 				for (Role rol : currentRoles) {
 					
 					if  (rol.getRole_name().equals("ADMIN_USER") || rol.getRole_name().equals("SUPER_USER") ) {
@@ -191,7 +185,7 @@ public class AuthentificationController {
 			
 			
 				if(memberRepo.getUserByMatricule(matricule)!=null && !(role.equals("ADMIN_USER"))) {
-							
+							System.out.println("-------matric-----");
 				    	List<List<Object>> detailMembre=payeRepo.getDetails(matricule);
 				    	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
 				    	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
@@ -203,8 +197,6 @@ public class AuthentificationController {
 							 modelAndView.addObject("capital",detailMembre.get(0).get(2));
 							 modelAndView.addObject("contributions",detailMembre.get(0).get(3));
 							 modelAndView.addObject("solde",detailMembre.get(0).get(4));			    		
-				    		
-				    		
 				    		
 				    	}else {
 				    		

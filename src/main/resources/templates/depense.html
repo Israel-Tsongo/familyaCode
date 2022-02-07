@@ -114,9 +114,9 @@
                                             <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a class="page-link"  th:onclick="'javascript:paginationInDep('+${currentPage-1}+')'"  aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
                                                 
-                                                <li th:class="${status.index==currentPage?' page-item active':'page-item'}" ><a class="page-link" th:onclick="'javascript:paginationInInDep('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
+                                                <li th:if="${(status.index+1)<=4} or ${status.index==currentPage}" th:class="${status.index==currentPage?' page-item active':'page-item'}" ><a  class="page-link" th:onclick="'javascript:paginationInInDep('+${status.index}+')'"  th:text="${status.index+1}"></a></li>
                                                 
-                                                <li   th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a class="page-link"  th:onclick="'javascript:paginationInDep('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
+                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a class="page-link"  th:onclick="'javascript:paginationInDep('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -243,7 +243,7 @@ function actions(type){
        				 data:{
        					 page:page,
        					 keyWord:$("#keyWord").val(),
-       					 pagination:true,
+       					 pagination:$("#keyWord").val()==""? true:false,
        				      },
        		 
        		        success: function(data){
@@ -251,10 +251,8 @@ function actions(type){
        		        	
        		        	
        		        	           $("#containerMainInDep").html(data);                    	       
-	                    	      $("#div-total-dep").load(location.href+ " #div-total-dep");	                    	     
-	                    	     
-       		           
-       		        	            console.log("Tout s'est bien passe");
+	                    	       $("#div-total-dep").load(location.href+ " #div-total-dep");	                    	     
+	                    	       console.log("Tout s'est bien passe");
        		        	
        		                      },        		          
        		          error: function(error){
@@ -295,8 +293,7 @@ function actions(type){
       		        success: function(data){
       		       	
       		        	
-			      		        	$("#containerMainInDep").html(data);      		        	
-			              	       
+			      		        	$("#containerMainInDep").html(data);     		        	
 			                	     $("#div-total-dep").load(location.href+ " #div-total-dep");
       		           
       		        	            console.log("Tout s'est bien passe");
@@ -389,7 +386,7 @@ function actions(type){
        		                      },        		          
        		          error: function(error){
        		        	  
-       		        	  alert("Echec d'effacement");
+       		        	  alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
        		                     }
        		        } );
@@ -449,7 +446,7 @@ function actions(type){
                     		                      
                     		          error: function(error){
                     		        	  
-                    		        	  alert("L'operation d'ajout a echouee");
+                    		        	  alert("L'operation d'ajout a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                     		        	  
                     		                     }
                     		        } );
@@ -458,8 +455,8 @@ function actions(type){
 		                    		 $(".btn-close").click(function(){
 		              		    	   
 		              		    	   idValue=-10;
-		              		    	 $("#depense-montant-field").val("");
-		        	    	    	  $("#motif-field").val("");
+		              		    	   $("#depense-montant-field").val("");
+		        	    	    	   $("#motif-field").val("");
 		              		    	   
               		       })
                     		 
@@ -532,7 +529,7 @@ function actions(type){
                             		                      },        		          
                             		          error: function(error){
                             		        	  
-                            		        	  alert("L'operation Modification a echouee");
+                            		        	  alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		                     }
                             		        } )  

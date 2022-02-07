@@ -14,6 +14,7 @@ import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.entities.Archive;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Depense;
 import org.sid.FamilyaProject.entities.Events;
@@ -154,7 +155,7 @@ public List<List<Object>> searchConverterPaye(Page <Payement> searchPayeList ){
 		return viewList;
 	}
 
-public List<List<Object>> searchDebConverter(Page <Debiteur> searchDebList ){
+ public List<List<Object>> searchDebConverter(Page <Debiteur> searchDebList ){
 	
 	List<List<Object>> viewList = new ArrayList<List<Object>>() ;	
 	List<Object>  newList=null;		           
@@ -187,6 +188,46 @@ public List<List<Object>> searchDebConverter(Page <Debiteur> searchDebList ){
 	}
 	
 
+ public List<List<Object>> searchArchivConverter(Page <Archive> searchArchiveList ){
+		
+		List<List<Object>> viewList = new ArrayList<List<Object>>() ;	
+		List<Object>  newList=null;		           
+			
+			
+							for( Archive ob  :searchArchiveList) {
+								
+								 newList= new ArrayList<Object>();
+								 
+								 newList.add(ob.getId_debArchiv());
+								 newList.add(ob.getNom());
+								 newList.add(ob.getEnteredMatric());
+								 newList.add(rounder((double)ob.getSommeEmprunt()));
+								 newList.add(ob.getTaux());
+								 newList.add(ob.getDettePlusInteret());							 
+								 newList.add(ob.getDuree_echeance());								 							 
+								 newList.add(ob.getTypeInteret());							 
+								 newList.add((ob.getDate_emprunt().toString()).substring(0, 10));
+								 newList.add(ob.getSommePenalty());
+								 newList.add(ob.getBeneficeGenere());
+								 
+								 viewList.add(newList);				              
+						}
+				   
+			           
+			 
+		
+			
+			
+			return viewList;
+		}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 

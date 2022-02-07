@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
@@ -50,6 +52,12 @@ public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
 	@Query(value="SELECT dette_courante FROM debiteur WHERE entered_matric=?1",nativeQuery=true)
 	public Double detteCouranteByMatricule(String matricule);
 	
+	@Query(value="SELECT current_penalite FROM debiteur WHERE entered_matric=?1",nativeQuery=true)
+	public Double getCurrentPenaliteByMatricule(String matricule);
+	
+	@Query(value="SELECT former_penalite FROM debiteur WHERE entered_matric=?1",nativeQuery=true)
+	public Double getFormerPenaliteByMatricule(String matricule);
+	
 	
 	@Modifying
 	@Transactional
@@ -62,7 +70,18 @@ public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
 	@Transactional
 	@Query(value="UPDATE debiteur d SET d.dette_courante =:detteCourante  WHERE d.id_debiteur=:id_debiteur",nativeQuery=true)	
 	void updateDetteCourante( @Param("id_debiteur") Long idDeb, @Param("detteCourante") double montant_restant);
+     
+	@Modifying
+	@Transactional(propagation=Propagation.REQUIRES_NEW,isolation=Isolation.SERIALIZABLE)
+	@Query(value="UPDATE debiteur d SET d.current_penalite =:penalite  WHERE d.entered_matric=:matricule",nativeQuery=true)	
+	void updateCurrentPenalite( @Param("matricule") String matricule, @Param("penalite") double penalite);
 
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE debiteur d SET d.former_penalite =:penalite  WHERE d.entered_matric=:matricule",nativeQuery=true)	
+	void updateFormerPenalite( @Param("matricule") String matricule, @Param("penalite") double penalite);
+
+	
 	List<Debiteur> findByEnteredMatricContains(String string);
 	
 	

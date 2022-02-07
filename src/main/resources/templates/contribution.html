@@ -94,7 +94,6 @@
                                             <tr th:each="element:${lst}">
                                                 <td style="padding: 12px;width: 36px;">
                                                     <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInContrib([[${element.get(0)}]] , [[${lst}]])" type="radio">
-                                                
                                                 </td>                                                
                                                 <td class="tab-cells all-co contrib-name-col"  th:text="${element.get(1)}" >Israel Tsongo kikama&nbsp; &nbsp;&nbsp;</td>
                                                 <td class="all-col contrib-matric-col"  th:text="${element.get(2)}" >8080</td>
@@ -122,7 +121,6 @@
                                             <tr th:each="element:${lstSolde}">
                                                 <td style="padding: 12px;width: 36px;">
                                                     <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInContrib( [[${element.get(0)}]] , [[${lstOpera}]] );" type="checkbox">
-                                                
                                                 </td>                                                
                                                 <td class="tab-cells all-co contrib-name-col"  th:text="${element.get(1)}" ></td>
                                                 <td class="all-col contrib-matric-col"  th:text="${element.get(2)}" ></td>
@@ -156,17 +154,17 @@
                                             <ul th:each ="page,status:${pages}" class="pagination pagin1" id="pagin">
                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin1"><a class="page-link pagin1"  th:onclick="'javascript:paginationInContrib('+${currentPage-1}+')'"  aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
                                                 
-                                                <li th:class="${status.index==currentPage?' page-item active':'page-item pagin1'}" ><a class="page-link pagin1" th:onclick="'javascript:paginationInContrib('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
+                                                <li th:if="${(status.index+1)<=4} or ${status.index==currentPage}" th:class="${status.index==currentPage?' page-item active':'page-item pagin1'}" ><a  class="page-link pagin1" th:onclick="'javascript:paginationInContrib('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
                                                 
-                                                <li   th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin1"><a class="page-link pagin1"  th:onclick="'javascript:paginationInContrib('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
+                                                <li th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin1"><a class="page-link pagin1"  th:onclick="'javascript:paginationInContrib('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
                                             </ul>
-                                            
                                              <ul th:each ="page,status:${pagesSolde}" class="pagination pagin2" id="pagin">
-                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage-1}+')'"  aria-label="Previous"><span class="pagin2" aria-hidden="true">&laquo</span></a></li>
+                                             
+                                                <li    th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage-1}+')'"  aria-label="Previous"><span class="pagin2" aria-hidden="true">&laquo</span></a></li>
                                                 
-                                                <li th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}" ><a class="page-link pagin2" th:onclick="'javascript:paginationInContrib2('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
+                                                <li    th:if="${(status.index+1)<=4} or ${status.index==currentPage}" th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}"><a  class="page-link pagin2" th:onclick="'javascript:paginationInContrib2('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
                                                 
-                                                <li   th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage+1}+')'"  aria-label="Next"><span class="pagin2" aria-hidden="true">&raquo</span></a></li>
+                                                <li    th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage+1}+')'"  aria-label="Next"><span class="pagin2" aria-hidden="true">&raquo</span></a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -388,7 +386,7 @@
        				 data:{
        					 page:page,
        					 keyWord:$("#keyWord").val(),
-       					 pagination:true,
+       					 pagination:$("#keyWord").val()==""? true:false,
        				      },
        		 
        		        success: function(data){
@@ -704,14 +702,12 @@
                       	       list.forEach(function(element){ 
                       	    	   
                       	    	    if(element[0]==idValue){
-                      	    	    	console.log( "From dataBase "+element[0]);
-                      	    	    	console.log( "From View "+idValue);
+                      	    	    	console.log("From dataBase "+element[0]);
+                      	    	    	console.log("From View "+idValue);
                       	    	    	 
                       	    	    	$("#contrib-matricule-field").val(element[2]);
                       	    	    	$("#contrib-matricule-field").prop('disabled',true)
                       	    	    	$("#contrib-field").val(element[3]);
-                      	    	    	
-                      	    	    	
                       	    	    	
                       	    	          }
                       	    	
@@ -723,7 +719,7 @@
                             				 type:"post",
                             				 data:{
                             					 idContrib:  idValue,
-                            					 matricule:      $("#contrib-matricule-field").val(),
+                            					 matricule:    $("#contrib-matricule-field").val(),
                            	    	    	     contribution:  $("#contrib-field").val(),
                            	    	    	    
                             				      },

@@ -40,6 +40,8 @@ public class Debiteur  implements Serializable  {
 	private double detteCourante;
 	private double dettePlusInteret;
 	private String typeInteret;
+	private double currentPenalite;	
+	private double formerPenalite;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="foreignKeyMember", nullable=false)
@@ -57,6 +59,8 @@ public class Debiteur  implements Serializable  {
 		this.premierRemboursement=premierRemboursement;
 		this.typeInteret=typeInteret;
 		this.dettePlusInteret=dettePlusInteret;
+		this.currentPenalite=0.0;
+		this.formerPenalite=0.0;
 		
 	}
 	
@@ -154,5 +158,28 @@ public class Debiteur  implements Serializable  {
 		this.detteCourante = detteCourante;
 	}
 
+
+	public double getCurrentPenalite() {
+		return currentPenalite;
+	}
+
+
+	public void setCurrentPenalite(double currentPenalite) {
+		this.currentPenalite = currentPenalite;
+	}
+
+
+	public double getFormerPenalite() {
+		return formerPenalite;
+	}
+
+
+	public void setFormerPenalite(double formerPenalite) {
+		this.formerPenalite = formerPenalite;
+	}
+
+
+	
+ 
 
 }

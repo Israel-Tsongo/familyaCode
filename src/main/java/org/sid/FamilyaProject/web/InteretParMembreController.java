@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
-import org.sid.FamilyaProject.dao.MemberRepository;
+
 import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.entities.InteretParMembre;
-import org.sid.FamilyaProject.entities.Member;
+
 import org.sid.FamilyaProject.entities.Operation;
-import org.sid.FamilyaProject.entities.Payement;
+
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -191,7 +191,7 @@ public class InteretParMembreController {
 	}
 	
 	
-	@GetMapping("interet/generatePDF/{type}/{keyWord}")
+	@GetMapping("/interet/generatePDF/{type}/{keyWord}")
 	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc,@PathVariable(name="type") String type) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();

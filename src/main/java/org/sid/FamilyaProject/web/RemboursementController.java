@@ -1,16 +1,13 @@
 package org.sid.FamilyaProject.web;
 
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-
 import org.sid.FamilyaProject.dao.ArchiveRepository;
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.DepenseRepository;
@@ -20,7 +17,6 @@ import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
-import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import net.sf.jasperreports.engine.JRException;
 
 
@@ -91,7 +86,9 @@ public class RemboursementController {
 		 Traitement trt = new Traitement();
 		  
 		   
-		   if(pagin) {			   	
+		   if(pagin) {	
+			   
+				
 				
 			   Page <List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));
 			   
@@ -104,6 +101,7 @@ public class RemboursementController {
 			   mv.setViewName("/remboursement::mainContainerInRembourse");
 	           return  mv;
 		   }else {
+			       
 			       Page <Events> searchEventList =eventRepo.findByEnteredMatriculeContains(mc,PageRequest.of(page,size));
 			       
 			       ModelAndView mv = new ModelAndView("/remboursement::mainContainerInRembourse");		           
@@ -126,41 +124,93 @@ public class RemboursementController {
 	public ModelAndView postRembourseData(@RequestParam() String matricule,  @RequestParam() double remboursement,				                                     
 			                                     @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
 		                                    ) {
+		String currentDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
 		List<String> errorList = new ArrayList<String>()	; 
 		Traitement trt = new Traitement();
 		ModelAndView mv=null ;
-		 
+		double remboursementTempo=0.0;
+		String date=eventRepo.matricIsExist(matricule) ? eventRepo.getDateEventByMatricule(matricule).get(eventRepo.getDateEventByMatricule(matricule).size()-1):debiteurRepo.getDebiteurDateByMatricule(matricule) ;
+		double prochainRembourcement=eventRepo.matricIsExist(matricule) ? eventRepo.getEventByMatricule(matricule).get(eventRepo.getEventByMatricule(matricule).size()-1).getProchainMontant():debiteurRepo.getDebiteurByMatricule(matricule).getPremierRemboursement() ;
+
 		try {
 			
-			if( memberRepo.getUserByMatricule(matricule)!=null && debiteurRepo.getDebiteurByMatricule(matricule)!=null ) {
+			if( memberRepo.getUserByMatricule(matricule)!=null) {
 				
-				
-				      
-				       
-				       Events e=new Events(matricule,  remboursement, new Date(),0.0 );
-				       Member curentMember  =memberRepo.getUserByMatricule(e.getEntered_matricule());
-				       String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
-				       
-						if( typeInteret.equals("Degressif")) {							 
-							 			
-							Set<Events> setterEvent =new HashSet<Events> ();									
-							setterEvent.add(e);
-							curentMember.setEvents(setterEvent);
-							e.setMembre(curentMember);
-					        e.computing(interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
-								  
-						 }else{
-							 Set<Events> setterEvent =new HashSet<Events> ();
+				      if(debiteurRepo.getDebiteurByMatricule(matricule) != null) {
+				    	  
+							  double currentPenalty=0.0;
+				   	   		  Debiteur debit=debiteurRepo.getDebiteurByMatricule(matricule);
+				   	   		  
+		    	 	         int currentNewDate=Integer.parseInt(currentDate.toString().substring(5,7));				
+				             //int currentNewDate=3;
+		    	 		     int newDate=Integer.parseInt(date.toString().substring(5,7));
+				             //int newDate=12;
+		    	 		     
+		    	 		     int tempDate=(newDate==12)?(0+1):(newDate+1);
+		    	 		    
+		    	 		   
+							 if((currentNewDate >tempDate)) {
+								 
+								 double difference=(currentNewDate-tempDate);
+								 double penalite=(0.1*prochainRembourcement)*difference;
+								 System.out.println("======difference======"+difference );
+								 debiteurRepo.updateCurrentPenalite(matricule,trt.rounder(penalite) ) ;	
+								 
+								  currentPenalty=debiteurRepo.getCurrentPenaliteByMatricule(matricule) ;
+					   	   		  debit =debiteurRepo.getDebiteurByMatricule(matricule);
+					   	   		  
+					   	   		 
+								 if(remboursement==(debit.getPremierRemboursement()+currentPenalty)) {
+									 
+									 remboursementTempo=remboursement;
+									 remboursement=(remboursement-currentPenalty);									 
+									 double formerPenalty= debiteurRepo.getFormerPenaliteByMatricule(matricule);
+  	                            	 double sommePenalty=(formerPenalty+currentPenalty);	  	                            	
+  	    	                         debiteurRepo.updateFormerPenalite(matricule, sommePenalty) ;								        	                            	   
+	                            	 debiteurRepo.updateCurrentPenalite(matricule,0.0);
+	                            	 
+								 }else {
+									 System.out.println("==============+Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
+									 errorList.add("Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
+								 }
+							 }
+				           
+							
+							if(currentNewDate <= tempDate ||(remboursementTempo==(debit.getPremierRemboursement()+currentPenalty)) || debiteurRepo.getDebiteurByMatricule(matricule)==null) {
 								
+					       Events e=new Events(matricule,  remboursement, new Date());
+					       Member curentMember  =memberRepo.getUserByMatricule(e.getEntered_matricule());
+					       String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
+					       
+							if( typeInteret.equals("Degressif")) {							 
+								 			
+								Set<Events> setterEvent =new HashSet<Events> ();									
 								setterEvent.add(e);
 								curentMember.setEvents(setterEvent);
 								e.setMembre(curentMember);
-						        e.interetConstant(interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
-										  
+						        e.computing(interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
+									  
+							 }else{
+								 
+								 Set<Events> setterEvent =new HashSet<Events> ();								
+									setterEvent.add(e);
+									curentMember.setEvents(setterEvent);
+									e.setMembre(curentMember);
+							        e.interetConstant(interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
+											  
+							 }
+						
 						 }
+							
+							
+			    }else {
+			    	
+			    	errorList.add("Le matricule saisi ne figure pas sur la liste des debiteurs");
+			    }
 					  
 			           
 			}else {
+				
 				
 				errorList.add("Le matricule saisi ne correspond a aucun membre");
 				
@@ -242,7 +292,7 @@ public class RemboursementController {
 	
 	
 	
-	@GetMapping("rembourse/generatePDF/{keyWord}")
+	@GetMapping("/rembourse/generatePDF/{keyWord}")
 	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();

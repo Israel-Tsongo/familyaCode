@@ -1,16 +1,10 @@
 package org.sid.FamilyaProject.web;
 
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.List;
-
-import org.sid.FamilyaProject.dao.DebiteurRepository;
-import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
-import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
-import org.sid.FamilyaProject.entities.Member;
-import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import net.sf.jasperreports.engine.JRException;
 
 @Controller
@@ -36,14 +29,6 @@ public class ProfileController {
 	@Autowired
 	private MemberRepository memberRepo;
 	
-	@Autowired
-	private DebiteurRepository debiteurRepo;
-	
-	@Autowired
-	private InteretParMembreRepository interetRepo;
-	
-	@Autowired
-	private PayementRepository payeRepo;
 	
 	@Autowired
 	private UserRepository userRepo;
@@ -59,7 +44,6 @@ public class ProfileController {
 		Page <List<List<Object>>> profilList =userRepo.getAllUsers(PageRequest.of(page,size));		
 		
 	   
-
 	    model.addAttribute("lst",trt.converter(profilList));
 		model.addAttribute("pages",new int[profilList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
@@ -269,7 +253,7 @@ public class ProfileController {
 		
 		}
 		
-		@GetMapping("profile/generatePDF/{keyWord}")
+		@GetMapping("/profile/generatePDF/{keyWord}")
 		public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
 			
 			 	   Traitement trt = new Traitement();
