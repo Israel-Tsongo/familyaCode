@@ -64,15 +64,15 @@ public class DebiteurController {
 		Traitement trt = new Traitement();		
 		 
 		Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
-	   
+		Page <List<List<Object>>> debArchivList =archiveRepo.getArchiveList(PageRequest.of(page,size));			
+
        double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;
 
 	   
-	  
-	 
 	    model.addAttribute("lst",trt.converter(debList));
 		model.addAttribute("pages",new int[debList.getTotalPages()]);
-		model.addAttribute("pagesArchive", new int[0]);
+		model.addAttribute("pagesArchive",new int[debArchivList.getTotalPages()]);
+		
 		model.addAttribute("currentPage",page);
 		model.addAttribute("pageTitle","Debiteur");
 		model.addAttribute("totalDette",String.format("%.3f", totalEnDette));
@@ -303,11 +303,11 @@ public class DebiteurController {
 		   
 		   if(pagin||mc.isEmpty()) {			   	
 				
-			   Page <List<List<Object>>> debList =archiveRepo.getArchiveList(PageRequest.of(page,size));			
+			   Page <List<List<Object>>> debArchivList =archiveRepo.getArchiveList(PageRequest.of(page,size));			
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
 			   ModelAndView mv = new ModelAndView();		           
-	           mv.addObject("lstArchive", trt.converter(debList));
-	           mv.addObject("pagesArchive", new int[debList.getTotalPages()]);	
+	           mv.addObject("lstArchive", trt.converter(debArchivList));
+	           mv.addObject("pagesArchive", new int[debArchivList.getTotalPages()]);	
 	           mv.addObject("currentPage",page);
 	           mv.addObject("totalCapitaux", String.format("%.3f", totalEnDette));  
 	           mv.addObject("keyWord", mc);

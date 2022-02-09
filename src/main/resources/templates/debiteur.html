@@ -163,7 +163,9 @@
                          <div  th:fragment="pagination_card"  id="card-center-1" class="card shadow mb-12">
                             <div id="div-total">
                                 <div class="d-inline" id="total-content" style="width:320px">
-                                    <p class="d-inline" id="title-total">TOTAL :&nbsp;</p><button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalDette+' $'}]]</button></div>
+                                    <p class="d-inline" id="title-total">TOTAL :&nbsp;</p>
+                                    <button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalDette+' $'}]]</button>
+                                </div>
                             </div>
                             <div class="card-body"  id="card-bottom-body">
                                 <div class="row">
@@ -184,12 +186,12 @@
                                             </nav>
                                             <div> </div>
                                             <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers pagin2" id="pagination">
-                                               
+                                                
 	                                            <ul th:each ="page,status:${pagesArchive}" class="pagination pagin2" id="pagin2">
 	                                                 
 	                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:javascript:paginationInDebArchiv('+${currentPage-1}+')'"  aria-label="Previous"><span class="pagin2" aria-hidden="true">&laquo</span></a></li>
 	                                                
-	                                                <li th:if="${(status.index+1)<=4} or ${status.index==currentPage}" ><a th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}"  class="page-link pagin2" th:onclick="'javascript:paginationInDebArchiv('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
+	                                                <li th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}"  ><a  class="page-link pagin2" th:onclick="'javascript:paginationInDebArchiv('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
 	                                                
 	                                               <li   th:if="${status.last} and ${currentPage <= pagesArchive.length-2}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInDebArchiv('+${currentPage+1}+')'"  aria-label="Next"><span class="pagin2" aria-hidden="true">&raquo</span></a></li> 
 	                                           </ul>
@@ -293,7 +295,7 @@
                          var mainList;
                          var idValue=-10;
                          var toggle=true;
-                         var state=""
+                         var state="Dette"
                          
   
 function archiveList()   {
@@ -308,7 +310,7 @@ function archiveList()   {
         		$("#archiveBtn").text("archives");
         		$("#montantARembourcer").show()
         		$(".pagin1").show();
-        		$(".pagin2").hide();
+        		$(".pagin2").show();
         		$("#div-total").show();        		
         		$("#div-total").load(location.href+ " #div-total");
         		$("#floating-button-contrib").show();
@@ -353,7 +355,7 @@ function archiveList()   {
         				 data:{
         					 page:0,
         					 keyWord:$("#keyWord").val(),
-        					 pagination:true,
+        					 pagination:url=="debSearcher"? false:true,
         				      },
         		 
         		        success: function(data){
@@ -367,18 +369,19 @@ function archiveList()   {
       		        	           //url=="archive"?$("#empruntTitle").text("Tous les Emprunts Archives"):$("#empruntTitle").text("Tous les Emprunts");
 	      		        	       
       		        	           url=="archive"?state="Archive":state="Dette";
-      		        	           $("#div-total").hide();	
+      		        	           	
       		        	           
-      		        	           url=="archive"?$(".pagin2").show():$(".pagin1").hide();
-      		        	           url!="archive"?$(".pagin1").show():$(".pagin2").hide();
-      		           
+      		        	            url=="archive"?$(".pagin2").show():$(".pagin1").hide();
+      		        	            url!="archive"?$(".pagin1").show():$(".pagin2").hide();
+      		                        (url=="archive")?$("#div-total").hide():$("#div-total").show();
+      		                        (url!="archive")?$("#div-total").show():$("#div-total").hide();
                     	           
                     	           console.log("Tout s'est bien passe");
         		        	
         		                      },        		          
         		          error: function(error){
         		        	  
-        		        	        alert("le serveur serveur ne repond pas ")
+        		        	        alert("le serveur  ne repond pas ")
         		        	  
         		                     }
         		        } );
@@ -389,7 +392,7 @@ function archiveList()   {
     $(document).ready(function(){
    	 
    	
-   	
+    	$(".pagin2").hide();
 	     document.querySelector("#tableMember").style.display="none";
 	     document.querySelector("#table-member").style.display="block";
 	     document.querySelector(".pagin2").style.display="none";
@@ -469,8 +472,6 @@ function archiveList()   {
        		 
        		        success: function(data){
        		       	
-       		        	
-       		        	
        		        	        $("#containerMainInDeb").html(data); 
        		        	        $("#table-member").show();
 	       		         		$("#tableMember").hide();
@@ -507,7 +508,7 @@ function archiveList()   {
           				 type:"post",
           				 data:{
           					 page:page,
-          					 keyWord:$("#keyWord").val(),
+          					 //keyWord:$("#keyWord").val(),
           					 pagination:true,
           				      },
           		 
@@ -516,13 +517,15 @@ function archiveList()   {
           		        	
           		        	
           		        	        $("#containerMainInDeb").html(data); 
-          		        	        $("#table-member").show();
-	   	       		         		$("#tableMember").hide();	   	       		         		
+          		        	        $("#table-member").hide();
+	   	       		         		$("#tableMember").show();	   	       		         		
 	   	       		         		$("#archiveBtn").text("archives");
 	   	       		         		$("#montantARembourcer").show()
-	   	       		         		$(".pagin1").show();
-	   	       		         		$(".pagin2").hide();	                    	       
-	   	                    	    $("#div-total").load(location.href+ " #div-total");	                   	     
+	   	       		         		$(".pagin1").hide();
+	   	       		         		$(".pagin2").show();
+	   	       		         	    $("#div-total").hide();
+	   	       		         	   
+	   	                    	   //$("#div-total").load(location.href+ " #div-total");	                   	     
    	                    	         console.log("Tout s'est bien passe");
           		        	
           		                      },        		          
@@ -573,14 +576,11 @@ function archiveList()   {
     	     
        		 $("#pageSize").on('change',function(){
        			 
-       			 
-       			 
        			$.ajax({
-      				 url:"http://localhost:8080/debSearcher",
+      				 url: (state=="Dette")?"http://localhost:8080/debSearcher":"http://localhost:8080/archive",
       				 type:"post",
       				 data:{
       					 
-      					 pageOpera:0,
       					 keyWord:$("#keyWord").val(),
       					 pagination:false,
       					 size:$("#pageSize").val(),
@@ -590,20 +590,21 @@ function archiveList()   {
       		       	
       		        	
 			      		        	$("#containerMainInDeb").html(data);
-			      		        	$("#table-member").show();
-			      	        		$("#tableMember").hide();
+			      		        	(state=="Dette")?$("#table-member").show():$("#table-member").hide();
+			      		        	(state=="Archive")?$("#tableMember").show():$("#tableMember").hide();
 			      	        		$("#archiveBtn").text("archives");
-			      	        		$("#montantARembourcer").show()
-			      	        		$(".pagin1").show();
-			      	        		$(".pagin2").hide();
-			                 	    $("#div-total").load(location.href+ " #div-total");
+			      	        		(state=="Dette")?$("#montantARembourcer").show():$("#montantARembourcer").hide()
+			      	        	    (state=="Archive")?$(".pagin2").show():$(".pagin1").hide();
+			      	        	    (state!="Archive")?$(".pagin1").show():$(".pagin2").hide();
+			      	        	    (state=="Dette")?$("#div-total").show():$("#div-total").hide();
+			      	        	    (state=="Archive")?$("#div-total").hide():$("#div-total").show();
+			      	        	    (state=="Dette")?$("#div-total").load(location.href+ " #div-total"):'';
       		           
       		        	             console.log("Tout s'est bien passe");
       		        	
       		                      },        		          
       		          error: function(error){
-			       		        	
-      		        	  
+			       		 
       		        	  alert("error in selecting")
       		        	  
       		                     }
@@ -638,17 +639,17 @@ function archiveList()   {
         		 
         		        success: function(data){
         		       	
-        		        	
-        		        	
         		        	    $("#containerMainInDeb").html(data);        		        	    
         		        	    state=="Archive"?$("#tableMember").show():$("#tableMember").hide();
    		        	            state=="Archive"?$("#table-member").hide():$("#table-member").show();   		        	           
    		        	            state=="Archive"?$("#montantARembourcer").hide():$("#montantARembourcer").show();
    		        	            state=="Archive"?$("#archiveBtn").text("Dettes en cours"):$("#archiveBtn").text("archives");
    		        	           
-        		          		$(".pagin1").show();
-        		          		$(".pagin2").hide();
- 	                    	    $("#div-total").load(location.href+ " #div-total");
+   		        	           (state=="Dette")?$(".pagin1").show():$(".pagin2").hide();
+   		        	           (state=="Archive")?$(".pagin2").show():$(".pagin1").hide();
+   		        	           (state=="Archive")?$("#div-total").hide():$("#div-total").show();
+ 	                    	   
+   		        	           $("#div-total").load(location.href+ " #div-total");
         		            
         		        	      console.log("Tout s'est bien passe");
         		        	
