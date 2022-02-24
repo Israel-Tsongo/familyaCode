@@ -64,14 +64,12 @@ public class DashbordController {
 			
 			
 		   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0.00;
-		   
 		   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
 		   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
-
 		   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;			   
 		   double interetNet=(interetGeneral-totalDepense);			   
 		   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;			   
-
+		   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
 		   
 		  double soldeTotal= (totalCapitauxInitiaux +totalContribution);     
 			   
@@ -79,6 +77,7 @@ public class DashbordController {
 		   model.addAttribute("totalEnCaisse",String.format("%.3f",soldeTotal));
 		   model.addAttribute("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
 		   model.addAttribute("totalContribution",String.format("%.3f", totalContribution));
+		   model.addAttribute("sommePenalite",String.format("%.3f", sommePenalite));
 		   model.addAttribute("totalDepense",String.format("%.3f", totalDepense));
 		   model.addAttribute("totalInteret",String.format("%.3f", interetGeneral));
 		   model.addAttribute("interetNet",String.format("%.3f", interetNet));
@@ -105,18 +104,6 @@ public class DashbordController {
 			      String role="";
 			      mv= new ModelAndView();
 			      
-			       double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0;				   
-				   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
-				   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
-				   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;	   
-			       
-				   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
-				   
-				   double interetNet=(interetGeneral-totalDepense);			   
-				   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;
-				   double soldeTotal= (totalCapitauxInitiaux +totalContribution);
-			     
-			     
 				 if(authentication !=null) {
 					 
 						email= authentication.getName();
@@ -124,63 +111,59 @@ public class DashbordController {
 						userPassword=usr.getPassword();
 						currentRoles=usr.getRoles();
 						
-						for (Role rol : currentRoles) {
+						for(Role rol : currentRoles) {
 							
 							if  (rol.getRole_name().equals("ADMIN_USER")|| rol.getRole_name().equals("SUPER_USER")) {
 								
 							    role="ADMIN_USER";					    
-								 
 							}
 						}
 						
-						
 				 }else {
 					 
-					 errorList.add("Vous n etes pas admin");
-					 System.out.println(" Vous n ete pas admin");
+						 errorList.add("Vous n etes pas admin");
+						 System.out.println(" Vous n ete pas admin");
 					 
-				 }
+				   }
 			      
-				if(role.equals("ADMIN_USER") && enc.matches(password, userPassword)) {
-						if(btnEnd) {
-										
-							  // mv.addObject("errorList",errorList);
+				   if(role.equals("ADMIN_USER") && enc.matches(password, userPassword)) {
+						
+					   if(btnEnd) {										
 							  
 				   			   interetParMem.partageInteret(interetRepo, eventRepo, depenseRepo, memberRepo,archivRepo, errorList);
-				   			   
 				   			   trt.archiveDataBase(payeRepo,memberRepo,errorList);							
-					 		   
-								   
-							}
+						}
 				      
 				    }else {
 				    	
 				    	errorList.add("Mot  de passe incorect");
 				    	System.out.println("Mauvais mot de passe ou alors vous n avez pas les droits administarteurs");
 				    	
-				    	
 				    }
 			
-						
-			    mv.addObject("pageTitle","Authentification");
-			    
-			    mv.addObject("totalEnCaisse",String.format("%.3f",soldeTotal));
-			    mv.addObject("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
-			    mv.addObject("totalContribution",String.format("%.3f", totalContribution));
-			    mv.addObject("totalDepense",String.format("%.3f", totalDepense));
-			    mv.addObject("totalInteret",String.format("%.3f", interetGeneral));
-			    mv.addObject("sommePenalite",String.format("%.3f", sommePenalite));
-			    mv.addObject("interetNet",String.format("%.3f", interetNet));
-			    mv.addObject("totalDette",String.format("%.3f", totalDette));	
-	 		  	
-	 		  	
-			    mv.setViewName("/dashbord::mainDash");
-			    mv.addObject("errorList",errorList);
-			return mv;
+				   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0;				   
+				   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
+				   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
+				   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;	   
+				   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
+				   double interetNet=(interetGeneral-totalDepense);			   
+				   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;
+				   double soldeTotal= (totalCapitauxInitiaux +totalContribution+sommePenalite);
+				   
+				    mv.addObject("pageTitle","Authentification");
+				    mv.addObject("totalEnCaisse",String.format("%.3f",soldeTotal));
+				    mv.addObject("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
+				    mv.addObject("totalContribution",String.format("%.3f", totalContribution));
+				    mv.addObject("totalDepense",String.format("%.3f", totalDepense));
+				    mv.addObject("totalInteret",String.format("%.3f", interetGeneral));
+				    mv.addObject("sommePenalite",String.format("%.3f", sommePenalite));
+				    mv.addObject("interetNet",String.format("%.3f", interetNet));
+				    mv.addObject("totalDette",String.format("%.3f", totalDette));	
+				    mv.setViewName("/dashbord::mainDash");
+				    mv.addObject("errorList",errorList);
+				    return mv;
 			
 		}	
-		
-		
 		
 		
 		//Using generated security password: ac2db985-46af-421e-947e-00da6e5d0f9b

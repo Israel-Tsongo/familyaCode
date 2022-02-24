@@ -45,10 +45,10 @@
 										                                </button>
 									                                    <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 									                                        <p class="text-center dropdown-header">dropdown header:</p>
-									                                        <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
-									                                        <a class="dropdown-item" href="#">&nbsp;Une autre action</a>
+									                                        <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF </a>
+									                                       <!-- <a class="dropdown-item" href="#">&nbsp;Une autre action</a>
 									                                        <div class="dropdown-divider"></div>
-									                                        <a class="dropdown-item" href="#">Quelque chose d'autre ?</a>
+									                                        <a class="dropdown-item" href="#">Quelque chose d'autre ?</a>-->
 									                                     </div>
 									                                </div>
 									                            </div>
@@ -88,11 +88,12 @@
 									                                                <th style="width: 0px;padding: 0px;padding-top: 0px;font-size: 0px;height: 10px;"></th>
 									                                                <th>Nom</th>
 									                                                <th>Matricule</th>
-									                                                <th >Capital</th>
-									                                                <th>Categorie</th>
+									                                                <th>Mandataire</th>
+									                                                <th>Capital</th>
+									                                                <th>Categorie</th>									                                                
 									                                                <th>Fonction</th>
-									                                                <th >Type de contrat</th>
-									                                                <th >Date d'adhesion</th>
+									                                                <th>Type de contrat</th>
+									                                                <th>Date d'adhesion</th>
 									                                            </tr>
 									                                        </thead>
 									                                        <tbody >
@@ -102,13 +103,14 @@
 									                                               <td class="text-center" style="width: 36.8px;padding: 12px;font-size: 16px;border-width: 2px;">                                                 
 									                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isChecked([[${element.get(0)}]],[[${lst}]]);" class="idMember" type="radio" name="chk" style="margin-top: 0px;">                                                                                                  
 									                                             </td>
-									                                                <td class="all-col" th:text="${element.get(1)}" ></td>
-									                                                <td class="all-col" th:text="${element.get(2)}"></td>
-									                                                <td class="all-col" th:text="${element.get(3)+' $'}"></td>
-									                                                <td class="all-col"  th:text="${element.get(4)}"></td>
-									                                                <td class="all-col"  th:text="${element.get(5) }"></td>
-									                                                <td class="all-col"  th:text="${element.get(6) }"></td>
-									                                                <td class="all-col"  th:text="${element.get(7)}"></td>  
+									                                                <td th:text="${element.get(1)}" ></td>
+									                                                <td th:text="${element.get(2)}"></td>
+									                                                <td th:text="${element.get(3)}"></td>
+									                                                <td th:text="${element.get(4)+' $'}"></td>
+									                                                <td th:text="${element.get(5)}"></td>
+									                                                <td th:text="${element.get(6) }"></td>
+									                                                <td th:text="${element.get(7) }"></td>
+									                                                <td th:text="${element.get(8)}"></td>  
 									                                            </tr>                                          
 									                                        </tbody>
 									                                    </table>
@@ -125,21 +127,14 @@
 									                            </div>
 									                            <div class="card-body" id="card-bottom-body">
 									                                <div class="row">
-									                                    <div class="col-md-6 align-self-center">
+									                                    <div class="col-md-2 align-self-center">
 									                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to [[${currentSize}]] of </p>
 									                                    </div>
 									                                    
-									                                    <div class="col-md-6">
-									                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers" id="pagination">
-									                                            
-									                                            <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
-									                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a    class="page-link"   th:onclick="'javascript:pagination('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
-									                                                
-									                                                <li class="page-item" th:if="${(status.index+1)<=4} or ${status.index==currentPage}" ><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link '}"  class="page-link"   th:onclick="'javascript:pagination('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
-									                                                
-									                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link"  th:onclick="'javascript:pagination('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
-									                                            </ul>
-									                                        </nav>
+									                                    <div class="col-md-10">
+									                                        <nav th:replace="fragments :: safePagination" >
+                                    
+       								   										</nav>
 									                                    </div>
 									                                </div>
 									                            </div>
@@ -252,7 +247,7 @@
                             																		       <input type="text" class="form-control form-control-user-left"  id="matricule" placeholder="Matricule" name="matricule" />
                             																		</div>
                            																			 <div class="col-auto col-sm-6 all-col-right" style="padding-right: 0px;padding-left: 0px;">
-                           																					 <input type="text" class="form-control form-control-user-right" disabled id="mandateur" placeholder="Mandateur" name="mandateur" />
+                           																					 <input type="text" class="form-control form-control-user-right"  id="mandataire" placeholder="Mandateur" name="mandataire" />
                            																			 </div>
                        																		</div>
                        																		<div class="form-group row all-forms" style="width: 525px;">
@@ -304,15 +299,6 @@
                                  </div>
                         </div>
                       
-                         
-                         <!--     Details Modal -->
-    
-				      
-       
-       
-       
-                       <!--    End  Details Modal -->
-    
     
     <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>   
@@ -323,8 +309,8 @@
     <script  th:inline="javascript" > 
     
     
-                         var idValue=-10;
-                         var mainList;
+      var idValue=-10;
+      var mainList;
                          
                          
                          
@@ -376,7 +362,7 @@ function actions(type){
 	 
  }  
     
-    function pagination(page)   {
+    function pagination1(page)   {
     
    	 $(document).ready(function(){
    	       
@@ -389,23 +375,19 @@ function actions(type){
        					 page:page,
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
+       					 size:$("#pageSize").val(),
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	
-       		        	
-       		        	           $("#containerMain").html(data);       		        	
-	                    	       
-	                    	      $("#div-total").load(location.href+ " #div-total");	                    	     
-	                    	     
-       		           
-       		        	            console.log("Tout s'est bien passe");
+     		        	    $("#containerMain").html(data);      		        	
+                   	        $("#div-total").load(location.href+ " #div-total");	                    	     
+                   	        console.log("Tout s'est bien passe");
        		        	
        		                      },        		          
        		          error: function(error){
        		        	  
-       		        	  alert("La Pagination n'a pas reussie")
+       		        	     alert("La Pagination n'a pas reussie")
        		        	  
        		                     }
        		        } );
@@ -426,28 +408,21 @@ function actions(type){
 				 type:"post",
 				 data:{
 					 idMember:idValue,
-					 
+					 size:$("#pageSize").val(),
 				      },
 		 
 		        success: function(data){
 		       	
+		        	   $("#detailModalContent").html(data);  
+		        	   $ ("#detailModal").modal("show");
+		        	   console.log("Tout s'est bien passe");
 		        	
-		        	
-		        	      $("#detailModalContent").html(data);  
-		        	     $ ("#detailModal").modal("show");
-		        	     // setTimeout(function(){ $(";   }, 1000);
-		        	      
-                 	       
-                 	     
-		            
-		        	console.log("Tout s'est bien passe");
-		        	
-		                      },        		          
+		          },        		          
 		          error: function(error){
 		        	  $ ("#detailModal").show();
 		        	  alert("Echec lors de la recherche les info sur le membres");
 		        	  
-		                     }
+		             }
 		        } );
     		 
     	 });
@@ -471,29 +446,26 @@ function actions(type){
    					 
    					 pageOpera:0,
    					 keyWord:$("#keyWord").val(),
-   					 pagination:false,
+   					 pagination:$("#keyWord").val()==""? true:false,
    					 size:$("#pageSize").val(),
    				      },
    		 
    		        success: function(data){
    		       	
-			   		        	$("#containerMain").html(data);
-			            	     $("#div-total").load(location.href+ " #div-total");
-   		        	            console.log("Tout s'est bien passe");
+			   		        $("#containerMain").html(data);
+			            	$("#div-total").load(location.href+ " #div-total");
+   		        	        console.log("Tout s'est bien passe");
    		        	
    		                      },        		          
    		          error: function(error){
-			       		        	
+			       		     
+   		        	         alert("error de selection")
    		        	  
-   		        	  alert("error de selection")
-   		        	  
-   		                     }
-   		        } );
+   		            }
+   		   });
     			 
     			 
-    			 
-    			 
-    		 })
+     })
     		 
 });
  	
@@ -513,6 +485,7 @@ function actions(type){
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
+        					 size:$("#pageSize").val(),
         					 
         				      },
         		 
@@ -520,25 +493,23 @@ function actions(type){
         		       	
         		        	     $("#containerMain").html(data);
  	                    	     $("#div-total").load(location.href+ " #div-total");
-        		            
-        		        	console.log("Tout s'est bien passe");
+        		        	     console.log("Tout s'est bien passe");
         		        	
-        		                      },        		          
-        		          error: function(error){
+        		          },        		          
+        		        error: function(error){
         		        	  
         		        	  alert("L'operation de  recherche a echouee"+error);
         		        	  
-        		                     }
-        		        } );
+        		          }
+        		 } );
         		 
-        	            });  
+       });  
     	
 	 
  }    
     
     	function setVariableDelete(){ 
     	
-
         $(document).ready(function(){
        
             // Delete Button
@@ -549,28 +520,28 @@ function actions(type){
        				 url:"http://localhost:8080/deteteMember",
        				 type:"post",
        				 data:{
-       					 idMember:idValue,
        					 
-       				      },
+       					 idMember:idValue,
+       					 size:$("#pageSize").val(),
+       					 
+       				 },
        		 
        		        success: function(data){
        		       	
-       		        	
-       		                     $("#containerMain").html(data);        		        	
-	                    	     idValue=-10;
-	                    	     $("#div-total").load(location.href+ " #div-total");
-       		            
-       		        	         console.log("Tout s'est bien passe");
+	     		             $("#containerMain").html(data);        		        	
+	                   	     idValue=-10;
+	                   	     $("#div-total").load(location.href+ " #div-total");
+	       		        	 console.log("Tout s'est bien passe");
        		        	
        		                      },        		          
-       		          error: function(error){
+       		         error: function(error){
        		        	  
-       		        	         alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+       		        	     alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
-       		                     }
-       		        } );
+       		           }
+       		} );
        		 
-       	            });  	             
+      });  	             
        	    
        
     	
@@ -584,20 +555,16 @@ function actions(type){
         	       	
         	       	document.querySelector("#updateButton").style.display="none";
         	       	document.querySelector("#addButton").style.display="block";
-        	       	
-        	       	
         	       	$(document).ready(function(){ 
         	       		
         	          $("#nom-field").val("");
  	    	    	  $("#matricule").val("");
+ 	    	    	  $("#mandataire").val("");
  	    	    	  $("#capital-field").val("");
  	    	    	  $("#fonction-field").val("");
  	    	    	  $("#categorie-field").val("");
  	    	    	  $("#contrat-field").val(""); 
- 	    	    	  
- 	    	    	  
- 	    	    	
- 	    	    	console.log("Here is"+ pages.length-1);
+ 	    	    	  console.log("Here is"+ pages.length-1);
  	    	    	
  	    	    	 
         	       	  // Add Button
@@ -613,10 +580,12 @@ function actions(type){
                     				 data:{
                     					 nom:       $("#nom-field").val(),
                      	    	    	 matricule: $("#matricule").val(),
+                     	    	    	 mandataire: $("#mandataire").val(),
                      	    	    	 capital:   $("#capital-field").val(),
                      	    	    	 fonction:  $("#fonction-field").val(),
                      	    	    	 categorie: $("#categorie-field").val(),
                      	    	    	 contrat:   $("#contrat-field").val(),
+                     	    	    	 size:$("#pageSize").val(),
                      	    	    	 page:((pag.length-1) <= 0) ? 0:(pag.length-1),
                     				      },
                     		 
@@ -639,11 +608,11 @@ function actions(type){
                     		        } );
                     		       
                     		 
-		                    		 $(".btn-close").click(function(){
-		              		    	   
+		                    		    $(".btn-close").click(function(){
 		              		    	    idValue=-10;
 		              		    	    $("#nom-field").val('');
 		              	    	    	$("#matricule").val('');
+		              	    	    	$("#mandataire").val('');
 		              	    	    	$("#capital-field").val('');
 		              	    	    	$("#fonction-field").val('');
 		              	    	    	$("#categorie-field").val('');
@@ -666,16 +635,15 @@ function actions(type){
           function  setVariableUpdate(idValue)   {
         		  
         	        
-        	        document.querySelector("#addButton").style.display="none";
-        	        document.querySelector("#updateButton").style.display="block"; ;
-        	      
-        	          console.log("Update Method");
+        	         document.querySelector("#addButton").style.display="none";
+        	         document.querySelector("#updateButton").style.display="block"; ;
+        	         console.log("Update Method");
         	         $(document).ready(function(){
         	        	 
         	        	//Update Button
          	            
                       	    	var list =mainList;
-                      	        
+        	        	       var dateAdhesion;
                       	       list.forEach(function(element){ 
                       	    	   
                       	    	    if(element[0]==idValue){
@@ -684,13 +652,14 @@ function actions(type){
                       	    	    	$("#nom-field").val(element[1]);
                       	    	    	$("#matricule").val(element[2]);
                       	    	    	$("#matricule").prop('disabled',true);
-                      	    	    	$("#capital-field").val(element[3]);
-                      	    	    	$("#fonction-field").val(element[4]);
-                      	    	    	$("#categorie-field").val(element[5]);
-                      	    	    	$("#contrat-field").val(element[6]).change();
+                      	    	    	$("#mandataire").val(element[3]);
+                      	    	    	$("#capital-field").val(element[4]);
+                      	    	    	$("#fonction-field").val(element[5]);
+                      	    	    	$("#categorie-field").val(element[6]);
+                      	    	    	$("#contrat-field").val(element[7]).change();
+                      	    	    	dateAdhesion=element[8];
                       	    	    	
-                      	    	    	
-                      	    	          }
+                      	    	    }
                       	    	
                       	       });
                       	    	   $("#updateButton").click( function(){   
@@ -700,13 +669,16 @@ function actions(type){
                             				 type:"post",
                             				 data:{
                             					 idMember:  idValue,
-                            					 nom:          $("#nom-field").val(),
-                           	    	    	     matricule:  $("#matricule").val(),
-                           	    	    	     capital:      $("#capital-field").val(),
-                           	    	    	     fonction:    $("#fonction-field").val(),
-                           	    	    	     categorie:  $("#categorie-field").val(),
-                           	    	    	     contrat:     $("#contrat-field").val(),
-                            				      },
+                            					 nom:       $("#nom-field").val(),
+                           	    	    	     matricule: $("#matricule").val(),
+                           	    	    	     mandataire:$("#mandataire").val(),
+                           	    	    	     capital:   $("#capital-field").val(),
+                           	    	    	     fonction:  $("#fonction-field").val(),
+                           	    	    	     categorie: $("#categorie-field").val(),
+                           	    	    	     contrat:   $("#contrat-field").val(),
+                           	    	    	     date:      dateAdhesion,
+                           	    	    	     size:      $("#pageSize").val(),
+                            				  },
                             		 
                             		        success: function(data){
                             		       	
@@ -717,30 +689,30 @@ function actions(type){
                                        	    	          idValue=-10;
                                        	    	          $("#nom-field").val('');
                                     	    	    	  $("#matricule").val('');
+                                    	    	    	  $("#mandataire").val('');
                                     	    	    	  $("#capital-field").val('');
                                     	    	    	  $("#fonction-field").val('');
                                     	    	    	  $("#categorie-field").val('');
                                     	    	    	  $("#contrat-field").val(''); 
-                            	        	
                             		        	          console.log("Tout s'est bien passe dans upda");
-                            		        	
+                            		        	          errorFonction(); 
                             		                      },        		          
                             		          error: function(error){
+                            		        	         errorFonction(); 
+                            		        	  		 alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
-                            		        	  alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
-                            		        	  
-                            		                     }
+                            		              }
                             		        } )  
                             		        
-                            		       $(".btn-close").click(function(){
-                            		    	   
-                            		    	   idValue=-10;
-                            		    	   $("#nom-field").val('');
-                            	    	    	$("#matricule").val('');
-                            	    	    	$("#capital-field").val('');
-                            	    	    	$("#fonction-field").val('');
-                            	    	    	$("#categorie-field").val('');
-                            	    	    	$("#contrat-field").val('');
+				                            		       $(".btn-close").click(function(){
+			                            		    	   idValue=-10;
+			                            		    	   $("#nom-field").val('');
+			                            	    	       $("#matricule").val('');
+			                            	    	       $("#mandataire").val('');
+			                            	    	       $("#capital-field").val('');
+			                            	    	       $("#fonction-field").val('');
+			                            	    	       $("#categorie-field").val('');
+			                            	    	       $("#contrat-field").val('');
                             		    	   
                             		       })
                             		       

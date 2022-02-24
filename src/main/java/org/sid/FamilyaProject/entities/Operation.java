@@ -20,19 +20,18 @@ public class Operation {
 	
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Long idOperation;
-	
-	
+	private Long idOperation;	
 	private String operation;		
 	private  Date date;
 	
 	public Operation( String operation,  Date date) {
-		
 				
 		this.operation = operation;		
 		this.date = date;
 	}
 
+	
+	
 	public Long getIdOperation() {
 		return idOperation;
 	}

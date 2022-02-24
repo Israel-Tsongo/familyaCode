@@ -59,7 +59,7 @@ public class DebiteurController {
 	//************** ACCEUILLE************************
 	
 	@GetMapping(path="/debiteur")
-	public String debiteur(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
+	public String debiteur(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pageArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
 		 
@@ -71,9 +71,10 @@ public class DebiteurController {
 	   
 	    model.addAttribute("lst",trt.converter(debList));
 		model.addAttribute("pages",new int[debList.getTotalPages()]);
-		model.addAttribute("pagesArchive",new int[debArchivList.getTotalPages()]);
-		
+		model.addAttribute("pages2",new int[debArchivList.getTotalPages()]);		
+		model.addAttribute("currentSize",size);
 		model.addAttribute("currentPage",page);
+		model.addAttribute("currentPage2",pagesArchiv);
 		model.addAttribute("pageTitle","Debiteur");
 		model.addAttribute("totalDette",String.format("%.3f", totalEnDette));
 		model.addAttribute("keyWord", mc);
@@ -98,20 +99,27 @@ public class DebiteurController {
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
 			   ModelAndView mv = new ModelAndView();		           
 	           mv.addObject("lst", trt.converter(debList));
-	           mv.addObject("pages", new int[debList.getTotalPages()]);	
+	           mv.addObject("pages", new int[debList.getTotalPages()]);
+	           mv.addObject("pages2", new int[0]);
+	           mv.addObject("currentPage2",0);
 	           mv.addObject("currentPage",page);
+	           mv.addObject("currentSize",size);
 	           mv.addObject("totalCapitaux", String.format("%.3f", totalEnDette));  
 	           mv.addObject("keyWord", mc);
 			   mv.setViewName("/debiteur::mainContainerInDeb");
 	           return  mv;
+	           
 		   }else {
 			   Page <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(mc,PageRequest.of(page,size));			
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
 			       ModelAndView mv = new ModelAndView("/debiteur::mainContainerInDeb");		           
 		             mv.addObject("lst", trt.searchDebConverter(searchdebList));
-		             mv.addObject("pages", new int[searchdebList.getTotalPages()]);	
+		             mv.addObject("pages",new int[searchdebList.getTotalPages()]);
+		             System.out.println("===="+searchdebList.getTotalPages());
+		             mv.addObject("pages2",new int[0]);
 		             mv.addObject("currentPage",page);
-		             mv.addObject("currentSize",size);	
+		             mv.addObject("currentSize",size);
+			         mv.addObject("currentPage2",0);
 		             mv.addObject("totalCapitaux",String.format("%.3f", totalEnDette));  
 		             mv.addObject("keyWord", mc);
 		
@@ -142,7 +150,6 @@ public class DebiteurController {
 				    if(montant<= 6*userRepo.getSalaryByMatricule(matricule)) {
 				    	
 				      
-				    	
 				      List<Double> debiteurEntry= trt.debiteurCalculMontant(montant,echeance,typeInteret);				    
 					  Debiteur deb =new Debiteur(matricule,montant, echeance ,1.5, trt.rounder(debiteurEntry.get(0)), new Date(),trt.rounder(debiteurEntry.get(1)),trt.rounder(debiteurEntry.get(0)), typeInteret);
 		              Member membDeb = memberRepo.getUserByMatricule(deb.getEnteredMatric());
@@ -170,8 +177,8 @@ public class DebiteurController {
 					  
 					  
 				    }else {
-				    	errorList.add("L'emprunt doit etre inferieur a 6 fois le salaire");
 				    	
+				    	errorList.add("L'emprunt doit etre inferieur a 6 fois le salaire");
 				    	System.out.println("L'emprunt doit etre inferieur a 6 fois le salaire");				    	
 				    	
 				    }
@@ -179,7 +186,6 @@ public class DebiteurController {
 			   }else {
 				   
 			    	errorList.add("On ne prend pas une seconde dette tant que la premiere n est pas encore remboursee");
-
 				   
 			   }
 				      
@@ -191,9 +197,9 @@ public class DebiteurController {
 			
 		}catch(Exception exc) {	
 			
-			errorList.add("Une erreur s'est produite lors de l'enregistrement d'un nouveau Debiteur");
-			System.out.println("Une erreur s'est produite lors de l'enregistrement d un nouveau Debiteur");			
-			System.out.println(exc.getMessage()   );
+				errorList.add("Une erreur s'est produite lors de l'enregistrement d'un nouveau Debiteur");
+				System.out.println("Une erreur s'est produite lors de l'enregistrement d un nouveau Debiteur");			
+				System.out.println(exc.getMessage()   );
 			
 		}
 		
@@ -204,6 +210,9 @@ public class DebiteurController {
 		mv.addObject("lst", trt.converter(debList));
 		mv.addObject("pages", new int[debList.getTotalPages()]);	
 		mv.addObject("currentPage",page);
+		mv.addObject("currentSize",size);
+		mv.addObject("pages2", new int[0]);
+        mv.addObject("currentPage2",0);
         mv.addObject("totalCapitaux", String.format("%.3f", totalEnDette));		
 		mv.addObject("errorList",errorList);
 		return mv;
@@ -233,6 +242,10 @@ public class DebiteurController {
 		   mv.addObject("lst", trt.converter(debList));
 		   mv.addObject("pages", new int[debList.getTotalPages()]);
 		   mv.addObject("currentPage",page);
+		   mv.addObject("pages2", new int[0]);
+           mv.addObject("currentPage2",0);
+		   mv.addObject("currentSize",size);
+		   
 		   mv.addObject("totalCapitaux",String.format("%.3f", totalEnDette));   
 		
 		return  mv;
@@ -262,7 +275,10 @@ public class DebiteurController {
 		   mv = new ModelAndView("/debiteur::mainContainerInDeb");								   
 		   mv.addObject("lst", trt.converter(debList));
 		   mv.addObject("pages", new int[debList.getTotalPages()]);
+		   mv.addObject("currentSize",size);
 		   mv.addObject("currentPage",page);
+		   mv.addObject("pages2", new int[0]);
+           mv.addObject("currentPage2",0);
 		   mv.addObject("totalCapitaux", String.format("%.3f", totalEnDette));
 		     
 		 
@@ -276,15 +292,30 @@ public class DebiteurController {
 	
 	
 	
-	@GetMapping("debiteur/generatePDF/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
+	@GetMapping("debiteur/generatePDF/{type}/{keyWord}")
+	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc,@PathVariable(name="type") String type) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/Coffee.jrxml";
-		 	   String fileName="debiteur";
+		 	   String jasperFilePath="";
+		 	   String fileName="";
+		 	   
+		 	   
+		 	   
+		 	  if(type.equals("Archive")) {
+		 		   
+		 		 List <Archive> searchArchivList =archiveRepo.findByEnteredMatricContains(!mc.equals("all")? mc:"");							 	 fileName="archiveDette";
+		 		     
+		 		     fileName="archive";
+		 		     jasperFilePath="src/main/resources/archive.jrxml";
+				 	 map.put("nameFor", "Israel");				 	 
+				 	 return  trt.generatePDF(searchArchivList, jasperFilePath, map, fileName);
+		 	   }
+		 	   
 		 	   
 			   List <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(!mc.equals("all")? mc:"");			
+			   fileName="debiteur";
+			   jasperFilePath="src/main/resources/debiteur.jrxml";
 			   map.put("nameFor", "Israel");			   
 			   
 			   //List<Payement> testList=payeRepo.findAll();
@@ -296,7 +327,7 @@ public class DebiteurController {
 	
 	
 	@PostMapping(path="/archive")
-	public ModelAndView archive(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public ModelAndView archive(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pagesArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -307,8 +338,11 @@ public class DebiteurController {
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
 			   ModelAndView mv = new ModelAndView();		           
 	           mv.addObject("lstArchive", trt.converter(debArchivList));
-	           mv.addObject("pagesArchive", new int[debArchivList.getTotalPages()]);	
-	           mv.addObject("currentPage",page);
+	           mv.addObject("pages2", new int[debArchivList.getTotalPages()]);
+	           mv.addObject("currentPage2",pagesArchiv);
+	           mv.addObject("pages", new int[0]);
+	           mv.addObject("currentPage",page);	           
+	           mv.addObject("currentSize",size);
 	           mv.addObject("totalCapitaux", String.format("%.3f", totalEnDette));  
 	           mv.addObject("keyWord", mc);
 			   mv.setViewName("/debiteur::mainContainerInDeb");
@@ -318,8 +352,10 @@ public class DebiteurController {
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
 			       ModelAndView mv = new ModelAndView("/debiteur::mainContainerInDeb");		           
 		             mv.addObject("lstArchive", trt.searchArchivConverter(searchArchivList));
-		             mv.addObject("pagesArchive", new int[searchArchivList.getTotalPages()]);	
+		             mv.addObject("pages2", new int[searchArchivList.getTotalPages()]);	
 		             mv.addObject("currentPage",page);
+		             mv.addObject("pages", new int[0]);	
+		             mv.addObject("currentPage2",pagesArchiv);
 		             mv.addObject("currentSize",size);	
 		             mv.addObject("totalCapitaux",String.format("%.3f", totalEnDette));  
 		             mv.addObject("keyWord", mc);

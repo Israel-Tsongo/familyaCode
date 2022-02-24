@@ -9,12 +9,15 @@ import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
-
+import org.sid.FamilyaProject.entities.Payement;
+import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
 import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -163,7 +166,6 @@ public class AuthentificationController {
 			ModelAndView modelAndView = new ModelAndView();
 			
 			
-			
 			if(authentication !=null) {
 				
 				email= authentication.getName();
@@ -190,7 +192,7 @@ public class AuthentificationController {
 				    	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
 				    	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
 				    	
-				    	if(!(payeRepo.getPayementByMatric(matricule).isEmpty())) {
+				    	if(!(payeRepo.getPayementByMatricule(matricule).isEmpty())) {
 				    		
 				    		modelAndView.addObject("nom",detailMembre.get(0).get(0));
 							 modelAndView.addObject("matricule",detailMembre.get(0).get(1));
@@ -212,8 +214,11 @@ public class AuthentificationController {
 						 						
 				    	     modelAndView.addObject("detteCourante",detteCourante);			    		
 						     modelAndView.addObject("interet",interet);
-						
-						    modelAndView.setViewName("home"); // resources/template/home.html
+						     
+						     modelAndView.addObject("pages", new int[0]);
+						     modelAndView.addObject("currentPage",0);
+						     modelAndView.addObject("currentSize",5);
+						     modelAndView.setViewName("home"); // resources/template/home.html
 			
 		     	}else if(memberRepo.getUserByMatricule(matricule)==null && !(role.equals("ADMIN_USER")))  {
 		     		
@@ -227,8 +232,52 @@ public class AuthentificationController {
 			return modelAndView;
 		}
 	      
-	
-	
-	
+		//************** RECHERCHER PAR NOM************************
+		
+		@PostMapping(path="/siteUserSearcher")
+		public ModelAndView searchByMatriculeInsiteUser( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+			
+				 Traitement trt = new Traitement();
+				 String email="";
+				 String matricule="";
+				 User usr=null;			   
+				 email= authentication.getName();
+				 usr= userDetailsService.getUserByEmail(email);
+				 matricule=usr.getMatricule();
+				 
+			   if(mc!=null && !mc.isEmpty()) {			   	
+					
+				   
+				   Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
+				       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
+				       ModelAndView mv = new ModelAndView("/home::userSiteContainer");	
+			             mv.addObject("lst", trt.searchConverterPaye(searchContribList));
+			             mv.addObject("pages", new int[searchContribList.getTotalPages()]);				            	
+			             mv.addObject("currentPage",page);
+			             mv.addObject("currentSize",size);	
+			             mv.addObject("pageTitle","user_site_contribution");
+			             mv.addObject("totalContribution", String.format("%.3f",totalContribution));  
+			             mv.addObject("keyWord", mc);			
+			             return  mv;
+			             
+				  
+			   }else {
+			        
+						   Page <Payement> siteUserList = payeRepo.getPayementByMatric(matricule,PageRequest.of(page,size));
+					       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
+					       ModelAndView mv = new ModelAndView();						   
+				           mv.addObject("lst", trt.searchConverterPaye(siteUserList));
+				           mv.addObject("pages", new int[siteUserList.getTotalPages()]);
+				           mv.addObject("pageTitle","Contribution");
+				           mv.addObject("currentPage",page);
+				           mv.addObject("currentSize",size);
+				           mv.addObject("totalContribution",String.format("%.3f", totalContribution));  
+				           mv.addObject("keyWord", mc);
+						   mv.setViewName("/home::userSiteContainer");						  
+						   return  mv;
+				   
+				
+			   }
+		}
 
 }

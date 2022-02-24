@@ -59,14 +59,13 @@ public class InteretParMembreController {
 	    model.addAttribute("lst",trt.converter(interetList));	    
 		model.addAttribute("pages",new int[interetList.getTotalPages()]);		
 		model.addAttribute("lstOpera",trt.converter(operaList));
-		model.addAttribute("pagesOpera",new int[operaList.getTotalPages()]);		
+		model.addAttribute("pages2",new int[operaList.getTotalPages()]);		
 		model.addAttribute("currentPage",page);	
-		model.addAttribute("currentPageOpera",pageOpera);
+		model.addAttribute("currentSize",size);
+		model.addAttribute("currentPage2",pageOpera);
 		model.addAttribute("totalInteretNet",String.format("%.3f" ,totalInteretNet));
 		model.addAttribute("keyWord", mc);
-		
-		
-	    return "interet";
+		return "interet";
 	}
 	
 	
@@ -78,9 +77,9 @@ public class InteretParMembreController {
 		
 		 Traitement trt = new Traitement();
 		  
-		   System.out.println("interet searcher=== 0 >>");
+		   //System.out.println("interet searcher=== 0 >>");
 		   if(pagin) {			   	
-			   System.out.println("interet searcher=== 1 >>");
+			  // System.out.println("interet searcher=== 1 >>");
 			   Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));
 			   Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));	
 			   double totalInteretNet=interetRepo.totalInteretNet() !=null? interetRepo.totalInteretNet() : 0;			   
@@ -90,9 +89,10 @@ public class InteretParMembreController {
 			   mv.addObject("pages",new int[interetList.getTotalPages()]);
 				
 	           mv.addObject("lstOpera",trt.converter(operaList));
-	           mv.addObject("pagesOpera", new int[operaList.getTotalPages()]);	
+	           mv.addObject("pages2", new int[operaList.getTotalPages()]);	
 	           mv.addObject("currentPage",page);
-	           mv.addObject("currentPageOpera",pageOpera);
+	           mv.addObject("currentSize",size);
+	           mv.addObject("currentPage2",pageOpera);
 	           mv.addObject("totalInteretNet", String.format("%.3f" ,totalInteretNet));  
 	           mv.addObject("keyWord", mc);
 			   mv.setViewName("/interet::mainContainerInInteret");
@@ -108,8 +108,8 @@ public class InteretParMembreController {
 		             mv.addObject("lst", trt.searchInteretConverter(searchInteretList));
 		             mv.addObject("pages", new int[searchInteretList.getTotalPages()]);
 		             mv.addObject("lstOpera", trt.searchOperaConverter(searchOperaList));
-			         mv.addObject("pagesOpera", new int[searchOperaList.getTotalPages()]);
-			         mv.addObject("currentPageOpera",pageOpera);
+			         mv.addObject("pages2", new int[searchOperaList.getTotalPages()]);
+			         mv.addObject("currentPage2",pageOpera);
 			         mv.addObject("currentSize",size);			         
 		             mv.addObject("currentPage",page);
 		             mv.addObject("totalInteretNet",String.format("%.3f" ,totalInteretNet));  
@@ -147,7 +147,7 @@ public class InteretParMembreController {
 								        		   if(interetRepo.getInteretDuMembreParMatricule(matricule)==0){ 
 								        			   
 									        			   interetRepo.deleteById(itm.getId_interet());
-									        			   errorList.add("- Vous venez de tout retirer , desormais votre interet est de 0 $");
+									        			   errorList.add("Vous venez de tout retirer , desormais votre interet est de 0 $");
 								        		   
 								        		       }        		   
 							        		   
@@ -155,7 +155,7 @@ public class InteretParMembreController {
 					        		   
 					            }else {
 					        	  
-							        	     errorList.add("- Vous ne pouvez pas retirer un montant superieur a l'interet disponible");
+							        	     errorList.add("Vous ne pouvez pas retirer un montant superieur a l'interet disponible");
 								        	 System.out.println("Vous ne pouvez pas retirer un montant superieur a votre interet disponible");
 					        	 
 					             }
@@ -163,7 +163,7 @@ public class InteretParMembreController {
 				
 			            }else  {
 				  
-       	                    errorList.add("- Veiller selectionner le membre qui veut effectuer un retrait ");
+       	                    errorList.add("Veiller selectionner le membre qui veut effectuer un retrait ");
 	        	 				  
 			              }
 		          
@@ -171,15 +171,14 @@ public class InteretParMembreController {
 	           Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));
 			   Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));	
 			   double totalInteretNet=interetRepo.totalInteretNet()!=null? interetRepo.totalInteretNet() : 0;	
-			   
 			   mv = new ModelAndView("/interet::mainContainerInInteret");	
-			   
 			   mv.addObject("lst",trt.converter(interetList));	    
 			   mv.addObject("pages",new int[interetList.getTotalPages()]);								
 	           mv.addObject("lstOpera",trt.converter(operaList));
-	           mv.addObject("pagesOpera", new int[operaList.getTotalPages()]);	
+	           mv.addObject("pages2", new int[operaList.getTotalPages()]);	
 	           mv.addObject("currentPage",page);
-	           mv.addObject("currentPageOpera",pageOpera);
+	           mv.addObject("currentSize",size);
+	           mv.addObject("currentPage2",pageOpera);
 	           mv.addObject("totalInteretNet", String.format("%.3f" ,totalInteretNet));  
 	           mv.addObject("keyWord", mc);
 		       mv.addObject("errorList",errorList);
@@ -191,7 +190,7 @@ public class InteretParMembreController {
 	}
 	
 	
-	@GetMapping("/interet/generatePDF/{type}/{keyWord}")
+	@GetMapping("/interet/interetGeneratePDF/{type}/{keyWord}")
 	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc,@PathVariable(name="type") String type) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
@@ -204,14 +203,14 @@ public class InteretParMembreController {
 		 		   
 				     List<Operation> searchOperaList =operaRepo.findByOperationContains(!mc.equals("all")? mc:"");
 				 	 fileName="operations";
-				 	 jasperFilePath="src/main/resources/Coffee.jrxml";
+				 	 jasperFilePath="src/main/resources/operations.jrxml";
 				 	 map.put("nameFor", "Israel");				 	 
 				 	 return  trt.generatePDF(searchOperaList, jasperFilePath, map, fileName);
 		 	   }
 		 	    
 		 	   List<InteretParMembre> searchInteretList =interetRepo.findByMatriculeEnteredContains(!mc.equals("all")? mc:"");
 			   fileName="interets";
-			   jasperFilePath="src/main/resources/Coffee.jrxml";
+			   jasperFilePath="src/main/resources/interet.jrxml";
 			   map.put("nameFor", "Israel");			 	 
 			   return  trt.generatePDF(searchInteretList, jasperFilePath, map, fileName);
 	}

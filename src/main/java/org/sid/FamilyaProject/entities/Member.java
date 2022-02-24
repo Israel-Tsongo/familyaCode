@@ -3,26 +3,19 @@ package org.sid.FamilyaProject.entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import org.sid.FamilyaProject.users.User;
-
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+
 
 
 
@@ -40,7 +33,8 @@ public class Member implements Serializable {
 	private String  nom; 
 	private String matricule; 
 	private String fonction; 
-	private Date date_adhesion; 	
+	private Date date_adhesion; 
+	private String mandataire;
 	private String typeContrat; 
 	private String categorieMembre;	
 	private double capital_Initial;
@@ -67,7 +61,7 @@ public class Member implements Serializable {
 	
 	
 	public Member(String nom, String matricule, String fonction, Date date_adhesion, 
-			String typeContrat, String categorieMembre, double capital_Initial) {
+			String typeContrat, String categorieMembre, double capital_Initial, String mandataire) {
 		
 		this.nom = nom;
 		this.matricule = matricule;
@@ -76,6 +70,7 @@ public class Member implements Serializable {
 		this.typeContrat = typeContrat;
 		this.categorieMembre = categorieMembre;
 		this.capital_Initial = capital_Initial;
+		this.mandataire=mandataire;
 	}
 
 	
@@ -242,6 +237,26 @@ public class Member implements Serializable {
 
 	public void setMemberUser(User memberUser) {
 		this.memberUser = memberUser;
+	}
+
+
+
+
+
+
+
+	public String getMandataire() {
+		return mandataire;
+	}
+
+
+
+
+
+
+
+	public void setMandataire(String mandataire) {
+		this.mandataire = mandataire;
 	}
 
 

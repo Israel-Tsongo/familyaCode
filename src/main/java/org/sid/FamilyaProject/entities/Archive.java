@@ -22,8 +22,7 @@ public class Archive {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
 	
-	private Long Id_debArchiv;
-	
+	private Long id_debArchiv;
 	private double sommeEmprunt;	
 	private double duree_echeance;
 	private double taux;
@@ -38,7 +37,7 @@ public class Archive {
 		
 
 	public Archive(String nom, String enteredMatric, double sommeEmprunt, double duree_echeance, double taux, 
-			double dettePlusInteret, String typeInteret, Date date_emprunt,double beneficeGenere,double formerPenalty) {
+			double dettePlusInteret, String typeInteret, Date date_emprunt,double beneficeGenere,double sommePenalty) {
 		this.nom=nom;
 		this.sommeEmprunt = sommeEmprunt;
 		this.duree_echeance = duree_echeance;
@@ -48,15 +47,15 @@ public class Archive {
 		this.typeInteret = typeInteret;
 		this.date_emprunt = date_emprunt;
 		this.beneficeGenere=beneficeGenere;
-		
+		this.sommePenalty=sommePenalty;
 	}
 
 	public Long getId_debArchiv() {
-		return Id_debArchiv;
+		return id_debArchiv;
 	}
 
 	public void setId_debArchiv(Long id_debArchiv) {
-		Id_debArchiv = id_debArchiv;
+		this.id_debArchiv = id_debArchiv;
 	}
 
 	public double getSommeEmprunt() {

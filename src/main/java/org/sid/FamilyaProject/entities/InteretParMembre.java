@@ -29,9 +29,9 @@ import lombok.ToString;
 public class InteretParMembre {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Long Id_interet;
-	private double interetDuMembre;
-	private String matriculeEntered;
+	private Long id_interet;	
+	private String matriculeEntered;	
+	private double interetDuMembre;	
 	private Date dateInteret;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
@@ -63,9 +63,8 @@ public class InteretParMembre {
 		         interetTotal=(interetTotalDansArchive+sommePenalite);
 		         totalDepense=depenseRepo.getTotalOutgo() !=null? depenseRepo.getTotalOutgo() : 0;
 		         listCapitaux=memberRepo.getCapitalInitialParMembre();		         
-		  	    totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? memberRepo.getTotalCapitauxInitiaux() : 0 ;
-                interetPartageable=(interetTotal-totalDepense);
-		         
+		  	     totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? memberRepo.getTotalCapitauxInitiaux() : 0 ;
+                 interetPartageable=(interetTotal-totalDepense);		         
 		         System.out.println("++++++++++++ interetPartageable :"+interetPartageable);
 		         System.out.println("++++++++++++ interetTotal:"+interetTotal);
 		         System.out.println("++++++++++++ totalDepense :"+totalDepense);
@@ -74,28 +73,36 @@ public class InteretParMembre {
 		        	 
 				         for(List<Object> obj : listCapitaux) {
 				        	 Traitement trt= new Traitement();
-				        	 InteretParMembre interetInstance=new InteretParMembre();
-				        	      
-				        	 Set<InteretParMembre> setInteret =new HashSet<InteretParMembre> ();
-								
-							       setInteret.add(interetInstance);
-				        	     
-							       interetInstance.setDateInteret(new Date());
-				        	       currentMember = memberRepo.getUserByMatricule((String)obj.get(0));
-				        	       interetInstance.setMatricule_entered((String)obj.get(0));		        	      
-				        	      capitalInitialParMembre=trt.rounder((double)obj.get(1));
-				        	      
-				        	      interetParChacun = ((interetPartageable*capitalInitialParMembre)/(totalCapitauxInitiaux));		        	      
-				        	      interetInstance.setInteretDuMembre(trt.rounder(interetParChacun));
-				        	      currentMember.setIntereretParMembre(setInteret);
-				        	      
-				        	      interetInstance.setMember(currentMember);
-				        	     interetRepo.save(interetInstance);
+				        	 if(interetRepo.interetDuMembreByMatricule((String)obj.get(0))==null) {
+				        		 
+							           
+							           InteretParMembre interetInstance=new InteretParMembre();				        	      
+							           Set<InteretParMembre> setInteret =new HashSet<InteretParMembre> ();								
+								       setInteret.add(interetInstance);				        	     
+								       interetInstance.setDateInteret(new Date());
+					        	       currentMember = memberRepo.getUserByMatricule((String)obj.get(0));
+					        	       interetInstance.setMatriculeEntered((String)obj.get(0));		        	      
+					        	       capitalInitialParMembre=trt.rounder((double)obj.get(1));				        	      
+					        	       interetParChacun = ((interetPartageable*capitalInitialParMembre)/(totalCapitauxInitiaux));		        	      
+					        	       interetInstance.setInteretDuMembre(trt.rounder(interetParChacun));
+					        	       currentMember.setIntereretParMembre(setInteret);				        	      
+					        	       interetInstance.setMember(currentMember);				        	      
+					        	       interetRepo.save(interetInstance);
+					        	       
+				        	 }else {
+				        		 
+				        		 
+				        		  double initialInteret=interetRepo.interetDuMembreByMatricule((String)obj.get(0));
+				        		  double newInteret=trt.rounder(((interetPartageable*capitalInitialParMembre)/(totalCapitauxInitiaux)));
+				        		  interetRepo.updateInteretMembre((String)obj.get(0),(initialInteret+newInteret));
+				        		 
+				        	 }  
+				        	       
 				         }
 		         
 		         }else {  
 		        	 
-		        	 errorList.add("- la somme des interets est negatif ou interet total est egal a 0.0");
+		        	 errorList.add("la somme des interets est negatif ou interet total est egal a 0.0");
 			         System.out.println("+++++++++interet negatif ou interet total est egal a 0.0");
 		        	 
 		        	 
@@ -122,13 +129,7 @@ public class InteretParMembre {
 		this.interetDuMembre = interetDuMembre;
 	}
 
-	public String getMatricule_entered() {
-		return matriculeEntered;
-	}
-
-	public void setMatricule_entered(String matricule_entered) {
-		this.matriculeEntered = matricule_entered;
-	}
+	
 
 	public Date getDateInteret() {
 		return dateInteret;
@@ -153,7 +154,7 @@ public class InteretParMembre {
 
 
 	public Long getId_interet() {
-		return Id_interet;
+		return id_interet;
 	}
 
 
@@ -163,7 +164,7 @@ public class InteretParMembre {
 
 
 	public void setId_interet(Long id_interet) {
-		Id_interet = id_interet;
+		this.id_interet = id_interet;
 	}
 
 
@@ -184,6 +185,26 @@ public class InteretParMembre {
 
 	public void setMembreDansInteret(Member membreDansInteret) {
 		this.membreDansInteret = membreDansInteret;
+	}
+
+
+
+
+
+
+
+	public String getMatriculeEntered() {
+		return matriculeEntered;
+	}
+
+
+
+
+
+
+
+	public void setMatriculeEntered(String matriculeEntered) {
+		this.matriculeEntered = matriculeEntered;
 	}
 
 

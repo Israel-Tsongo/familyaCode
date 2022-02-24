@@ -26,7 +26,7 @@ public class Payement  implements  Serializable  {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long Id_paye;
-	private Date date_payement;
+	private Date datePayement;
 	private double contribMensuel;
 	private String enteredMatric;
 	
@@ -37,9 +37,9 @@ public class Payement  implements  Serializable  {
 	
 			public Payement( String enteredMatric, double contribMensuel,Date date) {
 					
-				     this.enteredMatric = enteredMatric;
+				    this.enteredMatric = enteredMatric;
 					this.contribMensuel = contribMensuel;
-					this.date_payement=date;
+					this.datePayement=date;
 					
 				}
 	
@@ -96,14 +96,14 @@ public class Payement  implements  Serializable  {
 
 
 	public Date getDate_payement() {
-		return date_payement;
+		return datePayement;
 	}
 
 
 
 
 	public void setDate_payement(Date date_payement) {
-		this.date_payement = date_payement;
+		this.datePayement = date_payement;
 	}
 
 

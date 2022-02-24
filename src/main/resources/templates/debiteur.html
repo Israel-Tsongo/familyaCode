@@ -40,11 +40,11 @@
 	                                	<i class="fas fa-ellipsis-v text-gray-400"></i>
 	                                </button>
 	                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
-	                                      <p class="text-center dropdown-header">dropdown header:</p>
-	                                      <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
-	                                      <a class="dropdown-item btn" id="archiveBtn" onclick="archiveList()">Archives</a>
-	                                      <div class="dropdown-divider"></div>
-	                                      <a class="dropdown-item" href="#">&nbsp;Something else here</a>
+	                                      <p class="text-center dropdown-header">dropdown header:</p>                                      
+	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="archiveBtn" onclick="archiveList()">Archives</a>
+	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
+	                                      <!--  <div class="dropdown-divider"></div>
+	                                      <a class="dropdown-item" href="#">&nbsp;Something else here</a>-->
 	                                  </div>
                                 </div>
                             </div>
@@ -159,7 +159,8 @@
                 <!-- End: Chart -->
                 <div class="row">
                     <div class="col">
-                    
+                          
+                          
                          <div  th:fragment="pagination_card"  id="card-center-1" class="card shadow mb-12">
                             <div id="div-total">
                                 <div class="d-inline" id="total-content" style="width:320px">
@@ -169,33 +170,18 @@
                             </div>
                             <div class="card-body"  id="card-bottom-body">
                                 <div class="row">
-                                    <div class="col-md-6 align-self-center">
+                                    <div class="col-md-3 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
                                     </div>
-                                    <div class="col-md-6">
-                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers" id="pagination">
-                                        
-                                            <ul th:each ="page,status:${pages}" class="pagination pagin1" id="pagin1">
-                                            
-                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin1"><a    class="page-link pagin1"   th:onclick="'javascript:paginationInDeb('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
-                                                
-                                                <li th:if="${(status.index+1)<=4} or ${status.index==currentPage}" class="page-item"><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link pagin1 '}"  class="page-link pagin1"   th:onclick="'javascript:paginationInDeb('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
-                                                
-                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link pagin1"  th:onclick="'javascript:paginationInDeb('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
-                                            </ul>
-                                            </nav>
-                                            <div> </div>
-                                            <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers pagin2" id="pagination">
-                                                
-	                                            <ul th:each ="page,status:${pagesArchive}" class="pagination pagin2" id="pagin2">
-	                                                 
-	                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:javascript:paginationInDebArchiv('+${currentPage-1}+')'"  aria-label="Previous"><span class="pagin2" aria-hidden="true">&laquo</span></a></li>
-	                                                
-	                                                <li th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}"  ><a  class="page-link pagin2" th:onclick="'javascript:paginationInDebArchiv('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
-	                                                
-	                                               <li   th:if="${status.last} and ${currentPage <= pagesArchive.length-2}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInDebArchiv('+${currentPage+1}+')'"  aria-label="Next"><span class="pagin2" aria-hidden="true">&raquo</span></a></li> 
-	                                           </ul>
-                                        </nav>
+                                    <div class="col-md-9">
+                                    
+                                     <nav th:replace="fragments :: safePagination">
+               						 </nav>
+               						 
+               						 <nav th:replace="fragments :: safePagination2">
+               						 </nav>
+                                   
+       								     
                                     </div>
                                 </div>
                             </div>
@@ -292,10 +278,10 @@
     
     <script  th:inline="javascript" > 
     
-                         var mainList;
-                         var idValue=-10;
-                         var toggle=true;
-                         var state="Dette"
+           var mainList;
+           var idValue=-10;
+           var toggle=true;
+           var state="Dette"
                          
   
 function archiveList()   {
@@ -304,13 +290,12 @@ function archiveList()   {
                         	
            	if(toggle){
            		
+           		
            		chiftTable("archive");
         		$("#table-member").show();
         		$("#tableMember").hide();
         		$("#archiveBtn").text("archives");
-        		$("#montantARembourcer").show()
-        		$(".pagin1").show();
-        		$(".pagin2").show();
+        		$("#montantARembourcer").show()        		
         		$("#div-total").show();        		
         		$("#div-total").load(location.href+ " #div-total");
         		$("#floating-button-contrib").show();
@@ -320,15 +305,14 @@ function archiveList()   {
 
            	}
            if(!toggle){
-   		
-	            chiftTable("debSearcher");
+        	   
+        	    
+        	    chiftTable("debSearcher");
 	            $("#montantARembourcer").hide()
 	       		$("#table-member").hide();
 	       		$("#tableMember").show();
 	       		$("#div-total").hide();
-	       		$("#archiveBtn").text("dette en cours")
-	       		$(".pagin1").hide();
-	       		$(".pagin2").show();
+	       		$("#archiveBtn").text("dette en cours")	       		
 	       		$("#floatingBtn").hide();
 	       		$("#floating-button-contrib").hide();
 	       		state="Archive";
@@ -356,27 +340,41 @@ function archiveList()   {
         					 page:0,
         					 keyWord:$("#keyWord").val(),
         					 pagination:url=="debSearcher"? false:true,
+        					 size:$("#pageSize").val(),
         				      },
         		 
         		        success: function(data){
         		       	
-      		        	           $("#containerMainInDeb").html(data);      		        	           
-      		        	           url=="archive"?$("#tableMember").show():$("#tableMember").hide();
-      		        	           url=="archive"?$("#table-member").hide():$("#table-member").show();
-      		        	           url=="archive"?$("#floatingBtn").hide():$("#floatingBtn").show();;
-      		        	           url=="archive"?$("#montantARembourcer").hide():$("#montantARembourcer").show();
-      		        	           url=="archive"?$("#archiveBtn").text("Dettes en cours"):$("#archiveBtn").text("archives");
-      		        	           //url=="archive"?$("#empruntTitle").text("Tous les Emprunts Archives"):$("#empruntTitle").text("Tous les Emprunts");
-	      		        	       
-      		        	           url=="archive"?state="Archive":state="Dette";
-      		        	           	
+      		        	           $("#containerMainInDeb").html(data); 
       		        	           
-      		        	            url=="archive"?$(".pagin2").show():$(".pagin1").hide();
-      		        	            url!="archive"?$(".pagin1").show():$(".pagin2").hide();
-      		                        (url=="archive")?$("#div-total").hide():$("#div-total").show();
-      		                        (url!="archive")?$("#div-total").show():$("#div-total").hide();
+      		        	           if(url=="archive"){
+      		        	        	   
+      		        	        	 $("#tableMember").show();
+      		        	        	 $("#table-member").hide();
+      		        	        	 $("#floatingBtn").hide();
+      		        	        	 $("#montantARembourcer").hide();     		        	        	
+     		        	        	 $("#archiveBtn").text("Dettes en cours");      		        	        	   
+      		        	        	 state="Archive";
+      		        	        	 $(".pagin1").hide();
+      		        	        	 $(".pagin2").show();
+      		        	        	 $("#div-total").hide();
+      		        	        	 
+      		        	           }else{
+      		        	        	   
+      		        	        	 $("#table-member").show();
+      		        	        	 $("#tableMember").hide();
+      		        	        	 $("#floatingBtn").show();
+      		        	        	 $("#montantARembourcer").show();
+      		        	        	 $("#archiveBtn").text("archives");
+      		        	        	 state="Dette";
+      		        	        	 $(".pagin1").show();
+      		        	        	 $(".pagin2").hide();
+      		        	        	 $("#div-total").show();
+      		        	           }
+      		        	           
+      		        	           //url=="archive"?$("#empruntTitle").text("Tous les Emprunts Archives"):$("#empruntTitle").text("Tous les Emprunts");
+	      		        	       console.log("Tout s'est bien passe");
                     	           
-                    	           console.log("Tout s'est bien passe");
         		        	
         		                      },        		          
         		          error: function(error){
@@ -408,8 +406,7 @@ function archiveList()   {
   	 $(document).ready(function(){
   		 
  		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-   		           var w=window.open("http://localhost:8080/debiteur/generatePDF/"+keyWord, "_blank");
- 		 		
+   		           var w=window.open("http://localhost:8080/debiteur/generatePDF/"+state+"/"+keyWord, "_blank");
  		 		   setTimeout(function(){
  		 			   
  		 			 //var a = w.document.createElement('A');
@@ -455,7 +452,7 @@ function archiveList()   {
 	 
  }  
     
-    function paginationInDeb(page)   {
+    function pagination1(page)   {
     
    	 $(document).ready(function(){
    	       
@@ -466,8 +463,10 @@ function archiveList()   {
        				 type:"post",
        				 data:{
        					 page:page,
+       					 
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
+       					 size:$("#pageSize").val(),
        				      },
        		 
        		        success: function(data){
@@ -475,29 +474,29 @@ function archiveList()   {
        		        	        $("#containerMainInDeb").html(data); 
        		        	        $("#table-member").show();
 	       		         		$("#tableMember").hide();
+	       		         	   $("#floatingBtn").show();
 	       		         		$("#archiveBtn").text("archives");
 	       		         		$("#montantARembourcer").show()
 	       		         		$(".pagin1").show();
-	       		         		$(".pagin2").hide();	                    	       
-	                    	    $("#div-total").load(location.href+ " #div-total");	                    	     
-	                    	     
-       		           
-       		        	            console.log("Tout s'est bien passe");
+	       		         		$(".pagin2").hide();
+	       		         	    $("#div-total").show()
+	                    	    $("#div-total").load(location.href+ " #div-total");	                  	     
+       		        	        console.log("Tout s'est bien passe");
        		        	
-       		                      },        		          
+       		                },        		          
        		          error: function(error){
-       		        	  
-       		        	  alert("La Pagination n'a pas reussie")
+       		        	         errorFonction(); 
+       		        	         alert("La Pagination n'a pas reussie")
        		        	  
        		                     }
        		        } );
        		 
-       	            });  
+       });  
    	
 	 
 }  
     
-    function paginationInDebArchiv(page)   {
+    function pagination2(page)   {
         
       	 $(document).ready(function(){
       	       
@@ -507,36 +506,38 @@ function archiveList()   {
           				 url:"http://localhost:8080/archive",
           				 type:"post",
           				 data:{
-          					 page:page,
+          					 page:0,
+          					 pagesArchiv:page,
           					 //keyWord:$("#keyWord").val(),
-          					 pagination:true,
+          					 pagination:$("#keyWord").val()==""? true:false,
+          					 size:$("#pageSize").val(),
           				      },
           		 
           		        success: function(data){
           		       	
-          		        	
-          		        	
           		        	        $("#containerMainInDeb").html(data); 
           		        	        $("#table-member").hide();
-	   	       		         		$("#tableMember").show();	   	       		         		
+	   	       		         		$("#tableMember").show();
+	   	       		                $("#floatingBtn").hide();
 	   	       		         		$("#archiveBtn").text("archives");
-	   	       		         		$("#montantARembourcer").show()
+	   	       		         		$("#montantARembourcer").hide()
 	   	       		         		$(".pagin1").hide();
 	   	       		         		$(".pagin2").show();
 	   	       		         	    $("#div-total").hide();
 	   	       		         	   
-	   	                    	   //$("#div-total").load(location.href+ " #div-total");	                   	     
+	   	                    	   //$("#div-total").load(location.href+ " #div-total");
+	   	                    	     errorFonction(); 
    	                    	         console.log("Tout s'est bien passe");
           		        	
           		                      },        		          
           		          error: function(error){
-          		        	  
+          		        	        errorFonction(); 
           		        	  		alert("La Pagination n'a pas reussie")
           		        	  
           		                     }
           		        } );
           		 
-          	            });  
+        });  
       	
    	 
    }  
@@ -582,30 +583,39 @@ function archiveList()   {
       				 data:{
       					 
       					 keyWord:$("#keyWord").val(),
-      					 pagination:false,
+      					 pagination:$("#keyWord").val()==""? true:false,
       					 size:$("#pageSize").val(),
       				      },
       		 
       		        success: function(data){
       		       	
       		        	
-			      		        	$("#containerMainInDeb").html(data);
-			      		        	(state=="Dette")?$("#table-member").show():$("#table-member").hide();
-			      		        	(state=="Archive")?$("#tableMember").show():$("#tableMember").hide();
-			      	        		$("#archiveBtn").text("archives");
-			      	        		(state=="Dette")?$("#montantARembourcer").show():$("#montantARembourcer").hide()
-			      	        	    (state=="Archive")?$(".pagin2").show():$(".pagin1").hide();
-			      	        	    (state!="Archive")?$(".pagin1").show():$(".pagin2").hide();
-			      	        	    (state=="Dette")?$("#div-total").show():$("#div-total").hide();
-			      	        	    (state=="Archive")?$("#div-total").hide():$("#div-total").show();
-			      	        	    (state=="Dette")?$("#div-total").load(location.href+ " #div-total"):'';
-      		           
-      		        	             console.log("Tout s'est bien passe");
+      		        	if(state=="Archive"){
+	        	        	   
+		        	        	 $("#tableMember").show();
+		        	        	 $("#table-member").hide();
+		        	        	 $("#floatingBtn").hide();
+		        	        	 $("#montantARembourcer").hide();  		        	        	
+		        	        	 $(".pagin1").hide();
+		        	        	 $(".pagin2").show();
+		        	        	 $("#div-total").hide();
+		        	        	 
+		        	           }else{
+		        	        	   
+		        	        	 $("#table-member").show();
+		        	        	 $("#tableMember").hide();
+		        	        	 $("#floatingBtn").show();
+		        	        	 $("#montantARembourcer").show();
+		        	        	 $(".pagin1").show();
+		        	        	 $(".pagin2").hide();
+		        	        	 $("#div-total").show();
+		        	        	 errorFonction(); 
+		        	           }
       		        	
       		                      },        		          
       		          error: function(error){
-			       		 
-      		        	  alert("error in selecting")
+      		        	        errorFonction(); 
+      		        	        alert("error in selecting")
       		        	  
       		                     }
       		        } );
@@ -633,30 +643,44 @@ function archiveList()   {
         				 url:(state=="Dette")?"http://localhost:8080/debSearcher":"http://localhost:8080/archive",
         				 type:"post",
         				 data:{
+        					 
         					 keyWord:$("#keyWord").val(),
+        					 size:$("#pageSize").val(),
         					 
         				      },
         		 
         		        success: function(data){
         		       	
-        		        	    $("#containerMainInDeb").html(data);        		        	    
-        		        	    state=="Archive"?$("#tableMember").show():$("#tableMember").hide();
-   		        	            state=="Archive"?$("#table-member").hide():$("#table-member").show();   		        	           
-   		        	            state=="Archive"?$("#montantARembourcer").hide():$("#montantARembourcer").show();
-   		        	            state=="Archive"?$("#archiveBtn").text("Dettes en cours"):$("#archiveBtn").text("archives");
-   		        	           
-   		        	           (state=="Dette")?$(".pagin1").show():$(".pagin2").hide();
-   		        	           (state=="Archive")?$(".pagin2").show():$(".pagin1").hide();
-   		        	           (state=="Archive")?$("#div-total").hide():$("#div-total").show();
+        		        	    $("#containerMainInDeb").html(data); 
+        		        	    
+        		        	    if(state=="Archive"){
+        		        	    	$("#tableMember").show();
+        		        	    	$("#table-member").hide();
+        		        	    	$("#montantARembourcer").hide();
+        		        	    	$("#floatingBtn").hide();
+        		        	    	$("#archiveBtn").text("Dettes en cours");
+        		        	    	$(".pagin1").hide();
+        		        	    	$(".pagin2").show();
+        		        	    	$("#div-total").hide();
+        		        	    }else{
+        		        	    	
+        		        	    	$("#tableMember").hide();
+        		        	    	$("#table-member").show();
+        		        	    	$("#montantARembourcer").show();
+        		        	    	$("#floatingBtn").show();
+        		        	    	$("#archiveBtn").text("archives");
+        		        	    	$(".pagin1").show();
+        		        	    	$(".pagin2").hide() ;       		        	    	
+        		        	    	$("#div-total").show();
+        		        	    }        		        	   
  	                    	   
-   		        	           $("#div-total").load(location.href+ " #div-total");
-        		            
-        		        	      console.log("Tout s'est bien passe");
+   		        	                $("#div-total").load(location.href+ " #div-total");        		            
+        		        	        console.log("Tout s'est bien passe");
         		        	
         		                      },        		          
         		          error: function(error){
         		        	  
-        		        	      alert("L'operation de  recherche a echouee"+error);
+        		        	        alert("L'operation de  recherche a echouee"+error);
         		        	  
         		                     }
         		        } );
@@ -680,30 +704,28 @@ function archiveList()   {
        				 type:"post",
        				 data:{
        					 idDeb:idValue,
+       					size:$("#pageSize").val(),
        					 
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	console.log("===="+data);
-       		        	
+       		        			console.log("===="+data);
        		                    $("#containerMainInDeb").html(data);
        		                    $("#table-member").show();
 	       		        		$("#tableMember").hide();
 	       		        		$("#archiveBtn").text("archives");
 	       		        		$("#montantARembourcer").show()
 	       		        		$(".pagin1").show();
-	       		        		$(".pagin2").hide();
-	       		        		
-	                    	        idValue=-10;
-	                    	     $("#div-total").load(location.href+ " #div-total");
-       		            
-       		        	console.log("Tout s'est bien passe");
-       		        	
+	       		        		$(".pagin2").hide();	       		        		
+	                    	    idValue=-10;
+	                    	    $("#div-total").load(location.href+ " #div-total");
+       		        	 		console.log("Tout s'est bien passe");
+       		        	 	    errorFonction(); v
        		                      },        		          
        		          error: function(error){
-       		        	  
-       		        	  alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+       		        	        errorFonction(); 
+       		        	  		alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
        		                     }
        		        } );
@@ -730,9 +752,9 @@ function archiveList()   {
         	     $(document).ready(function(){ 
         	       		
         	         $("#matricule-field").val("");
- 	    	    	  $("#montant-field").val("");
+ 	    	    	 $("#montant-field").val("");
  	    	    	 $("#echeance-field").val("");
-	    	    	  $("#typeInteret-field").val("");
+	    	    	 $("#typeInteret-field").val("");
  	    	    	 
  	    	    	
  	    	    	 
@@ -752,6 +774,7 @@ function archiveList()   {
                      	    	    	 echeance:  $("#echeance-field").val(),
                      	    	    	 typeInteret: $("#typeInteret-field").val(),
                      	    	    	 page:((pa.length-1) <= 0) ? 0:(pa.length-1),
+                     	    	    	 size:$("#pageSize").val(),
                     				      },
                     		 
                     		        success: function(data){
@@ -763,7 +786,6 @@ function archiveList()   {
 	                    		        	  $("#montantARembourcer").show()
 	                    		        	  $(".pagin1").show();
 	                    		        	  $(".pagin2").hide();
-                    		        		
 	             	                    	  $("#debiteurAddModal").modal("hide");
 	             	                    	  idValue=-10;
 	             	                    	  $("#div-total").load(location.href+ " #div-total");
@@ -773,8 +795,8 @@ function archiveList()   {
                     		                      },       
                     		                      
                     		          error: function(error){
-                    		        	  
-                    		        	  alert("L'operation d'ajout a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+                    		        	       errorFonction(); 
+                    		        	       alert("L'operation d'ajout a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                     		        	  
                     		                     }
                     		        } );
@@ -792,11 +814,11 @@ function archiveList()   {
                     		 
                     		 
                     		
-                    		});
+        		});
         	       		
         	       		
         	       		
-        	       	})
+   	})
         	       	
         	       	
         	       	
@@ -841,6 +863,7 @@ function archiveList()   {
                       	    	    	        montant:   $("#montant-field").val(),
                       	    	    	        echeance:  $("#echeance-field").val(),
                       	    	    	        typeInteret: $("#typeInteret-field").val(),
+                      	    	    	        size:$("#pageSize").val(),
                            	    	    	    
                             				      },
                             		 
@@ -861,12 +884,11 @@ function archiveList()   {
                                     	    	    	    $("#montant-field").val('');
                                     	    	    	    $("#echeance-field").val('');
                                     	    	    	    $("#typeInteret-field").val('');                                    	    	    	  
-                            	        	
                             		        	            console.log("Tout s'est bien passe dans upda");
-                            		        	
+                            		        	            errorFonction(); 
                             		                      },        		          
                             		          error: function(error){
-                            		        	  
+                            		        	             errorFonction(); 
                             		        	             alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		                     }

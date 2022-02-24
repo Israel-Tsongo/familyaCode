@@ -20,7 +20,7 @@ public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
 	
 	
 	@Query(value="SELECT  SUM(somme_emprunt) FROM debiteur", nativeQuery=true)
-	  Double totalEnDette();
+	Double totalEnDette();
 	
 	@Query(value= "SELECT * FROM `debiteur` WHERE entered_matric=:matricule", nativeQuery=true )
 	public Debiteur getDebiteurByMatricule(@Param("matricule") String matricule);
@@ -30,7 +30,7 @@ public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
 	
 	
 	
-	 public Page <Debiteur> findByEnteredMatricContains(String mc, org.springframework.data.domain.Pageable pageable  );
+	public Page <Debiteur> findByEnteredMatricContains(String mc, org.springframework.data.domain.Pageable pageable  );
 	
 	
 	@Query(value="SELECT  somme_emprunt ,taux, duree_echeance FROM debiteur WHERE  entered_matric = ?1", nativeQuery=true)

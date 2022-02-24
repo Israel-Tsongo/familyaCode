@@ -48,6 +48,7 @@ public class ProfileController {
 		model.addAttribute("pages",new int[profilList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
 		model.addAttribute("pageTitle","Profile");
+		model.addAttribute("currentSize",size);
 		
 		model.addAttribute("keyWord", mc);		
 		return "userDetails";
@@ -75,7 +76,7 @@ public class ProfileController {
 	           mv.addObject("lst", trt.converter(userList));
 	           mv.addObject("pages", new int[userList.getTotalPages()]);	
 	           mv.addObject("currentPage",page);
-	            
+	           mv.addObject("currentSize",size);
 	           mv.addObject("keyWord", mc);
 			   mv.setViewName("/userDetails::mainContainerProfile");
 			   
@@ -83,7 +84,6 @@ public class ProfileController {
 	           return  mv;
 		   }else {
 			       Page <User> searchUserList =userRepo.findByNomContains(mc,PageRequest.of(page,size));
-			       
 			       ModelAndView mv = new ModelAndView("/userDetails::mainContainerProfile");		           
 		             model.addAttribute("lst", trt.searchUserConverter(searchUserList));
 		             model.addAttribute("pages", new int[searchUserList.getTotalPages()]);	
@@ -143,6 +143,7 @@ public class ProfileController {
           mv = new ModelAndView("/userDetails::mainContainerProfile");		   
           mv.addObject("lst", trt.converter(UserList));
           mv.addObject("pages", new int[UserList.getTotalPages()]);
+          mv.addObject("currentSize",size);
           mv.addObject("currentPage",page);
           mv.setViewName("/userDetails::mainContainerProfile"); 
 		
@@ -178,6 +179,7 @@ public class ProfileController {
 				  mv = new ModelAndView("/userDetails::mainContainerProfile");								   
 				  mv.addObject("lst", trt.converter(userList));
 				  mv.addObject("pages", new int[userList.getTotalPages()]);
+				  mv.addObject("currentSize",size);
 				  mv.addObject("currentPage",page);				  
 	              mv.setViewName("/userDetails::mainContainerProfile");
 		 
@@ -246,6 +248,7 @@ public class ProfileController {
 					  mv = new ModelAndView("/userDetails::mainContainerProfile");								   
 					  mv.addObject("lst", trt.converter(userList));
 					  mv.addObject("pages", new int[userList.getTotalPages()]);
+					  mv.addObject("currentSize",size);
 					  mv.addObject("currentPage",page);				  
 		              mv.setViewName("/userDetails::mainContainerProfile");
 			 

@@ -2,9 +2,6 @@ package org.sid.FamilyaProject.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-
-
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,9 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -24,13 +18,10 @@ import lombok.ToString;
 @Entity
 
 @NoArgsConstructor  @ToString
-
-
 public class Debiteur  implements Serializable  {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Long Id_debiteur;
-	
+	private Long id_debiteur;	
 	private double sommeEmprunt;
 	private Date date_emprunt;
 	private double duree_echeance;
@@ -110,12 +101,12 @@ public class Debiteur  implements Serializable  {
 
 
 	public Long getId_debiteur() {
-		return Id_debiteur;
+		return id_debiteur;
 	}
 
 
 	public void setId_debiteur(Long id_debiteur) {
-		Id_debiteur = id_debiteur;
+		this.id_debiteur = id_debiteur;
 	}
 
 

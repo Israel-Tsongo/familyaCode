@@ -42,10 +42,10 @@
 	                                </button>
 	                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 	                                        <p class="text-center dropdown-header">dropdown header:</p>
-	                                        <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
-	                                        <a class="dropdown-item" href="#">&nbsp;Another action</a>
+	                                        <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF </a>
+	                                        <!--<a class="dropdown-item" href="#">&nbsp;Another action</a>
 	                                        <div class="dropdown-divider"></div>
-	                                        <a class="dropdown-item" href="#">&nbsp;Something else here</a>
+	                                        <a class="dropdown-item" href="#">&nbsp;Something else here</a>-->
 	                                  </div>
                                 </div>
                             </div>
@@ -72,14 +72,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="table-responsive" id="table-member" th:onload="setList(${lst})">
+                                <div class="table-responsive" id="table-member" >
                                     <table class="table">
                                         <thead>
                                             <tr id="tab-header">
                                                 <th style="width: 1px;padding: 0px;font-size: 15px;"></th>
                                                 <th>Nom</th>
-                                                <th id="interet-matric-col">Matricule</th>
-                                                <th class="col-capital">Interet du membre</th>
+                                                <th >Matricule</th>
+                                                <th >Interet du membre</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -87,31 +87,30 @@
                                                  <td style="padding: 12px;width: 36px;">
                                                     <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInInteret([[${element.get(0)}]],[[${lst}]]);" type="radio">                                                
                                                 </td> 
-                                                <td class="tab-cells all-col"  th:text="${element.get(1)}" >Israel Tsongo kikama</td>
-                                                <td class="all-col"  th:text="${element.get(2)}" >8080</td>
-                                                <td class="col-capital all-col" th:text="${element.get(3)+' $'}" >$ 15</td>
+                                                <td  th:text="${element.get(1)}" ></td>
+                                                <td  th:text="${element.get(2)}" ></td>
+                                                <td  th:text="${element.get(3)+' $'}" ></td>
                                             </tr>
                                             
                                         </tbody>
                                     </table>
                                 </div>
                                 
-                                <div class="table-responsive" id="tableMember">
-                                    <table class="table" style="height:260px;display:-moz-groupbox;">
+                                <div class="table-responsive" >
+                                    <table class="table" id="tableMember" >
                                         <thead>
-                                            <tr id="tab-header">
-                                              
-                                                <th class="col col-md-2">Id</th>                                        
-                                                <th class="col col-md-6">Operation effectuee</th>
-                                                <th class="colcol-md-4">date</th>
+                                            <tr >                                              
+                                                <th >Id</th>                                        
+                                                <th >Operation effectuee</th>
+                                                <th >date</th>
                                                
                                             </tr>
                                         </thead>
-                                        <tbody style="overflow-y:scroll;height:200px;width:98%;position:absolute;">
-                                            <tr th:each="element:${lstOpera}"  style="width:100%; height:10px; display:inline-table;table-layout:fixed">
-                                                 <td class="col col-md-2" th:text="${element.get(0)}"></td>
-                                                 <td class="col col-md-6" th:text="${element.get(1)}"></td>                                                         
-                                                <td  class="col col-md-4" th:text="${element.get(2)}"></td>
+                                        <tbody >
+                                            <tr th:each="element:${lstOpera}"  >
+                                                 <td  th:text="${element.get(0)}"></td>
+                                                 <td  th:text="${element.get(1)}"></td>                                                         
+                                                 <td  th:text="${element.get(2)}"></td>
                                                
                                             </tr>
                                             
@@ -130,28 +129,15 @@
                             </div>
                             <div class="card-body" id="card-bottom-body">
                                 <div class="row">
-                                    <div class="col-md-6 align-self-center">
+                                    <div class="col-md-2 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 8</p>
                                     </div>
-                                    <div class="col-md-6">
-                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers pagin1" id="pagination">
-	                                            <ul th:each ="page,status:${pages}" class="pagination pagin1" id="pagin">
-	                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a class="page-link pagin1"  th:onclick="'javascript:paginationInInteret('+${currentPage-1}+')'"  aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
-	                                                
-	                                                <li th:if="${(status.index+1)<=4} or ${status.index==currentPage}"  th:class="${status.index==currentPage?' page-item active':'page-item pagin1'}" ><a  class="page-link pagin1" th:onclick="'javascript:paginationInInteret('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
-	                                                
-	                                                <li th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin1"><a class="page-link pagin1"  th:onclick="'javascript:paginationInInteret('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
-	                                            </ul>
-                                            </nav>
-                                            <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers paginOpera" id="pagination">
-	                                            <ul th:each ="pageOpera,statusOpera:${pagesOpera}" class="pagination paginOpera" id="pagin">
-	                                                <li th:if="${statusOpera.first} and ${statusOpera.index != currentPageOpera}" class="page-item paginOpera"><a class="page-link paginOpera"  th:onclick="'javascript:paginationInInteret2('+${currentPageOpera-1}+')'"  aria-label="Previous"><span class="paginOpera" aria-hidden="true">&laquo</span></a></li>
-	                                                
-	                                                <li th:if="${(statusOpera.index+1)<=4} or ${statusOpera.index==currentPageOpera}" th:class="${statusOpera.index==currentPageOpera?' page-item active':'page-item paginOpera'}"><a   class="page-link paginOpera" th:onclick="'javascript:paginationInInteret2('+${statusOpera.index}+')'"   th:text="${statusOpera.index+1}"></a></li>
-	                                                
-	                                                <li th:if="${statusOpera.last} and ${currentPageOpera <= pagesOpera.length-2}" class="page-item paginOpera"><a class="page-link paginOpera"  th:onclick="'javascript:paginationInInteret2('+${currentPageOpera+1}+')'" aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
-	                                            </ul>
-                                            </nav>
+                                    <div class="col-md-10">
+                                        <nav th:replace="fragments :: safePagination" >                                    
+       								   </nav>
+       								   
+                                       <nav th:replace="fragments :: safePagination2" >                                    
+       								   </nav>
                                         
                                     </div>
                                 </div>
@@ -210,7 +196,6 @@
                             	<input  type="text" class="form-control form-control-user-right" id="montant-retrait-field" placeholder="Montant a retirer" name="MontantRetrait" />
                             </div>
                         
-                        
                     </form>
                     <div class="text-center" id="div-button">
                         <div class="form-group d-flex flex-column align-items-center" id="form-btn">
@@ -238,7 +223,14 @@
     <script src="assets/js/script.min.js?h=9b20e2f15b170d8c8330230170292640"></script>
     
     <script  th:inline="javascript" > 
-         
+        
+
+    var mainList;
+    document.querySelector("#tableMember").style.display="none";
+    document.querySelector("#table-member").style.display="block";
+    var toggle=false;    
+    var idValue=-10;
+    var matric;
     var currentTable="interet"
       
       
@@ -247,7 +239,7 @@
      	 $(document).ready(function(){
      		 
     		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-      		           var w=window.open("http://localhost:8080/generatePDF/"+currentTable+"/"+keyWord, "_blank");    		 		
+      		           var w=window.open("http://localhost:8080/interet/interetGeneratePDF/"+currentTable+"/"+keyWord, "_blank");    		 		
     		 		   setTimeout(function(){
     		 			   
     		 			 //var a = w.document.createElement('A');
@@ -265,17 +257,7 @@
      	 
       }     
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+ 
       function errorFonction() {
           if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
              var messages="";
@@ -294,23 +276,12 @@
       
       $(document).ready(function(){
      	 
-     	 $(".paginOpera").hide();
- 	     
+     	 $(".pagin1").show();
+     	$(".pagin2").hide();
      	 
      	 
       })
       
-                       var mainList;
-                       
-                       document.querySelector("#tableMember").style.display="none";
-                       
-                       document.querySelector("#table-member").style.display="block";
-                       
-                       
-                       
-                       var toggle=false;    
-                       var idValue=-10;
-                       var matric;
                       
     
     
@@ -333,9 +304,8 @@
     		$("#table-member").show();
     		$("#tableMember").hide();
     		$("#opera-button").text("Voir l'historique des operations")
-    		
     		$(".pagin1").show();
-    		$(".paginOpera").hide();
+    		$(".pagin2").hide();
     		$("#div-total").show();
     		$("#interet").load(location.href+ " #interet");	
     		$("#div-total").load(location.href+ " #div-total");
@@ -344,13 +314,13 @@
     	}
             if(!toggle){
             	
-            currentTable="operation";
+            currentTable="operations";
     		$("#table-member").hide();
     		$("#tableMember").show();
     		$("#div-total").hide();
     		$("#opera-button").text("Voir interet par Membre")
     		$(".pagin1").hide();
-    		$(".paginOpera").show();
+    		$(".pagin2").show();
     		$("#floating-button-interet").hide();
     		
     		
@@ -378,37 +348,43 @@
       				 type:"post",
       				 data:{
       					 
-      					 pageOpera:0,
       					 keyWord:$("#keyWord").val(),
-      					 pagination:false,
+      					 pagination:$("#keyWord").val()==""? true:false,
       					 size:$("#pageSize").val(),
       				      },
       		 
       		        success: function(data){
       		       	
-      		        	
-      		        	
-      		        	           $("#containerMainInInteret").html(data);   
-      		        	           $("#table-member").show();
-    		          		       $("#tableMember").hide();
-    		        	           $("#div-total").show() ;	                    	       
+      		        			   $("#containerMainInInteret").html(data);  
+      		        	           if(currentTable=="interet"){
+      		        	        	   
+	      		        	        	 $("#table-member").show();
+	      		          		         $("#tableMember").hide();
+	      		          		         $("#div-total").show() ;
+		      		          		     $(".pagin1").show();
+			 	                    	 $(".pagin2").hide();
+      		        	           }else{
+      		        	        	   
+	      		        	        	 $("#table-member").hide();
+	      		          		         $("#tableMember").show();
+	      		          		         $("#div-total").hide();
+		      		          		     $(".pagin1").hide();
+			 	                    	 $(".pagin2").show();
+      		        	           }
+      		        	                              	       
 	                    	       $("#div-total").load(location.href+ " #div-total");	                    	      
-	                    	       $(".pagin1").show();
-	 	                    	   $(".paginOpera").hide();
-      		           
-      		        	            console.log("Tout s'est bien passe");
+      		        	           console.log("Tout s'est bien passe");
+      		        	           errorFonction(); 
       		        	
       		                      },        		          
       		          error: function(error){
 			       		        	$(".pagin1").show();
-			                   	    $(".paginOpera").hide();
-      		        	  
-      		        	             alert("La Pagination n'a pas reussie")
-      		        	  
+			                   	    $(".pagin2").hide();
+			                   	    errorFonction(); 
+      		        	            alert("La Pagination n'a pas reussie")
+      		        	            
       		                     }
       		        } );
-       			 
-       			 
        			 
        			 
        		 })
@@ -423,7 +399,7 @@
     
     
     
-    function paginationInInteret(page)   {
+    function pagination1(page)   {
     
    	 $(document).ready(function(){
    	       
@@ -437,30 +413,27 @@
        					 pageOpera:0,
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
-       					size:$("#pageSize").val()
+       					 size:$("#pageSize").val()
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	
-       		        	
        		        	           $("#containerMainInInteret").html(data);   
        		        	           $("#table-member").show();
      		          		       $("#tableMember").hide();
      		        	           $("#div-total").show() ;	                    	       
-	                    	      $("#div-total").load(location.href+ " #div-total");
-	                    	      
-	                    	      $(".pagin1").show();
-	 	                    	  $(".paginOpera").hide();
-       		           
-       		        	            console.log("Tout s'est bien passe");
+	                    	       $("#div-total").load(location.href+ " #div-total");
+	                    	       $(".pagin1").show();
+	 	                    	   $(".pagin2").hide();
+       		        	           console.log("Tout s'est bien passe");
+       		        	           errorFonction(); 
        		        	
        		                      },        		          
        		          error: function(error){
 			       		        	$(".pagin1").show();
-			                   	    $(".paginOpera").hide();
-       		        	  
-       		        	  alert("La Pagination n'a pas reussie")
+			                   	    $(".pagin2").hide();
+			                   	    errorFonction(); 
+       		        	            alert("La Pagination n'a pas reussie")
        		        	  
        		                     }
        		        } );
@@ -470,7 +443,7 @@
 	 
 }   
     
-    function paginationInInteret2(page)   {
+    function pagination2(page)   {
         
       	 $(document).ready(function(){
       	       
@@ -481,37 +454,35 @@
           				 type:"post",
           				 data:{
           					 page:0,
-          					pageOpera:page,
+          					 pageOpera:page,
           					 keyWord:$("#keyWord").val(),
           					 pagination:$("#keyWord").val()==""? true:false,
-          					size:$("#pageSize").val()
+          					 size:$("#pageSize").val()
           				      },
           		 
           		        success: function(data){
           		       	
-          		        	
           		        	
          		        	     $("#containerMainInInteret").html(data);           		        	           
          		        	     $("#table-member").hide();
       		          		     $("#tableMember").show();
       		        	         $("#div-total").hide() ;   	                    	       
    	                    	     $("#div-total").load(location.href+ " #div-total");	                    	     
-   	                    	     $(".paginOpera").show();
+   	                    	     $(".pagin2").show();
 	                    		 $(".pagin1").hide();
 	                    		 $("#opera-button").text("Voir interet par Membre")
-          		           
-          		        	      console.log("Tout s'est bien passe");
-          		        	
-          		                      },        		          
+          		        	     console.log("Tout s'est bien passe");
+	                    		 errorFonction(); 
+          		              },        		          
           		          error: function(error){
-          		        	     $(".paginOpera").show();
+          		        	     $(".pagin2").show();
                    		         $(".pagin1").hide();
-          		        	  alert("La Pagination n'a pas reussie")
-          		        	  
-          		                     }
-          		        } );
+          		        	     alert("La Pagination n'a pas reussie")
+          		        	     errorFonction(); 
+          		          }
+          		  } );
           		 
-          	            });
+         });
       	 
       					
    	 
@@ -535,43 +506,46 @@
         		 
         		        success: function(data){
         		       	
-        		        	
  	                    	      
  	                    	    if(!toggle){
+ 	                    	    	
  	                    	    	$("#containerMainInInteret").html(data); 
  	                    	    	$("#div-total").load(location.href+ " #div-total");
  	                    	    	$("#div-total").show() ;
  	                    	    	$("#table-member").show();
  	                    	    	$("#tableMember").hide();
  	                    	    	$(".pagin1").show();
- 	                    		    $(".paginOpera").hide();
+ 	                    		    $(".pagin2").hide();
  	                    		   
  	                    		
  	                    	    }else if(toggle){
+ 	                    	    	
  	                    	    	$("#containerMainInInteret").html(data); 
  	                    	    	$("#div-total").load(location.href+ " #div-total");
  	                    	    	$("#div-total").hide() ;
  	                    	    	$(".pagin1").hide();
- 	                    		    $(".paginOpera").show();
+ 	                    		    $(".pagin2").show();
  	                    		    $("#table-member").hide();
 	                    	    	$("#tableMember").show();
 	                    	    	
  	                    	    	
  	                    	    }
- 	                    	    
- 	                    	    
-        		        	console.log("Tout s'est bien passe");
+ 	                    	   
+        		        	   console.log("Tout s'est bien passe");
+        		        	   errorFonction(); 
         		        	
-        		                      },        		          
+        		      },        		          
         		          error: function(error){
+        		        	  
         		        	     $(".pagin1").show();
-	                    		 $(".paginOpera").hide();
-        		        	  alert("L'operation de  recherche a echouee"+error);
+	                    		 $(".pagin2").hide();
+	                    		 errorFonction(); 
+        		        	     alert("L'operation de  recherche a echouee"+error);
         		        	  
         		                     }
-        		        } );
+        	 } );
         		 
-        	            });  
+         });  
     	
 	 
  }   
@@ -579,16 +553,11 @@
 
     function  setTheWithDrawerInInteret()   {
   		  
-  	       
-  	       
   	         $(document).ready(function(){
   	        	 
   	        	//Update Button
    	            
-             
-            	   
-                	    	var list=mainList;  	        	           
-                	        
+                	       var list=mainList;  	        	           
                 	       list.forEach(function(element){ 
                 	    	   
                 	    	    if(element[0]==idValue){
@@ -599,7 +568,7 @@
                 	    	    	console.log( "======"+element[2]);
                 	    	    	
                 	    	    	
-                	    	          }
+                	    	     }
                 	    	
                 	       });
        	    	    	       console.log( "======"+idValue);
@@ -613,42 +582,36 @@
                       					 idWithD:  idValue,
                       					 matricule:  matric,
                      	    	    	 montantRetrait:  $("#montant-retrait-field").val(),
-                     	    	    	    
+                     	    	    	 size:$("#pageSize").val(),
                       				      },
                       		 
                       		        success: function(data){
                       		       	               
                       		        	          $("#interetModal").modal("hide");  
                       		        	          $("#containerMainInInteret").html(data);      		        	
-           	                    	             
            	                    	              $("#div-total").load(location.href+ " #div-total");
            	                    	              $("#main-form").load(location.href+ " #main-form");
-           	                    	             
-           	                    	               $("#tableMember").hide();
-           	                    	               $("#table-member").show();
-           	                    	               $("#montant-retrait-field").val("");
-                		          		          
-                                 	    	       idValue=-10;
-                                 	    	        $(".pagin1").show();
-                   	 	                    	    $(".paginOpera").hide();
-                   	 	                    	    errorFonction();
-                                 	    	        
-                      		        				console.log("Tout s'est bien passe dans upda");
-                      		        	
-                      		                      },        		          
+           	                    	              $("#tableMember").hide();
+           	                    	              $("#table-member").show();
+           	                    	              $("#montant-retrait-field").val("");
+                               	    	          idValue=-10;
+                               	    	          $(".pagin1").show();
+                 	 	                    	  $(".pagin2").hide();
+                    		        			  console.log("Tout s'est bien passe dans upda");
+                    		        			  errorFonction(); 
+                      		          },        		          
                       		          error: function(error){
 			                      		        	$(".pagin1").show();
-			       	 	                    	    $(".paginOpera").hide();
+			       	 	                    	    $(".pagin2").hide();
 			       	 	                    	    errorFonction()
-                      		        	           alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
+                      		        	            alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
                       		        	  
                       		                     }
                       		        } )  
                       		        
-                      		       $(".btn-close").click(function(){
-                      		    	   
-                      		    	        idValue=-10;
-                      		    		
+				                      		       $(".btn-close").click(function(){
+				                      		       idValue=-10;
+				                      		    		
                       		    	   
                       		       })                      		       
                 	    	   

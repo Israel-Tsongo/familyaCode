@@ -1,24 +1,20 @@
 package org.sid.FamilyaProject.entities;
 
 import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
 @Entity
 @NoArgsConstructor   @ToString
-
 public class Depense  {	
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Long  Id;
+	private Long  id;
 	private double montantDepense;
 	private Date dateDuDepense;
 	private String motif;
@@ -50,10 +46,10 @@ public class Depense  {
 		this.motif = motif;
 	}
 	public Long getId() {
-		return Id;
+		return id;
 	}
 	public void setId(Long id) {
-		Id = id;
+		this.id = id;
 	}
 	public Date getDateDuDepense() {
 		return dateDuDepense;

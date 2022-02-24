@@ -7,21 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.sid.FamilyaProject.dao.DebiteurRepository;
-import org.sid.FamilyaProject.dao.EventsRepository;
+
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Member;
-import org.sid.FamilyaProject.entities.Payement;
+
 import org.sid.FamilyaProject.metier.Traitement;
-import org.sid.FamilyaProject.security.MyUserDetails;
+
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,6 +66,7 @@ public class MemberController {
 	    model.addAttribute("lst",trt.converter(MemberList));
 		model.addAttribute("pages",new int[MemberList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
+		model.addAttribute("currentSize",size);
 		model.addAttribute("pageTitle","Membre");
 		model.addAttribute("totalCapitaux",totalCapitauxInitiaux);
 		model.addAttribute("keyWord", mc);		
@@ -95,6 +96,7 @@ public class MemberController {
 	           mv.addObject("lst", trt.converter(MemberList));
 	           mv.addObject("pages", new int[MemberList.getTotalPages()]);	
 	           mv.addObject("currentPage",page);
+	           mv.addObject("currentSize",size);
 	           mv.addObject("totalCapitaux", totalCapitauxInitiaux1);	           
 	           mv.addObject("keyWord", mc);
 			   mv.setViewName("/index::mainContainer");
@@ -124,7 +126,7 @@ public class MemberController {
 	
 	
 	@PostMapping("/indexPost")
-	public ModelAndView postIndexData( @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandateur,			
+	public ModelAndView postIndexData( @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandataire,			
 			                                     @RequestParam() double capital,@RequestParam() String fonction,
 			                                     @RequestParam() String categorie,@RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
 			                                     ) {
@@ -147,7 +149,7 @@ public class MemberController {
 				    	 if (capital>=(salaire.doubleValue()*(retenu.doubleValue()/100))) {
 				
 						  User usr=userRepository.getUserByMatricule(matricule);
-						  Member member =new Member(usr.getNom(),matricule,fonction, new Date(),contrat,categorie,capital);
+						  Member member =new Member(usr.getNom(),matricule,fonction, new Date(),contrat,categorie,capital,mandataire);
 					      
 					      member.setMemberUser(usr);
 					      usr.setMember(member);
@@ -177,7 +179,7 @@ public class MemberController {
 			
 		}catch(Exception exc) {	
 			mv = new ModelAndView("/index::mainContainer");
-		    errorList.add("- Une erreur s'est produite lors de l'enregistrement d un nouveau membre");
+		    errorList.add("Une erreur s'est produite lors de l'enregistrement d un nouveau membre");
 			System.out.println("Une erreur s'est produite lors de l'enregistrement d un nouveau membre");			
 			System.out.println(exc.getMessage()   );
 			
@@ -187,7 +189,8 @@ public class MemberController {
 		   
 		mv = new ModelAndView("/index::mainContainer");					   
 		mv.addObject("lst", trt.converter(memberList));
-		mv.addObject("pages",new int[memberList.getTotalPages()]);			  
+		mv.addObject("pages",new int[memberList.getTotalPages()]);
+		mv.addObject("currentSize",size);
 		mv.addObject("currentPage",page);					   
         mv.addObject("totalCapitaux",String.format("%.3f", totalCapitauxInitiaux));		
 		mv.addObject("errorList",errorList);
@@ -216,6 +219,7 @@ public class MemberController {
 	         mv = new ModelAndView("/index::mainContainer");		   
 	         mv.addObject("lst", trt.converter(memberList));
 	         mv.addObject("pages", new int[memberList.getTotalPages()]);
+	         mv.addObject("currentSize",size);
 	         mv.addObject("currentPage",page);
 	         mv.addObject("totalCapitaux", totalCapitauxInitiaux);
 	         
@@ -227,18 +231,17 @@ public class MemberController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/update")
-	public ModelAndView updateMember(@RequestParam() Long  idMember , @RequestParam(defaultValue="") String mandateur,  @RequestParam() String matricule,			
+	public ModelAndView updateMember(@RequestParam() Long  idMember , @RequestParam(defaultValue="") String mandataire,  @RequestParam() String matricule,			
             @RequestParam() String capital,@RequestParam() String fonction,
-            @RequestParam() String categorie,@RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
+            @RequestParam() String categorie,@RequestParam() String contrat, @RequestParam() String date, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
 		     Traitement trt=new Traitement();
 		     ModelAndView mv=null ;
-		           if(idMember>0) {
+		     
+		     if(idMember>0) {
 			
-					     memberRepo.updateMember(idMember, matricule,Double.parseDouble(capital) , fonction, categorie, contrat, new Date());						   
-						 
-			      
-			   
+					 memberRepo.updateMember(idMember, matricule,mandataire,Double.parseDouble(capital) , fonction, categorie, contrat, new Date());						   
+					
 			  }else  { System.out.println("error in update Update");}
 		    
 		      Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
@@ -247,6 +250,7 @@ public class MemberController {
 			 mv = new ModelAndView("/index::mainContainer");								   
 			 mv.addObject("lst", trt.converter(memberList));
 			 mv.addObject("pages", new int[memberList.getTotalPages()]);
+			 mv.addObject("currentSize",size);
 		     mv.addObject("currentPage",page);
 		     mv.addObject("totalCapitaux", totalCapitauxInitiaux);
 		 
@@ -272,7 +276,7 @@ public class MemberController {
 		 if(memberRepo.getUserByMatricule(matricule)!=null) {
 				
 		    	
-		    	if(payeRepo.getPayementByMatric(matricule)==null || payeRepo.getPayementByMatric(matricule).isEmpty() ) {
+		    	if(payeRepo.getPayementByMatricule(matricule)==null || payeRepo.getPayementByMatricule(matricule).isEmpty() ) {
 		    		
 			    	List<List<Object>> lst=memberRepo.getCapitalMatriculeNom(matricule);
 			    	modelAndView.addObject("nom",lst.get(0).get(0));
@@ -306,11 +310,11 @@ public class MemberController {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/Coffee.jrxml";
-		 	   String fileName="contributions";
+		 	   String jasperFilePath="src/main/resources/membre.jrxml";
+		 	   String fileName="Membre";
 		       List <Member> searchMemberList =memberRepo.findByNomContains(!mc.equals("all")? mc:"");
 
-		 	   map.put("nameFor", "Israel");			   
+		 	   map.put("membre", "Israel");			   
 			   
 			   //List<Payement> testList=payeRepo.findAll();
 

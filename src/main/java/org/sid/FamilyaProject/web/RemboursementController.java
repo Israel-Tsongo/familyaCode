@@ -68,6 +68,7 @@ public class RemboursementController {
 	 
 	    model.addAttribute("lst",trt.converter(eventList));
 		model.addAttribute("pages",new int[eventList.getTotalPages()]);
+		model.addAttribute("currentSize",size);
 		model.addAttribute("currentPage",page);
 		model.addAttribute("pageTitle","Remboursement");
 		model.addAttribute("keyWord", mc);
@@ -96,7 +97,7 @@ public class RemboursementController {
 	           mv.addObject("lst", trt.converter(eventList));
 	           mv.addObject("pages", new int[eventList.getTotalPages()]);	
 	           mv.addObject("currentPage",page);
-	            
+	           mv.addObject("currentSize",size);
 	           mv.addObject("keyWord", mc);
 			   mv.setViewName("/remboursement::mainContainerInRembourse");
 	           return  mv;
@@ -178,9 +179,9 @@ public class RemboursementController {
 							
 							if(currentNewDate <= tempDate ||(remboursementTempo==(debit.getPremierRemboursement()+currentPenalty)) || debiteurRepo.getDebiteurByMatricule(matricule)==null) {
 								
-					       Events e=new Events(matricule,  remboursement, new Date());
-					       Member curentMember  =memberRepo.getUserByMatricule(e.getEntered_matricule());
-					       String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
+						       Events e=new Events(matricule,  remboursement, new Date());
+						       Member curentMember = memberRepo.getUserByMatricule(e.getEntered_matricule());
+						       String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
 					       
 							if( typeInteret.equals("Degressif")) {							 
 								 			
@@ -229,7 +230,8 @@ public class RemboursementController {
 		   
 		   mv = new ModelAndView("/remboursement::mainContainerInRembourse");					   
 		   mv.addObject("lst", trt.converter(eventList));
-		   mv.addObject("pages", new int[eventList.getTotalPages()]);	
+		   mv.addObject("pages", new int[eventList.getTotalPages()]);
+		   mv.addObject("currentSize",size);
 		   mv.addObject("currentPage",page);
 		   mv.addObject("errorList",errorList);
 		return mv;
@@ -255,6 +257,7 @@ public class RemboursementController {
 		  mv = new ModelAndView("/remboursement::mainContainerInRembourse");		   
 	      mv.addObject("lst", trt.converter(eventList));
 	      mv.addObject("pages", new int[eventList.getTotalPages()]);
+	      mv.addObject("currentSize",size);
 	      mv.addObject("currentPage",page);  
 		
 		return  mv;
@@ -272,17 +275,17 @@ public class RemboursementController {
 		      
 		       if(idRemb>0) {
 			
-					     eventRepo.updateRembourse(idRemb, matricule,remboursement,  new Date());						   
+				   eventRepo.updateRembourse(idRemb, matricule,remboursement,  new Date());						   
 				
 			   
 			  }else  { System.out.println("Rien a Update");}
 		           
-	             Page<List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));				 
+	              Page<List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));				 
 				  mv = new ModelAndView("/remboursement::mainContainerInRembourse");								   
 				  mv.addObject("lst", trt.converter(eventList));
 				  mv.addObject("pages", new int[eventList.getTotalPages()]);
+				  mv.addObject("currentSize",size);
 				  mv.addObject("currentPage",page);
-		 
 			      return mv;
 		
 	   
@@ -297,7 +300,7 @@ public class RemboursementController {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/Coffee.jrxml";
+		 	   String jasperFilePath="src/main/resources/remboursement.jrxml";
 		 	   String fileName="remboursements";
 		       List<Events> searchEventList =eventRepo.findByEnteredMatriculeContains(!mc.equals("all")? mc:"");
 

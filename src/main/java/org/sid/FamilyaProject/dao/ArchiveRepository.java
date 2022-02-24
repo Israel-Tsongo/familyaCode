@@ -17,11 +17,14 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long>  {
 	 @Query(value="SELECT  SUM(`benefice_genere`) AS Total_des_interets FROM archive", nativeQuery=true)
 	 Double totalBenefitInArchive();
 	 
-	 @Query(value="SELECT  SUM(`former_penalty`) AS Total_des_interets FROM archive", nativeQuery=true)
+	 @Query(value="SELECT  SUM(`somme_penalty`) AS Total_des_interets FROM archive", nativeQuery=true)
 	 Double totalPenalite();
 	
 	 @Query(value="SELECT `id_deb_archiv`,`nom`,`entered_matric`,`somme_emprunt`,`taux`,`dette_plus_interet`,`duree_echeance`, `type_interet` , `date_emprunt`,somme_penalty,benefice_genere FROM `archive`", nativeQuery=true )
      public Page<List<List<Object>>> getArchiveList(org.springframework.data.domain.Pageable pageable);
+
+
+	public List<Archive> findByEnteredMatricContains(String string);
 		
 	
 

@@ -44,11 +44,11 @@ public class DepenseController {
 	   	 
 	   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
 	   
-	  
 	 
 	    model.addAttribute("lst",trt.converter(DepList));
 		model.addAttribute("pages",new int[DepList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
+		model.addAttribute("currentSize",size);
 		model.addAttribute("pageTitle","Depense");
 		model.addAttribute("totalDepense", String.format("%.3f", totalDepense));
 		model.addAttribute("keyWord", mc);
@@ -66,19 +66,21 @@ public class DepenseController {
 		
 		 Traitement trt = new Traitement();
 		  
+		 
 		   
 		   if(pagin) {			   	
 				
+			  
 			   Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
 			   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
-			   
 			   ModelAndView mv = new ModelAndView();		           
 	           mv.addObject("lst", trt.converter(DepList));
 	           mv.addObject("pages", new int[DepList.getTotalPages()]);	
+	           mv.addObject("currentSize",size);
 	           mv.addObject("currentPage",page);
 	           mv.addObject("totalDepense", String.format("%.3f",  totalDepense));  
 	           mv.addObject("keyWord", mc);
-			   mv.setViewName("/depense:mainContainerInDep");
+			   mv.setViewName("/depense::mainContainerInDep");
 	           return  mv;
 		   }else {
 			       Page <Depense> depList =depRepo.findByMotifContains(mc,PageRequest.of(page,size));
@@ -127,6 +129,7 @@ public class DepenseController {
 		mv.addObject("lst", trt.converter(DepList));
 		mv.addObject("pages", new int[DepList.getTotalPages()]);	
 		mv.addObject("currentPage",page);
+		mv.addObject("currentSize",size);
         mv.addObject("totalDepense", String.format("%.3f",  totalDepense));
         mv.addObject("errorList",errorList);
 		return mv;
@@ -156,6 +159,7 @@ public class DepenseController {
          mv.addObject("lst", trt.converter(DepList));
          mv.addObject("pages", new int[DepList.getTotalPages()]);
          mv.addObject("currentPage",page);
+         mv.addObject("currentSize",size);
          mv.addObject("totalDepense", String.format("%.3f",  totalDepense));
 		
 		return  mv;
@@ -186,6 +190,7 @@ public class DepenseController {
 		     mv = new ModelAndView("/depense::mainContainerInDep");								   
 		     mv.addObject("lst", trt.converter(DepList));
 		     mv.addObject("pages", new int[DepList.getTotalPages()]);
+		     mv.addObject("currentSize",size);
 		     mv.addObject("currentPage",page);
 		     mv.addObject("totalDepense",  String.format("%.3f", totalDepense));
 			 return mv;
@@ -198,7 +203,7 @@ public class DepenseController {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/Coffee.jrxml";
+		 	   String jasperFilePath="src/main/resources/depenses.jrxml";
 		 	   String fileName="depense";
 		 	   
 		       List<Depense> depList =depRepo.findByMotifContains(!mc.equals("all")? mc:"");

@@ -32,16 +32,20 @@ public interface InteretParMembreRepository extends JpaRepository<InteretParMemb
 	 public void deleteByMatricule(@Param("matricule") String matricule);
 	
 	
-	@Query(value="SELECT interet_du_membre FROM interet_par_membre WHERE matricule_entered=:matricule ",nativeQuery=true)
+	@Query(value="SELECT interet_du_membre FROM interet_par_membre WHERE matricule_entered=:matricule",nativeQuery=true)
 	public Double interetDuMembreByMatricule(@Param("matricule") String matricule);
-	
-	
 	
 	@Modifying
 	@Transactional
 	@Query(value="UPDATE interet_par_membre i SET i.interet_du_membre =:interet_du_membre,i.date_interet=:date WHERE i.id_interet=:id_interet",nativeQuery=true)
 	void updateInteret(@Param("id_interet") Long id_interet,   @Param("interet_du_membre")  double reste, @Param("date") Date date );
+     
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE interet_par_membre i SET i.interet_du_membre =:interet_du_membre WHERE matricule_entered=:matricule", nativeQuery=true)
+	void updateInteretMembre(@Param("matricule") String matricule,  @Param("interet_du_membre")  double valeur);
 
+	
 	public List<InteretParMembre> findByMatriculeEnteredContains(String string);
 	
 	

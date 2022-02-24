@@ -106,6 +106,7 @@ public List<List<Object>> searchConverter(Page <Member> searchMemberList ){
 							 newList.add(ob.getId_member());
 							 newList.add(ob.getNom());
 							 newList.add(ob.getMatricule());
+							 newList.add(ob.getMandataire());
 							 newList.add(rounder((double)ob.getCapital_Initial()));
 							 newList.add(ob.getCategorieMembre());
 							 newList.add(ob.getFonction());
@@ -297,7 +298,7 @@ public List<List<Object>> searchInteretConverter(Page<InteretParMembre> searchIn
 							 
 							 newList.add(ob.getId_interet());
 							 newList.add(ob.getMembreDansInteret().getNom());
-							 newList.add(ob.getMatricule_entered());	
+							 newList.add(ob.getMatriculeEntered());	
 							 newList.add(rounder((double)ob.getInteretDuMembre()));			 							 
 						 
 							 viewList.add(newList);		

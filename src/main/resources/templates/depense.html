@@ -15,7 +15,7 @@
                 <nav th:replace="fragments :: centered_nav">
                 </nav> 
                 
-            <div class="container-fluid"  id="containerMainInDep" th:fragment="mainContainerInDep" >
+            <div class="container-fluid"  id="mainContainerInDep" th:fragment="mainContainerInDep" >
                 <div class="d-sm-flex justify-content-between align-items-center mb-4">
                     <h3 class="text-dark mb-0" id="membre-title">Toutes les Depenses</h3>
                 </div>
@@ -40,11 +40,11 @@
 	                                	<i class="fas fa-ellipsis-v text-gray-400"></i>
 	                                </button>
 	                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
-	                                      <p class="text-center dropdown-header">dropdown header:</p>
-	                                      <a class="dropdown-item" href="#">&nbsp;Action</a>
-	                                      <a class="dropdown-item" href="#">&nbsp;Another action</a>
+	                                      <p class="text-center dropdown-header">dropdown header:</p>	                                      
+	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF </a>
+	                                     <!--   <a class="dropdown-item" href="#">&nbsp;Action</a>
 	                                      <div class="dropdown-divider"></div>
-	                                      <a class="dropdown-item" href="#">&nbsp;Something else here</a>
+	                                      <a class="dropdown-item" href="#">&nbsp;Something else here</a> -->
 	                                 </div>
                                 </div>
                             </div>
@@ -106,19 +106,13 @@
                             </div>
                             <div class="card-body" id="card-bottom-body">
                                 <div class="row">
-                                    <div class="col-md-6 align-self-center">
+                                    <div class="col-md-2 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
                                     </div>
-                                    <div class="col-md-6">
-                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers" id="pagination">
-                                            <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
-                                                <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a class="page-link"  th:onclick="'javascript:paginationInDep('+${currentPage-1}+')'"  aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
-                                                
-                                                <li th:if="${(status.index+1)<=4} or ${status.index==currentPage}" th:class="${status.index==currentPage?' page-item active':'page-item'}" ><a  class="page-link" th:onclick="'javascript:paginationInInDep('+${status.index}+')'"  th:text="${status.index+1}"></a></li>
-                                                
-                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a class="page-link"  th:onclick="'javascript:paginationInDep('+${currentPage+1}+')'"  aria-label="Next"><span aria-hidden="true">&raquo</span></a></li>
-                                            </ul>
-                                        </nav>
+                                    <div class="col-md-10">
+                                        <nav th:replace="fragments :: safePagination" >
+                                    
+       								   </nav>
                                     </div>
                                 </div>
                             </div>
@@ -231,7 +225,7 @@ function actions(type){
 	 
  }  
     
-    function paginationInDep(page)   {
+    function pagination1(page)   {
     
    	 $(document).ready(function(){
    	       
@@ -244,13 +238,12 @@ function actions(type){
        					 page:page,
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
+       					 size:$("#pageSize").val(),
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	
-       		        	
-       		        	           $("#containerMainInDep").html(data);                    	       
+       		        	           $("#mainContainerInDep").html(data);                    	       
 	                    	       $("#div-total-dep").load(location.href+ " #div-total-dep");	                    	     
 	                    	       console.log("Tout s'est bien passe");
        		        	
@@ -277,32 +270,30 @@ function actions(type){
     	     
        		 $("#pageSize").on('change',function(){
        			 
-       			 
-       			 
+       			
        			$.ajax({
       				 url:"http://localhost:8080/depSearcher",
       				 type:"post",
       				 data:{
       					 
-      					 pageOpera:0,
+      					page:[[${currentPage}]],
       					 keyWord:$("#keyWord").val(),
-      					 pagination:false,
+      					 pagination:$("#keyWord").val()==""? true:false,
       					 size:$("#pageSize").val(),
       				      },
       		 
       		        success: function(data){
       		       	
       		        	
-			      		        	$("#containerMainInDep").html(data);     		        	
+			      		        	 $("#mainContainerInDep").html(data);     		        	
 			                	     $("#div-total-dep").load(location.href+ " #div-total-dep");
-      		           
-      		        	            console.log("Tout s'est bien passe");
+      		        	             console.log("Tout s'est bien passe");
       		        	
       		                      },        		          
       		          error: function(error){
 			       		        	
       		        	  
-      		        	  alert("La Pagination n'a pas reussie")
+      		        	  			alert("La Pagination n'a pas reussie")
       		        	  
       		                     }
       		        } );
@@ -336,20 +327,16 @@ function actions(type){
         		 
         		        success: function(data){
         		       	
-        		        	
-        		        	
-        		        	      $("#containerMainInDep").html(data);      		        	
- 	                    	       
+        		        	     $("#mainContainerInDep").html(data);      		        	
  	                    	     $("#div-total-dep").load(location.href+ " #div-total-dep");
-        		            
-        		        	console.log("Tout s'est bien passe");
-        		        	
-        		                      },        		          
+        		        	     console.log("Tout s'est bien passe");
+        		        	     errorFonction(); 
+        		              },        		          
         		          error: function(error){
+        		        	    errorFonction(); 
+        		        	  	alert("L'operation de  recherche a echouee"+error);
         		        	  
-        		        	  alert("L'operation de  recherche a echouee"+error);
-        		        	  
-        		                     }
+        		                }
         		        } );
         		 
         	            });  
@@ -357,15 +344,13 @@ function actions(type){
 	 
  }    
     
-    	function setVariableDeleteInDep(){ 
+   function setVariableDeleteInDep(){ 
     	
 
         $(document).ready(function(){
        
             // Delete Button
             
-       	  
-       		 
        		 $.ajax({
        				 url:"http://localhost:8080/deteteDep",
        				 type:"post",
@@ -376,22 +361,21 @@ function actions(type){
        		 
        		        success: function(data){
        		       	
-       		        	console.log("===="+data);
-       		                     $("#containerMainInDep").html(data);        		        	
-	                    	       idValue=-10;
+       		        			 console.log("===="+data);
+       		                     $("#mainContainerInDep").html(data);        		        	
+	                    	     idValue=-10;
 	                    	     $("#div-total-dep").load(location.href+ " #div-total-dep");
-       		            
-       		        	console.log("Tout s'est bien passe");
-       		        	
+       		        			 console.log("Tout s'est bien passe");
+       		        			 errorFonction(); 
        		                      },        		          
        		          error: function(error){
+       		        	         errorFonction(); 
+       		        	 		 alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
-       		        	  alert("Echec d'effacement /n Assurez-vous que vous avez le droit d'effectuer cette operation");
-       		        	  
-       		                     }
+       		                 }
        		        } );
        		 
-       	            });  	             
+       });  	             
        	    
        
     	
@@ -404,59 +388,51 @@ function actions(type){
        
          
           function  setVariableAddInDep()   {
-        	       	idValue=-10;
         	       	
+        	        idValue=-10;        	       	
         	       	document.querySelector("#updateButtonInDep").style.display="none";
         	       	document.querySelector("#addButtonInDep").style.display="block";
         	       	
-        	       	
-        	       	$(document).ready(function(){ 
+        	       	 $(document).ready(function(){ 
         	       		
         	         $("#depense-montant-field").val("");
- 	    	    	  $("#motif-field").val("");
- 	    	    	 
- 	    	    	
- 	    	    	 
-        	       	  // Add Button
-        	       	console.log("Add Method");
-        	       	  
+ 	    	    	 $("#motif-field").val(""); 	    	    	 
         	       	 $("#addButtonInDep").unbind("click").click( function() { 
                     		
-        	       		console.log(" Up Ajax Add Method");
+        	       		
                     		 
                     		 $.ajax({
                     				 url:"http://localhost:8080/depPost",
                     				 type:"post",
                     				 data:{
-                    					 depenseMontant:   $("#depense-montant-field").val(),
+                    					 
+                    					 depenseMontant:  $("#depense-montant-field").val(),
                      	    	    	 motif:  $("#motif-field").val(),
-                     	    	    	
                     					 
                     				      },
                     		 
                     		        success: function(data){
                     		        	
-                    		        	    $("#containerMainInDep").html(data);       		        	
-             	                    	   $("#depenseAddModal").modal("hide");
-             	                    	   idValue=-10;
-             	                    	  $("#div-total-dep").load(location.href+ " #div-total-dep");
-             	                    	  console.log("Add Method output");
-                      	    	    	
+                    		        	    $("#mainContainerInDep").html(data);       		        	
+             	                    	    $("#depenseAddModal").modal("hide");
+             	                    	    idValue=-10;
+             	                    	    $("#div-total-dep").load(location.href+ " #div-total-dep");
+             	                    	    console.log("Add Method output");
+             	                    	    errorFonction(); 
                     		                      },       
                     		                      
                     		          error: function(error){
-                    		        	  
-                    		        	  alert("L'operation d'ajout a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+                    		        	    errorFonction(); 
+                    		        	    alert("L'operation d'ajout a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                     		        	  
                     		                     }
                     		        } );
                     		       
-                    		 
-		                    		 $(".btn-close").click(function(){
-		              		    	   
-		              		    	   idValue=-10;
-		              		    	   $("#depense-montant-field").val("");
-		        	    	    	   $("#motif-field").val("");
+	                    		 
+			                    		   $(".btn-close").click(function(){
+			              		    	   idValue=-10;
+			              		    	   $("#depense-montant-field").val("");
+			        	    	    	   $("#motif-field").val("");
 		              		    	   
               		       })
                     		 
@@ -475,34 +451,29 @@ function actions(type){
           function  setVariableUpdateInDep(idValue)   {
         		  
         	        
-        	        document.querySelector("#addButtonInDep").style.display="none";
-        	        document.querySelector("#updateButtonInDep").style.display="block"; ;
-        	      
+        	          document.querySelector("#addButtonInDep").style.display="none";
+        	          document.querySelector("#updateButtonInDep").style.display="block"; ;
         	          console.log("Update Method");
-        	         $(document).ready(function(){
+        	          $(document).ready(function(){
         	        	 
         	        	//Update Button
          	            
-                   
-                  	   
-                      	    	var list =mainList;
-                      	        
+                      	       var list =mainList;
                       	       list.forEach(function(element){ 
                       	    	   
                       	    	    if(element[0]==idValue){
+                      	    	    	
                       	    	    	console.log( "From dataBase "+element[0]);
                       	    	    	console.log( "From View "+idValue);
-                      	    	    	 
                       	    	    	$("#depense-montant-field").val(element[1]);
                       	    	    	$("#motif-field").val(element[2]);
                       	    	    	
-                      	    	    	
-                      	    	    	
-                      	    	          }
+                      	    	    }
                       	    	
                       	       });
-                      	    	   $("#updateButtonInDep").unbind("onclick").click( function(){   
-                                  	   console.log("Salut tout le monde in Update");
+                      	    	        $("#updateButtonInDep").unbind("onclick").click( function(){   
+                                  	    console.log("Salut tout le monde in Update");
+                                  	   
                           	    	   $.ajax({
                             				 url:"http://localhost:8080/updateDep",
                             				 type:"post",
@@ -515,30 +486,27 @@ function actions(type){
                             		 
                             		        success: function(data){
                             		       	
-                            		        	          $("#containerMainInDep").html(data);      		        	
+                            		        	          $("#mainContainerInDep").html(data);      		        	
                  	                    	              $("#depenseAddModal").modal("hide");  
                  	                    	              $("#div-total-dep").load(location.href+ " #div-total-dep");
-                 	                    	             $("#main-form-dep").load(location.href+ " #main-form-dep");
+                 	                    	              $("#main-form-dep").load(location.href+ " #main-form-dep");
                                        	    	          idValue=-10;
                                        	    	          $("#depense-montant-field").val('');
                                     	    	    	  $("#motif-field").val('');
-                                    	    	    	  
-                            	        	
-                            		        	console.log("Tout s'est bien passe dans upda");
-                            		        	
-                            		                      },        		          
+                            		        			  console.log("Tout s'est bien passe dans upda");
+                            		        			  errorFonction(); 
+                            		                 },        		          
                             		          error: function(error){
-                            		        	  
-                            		        	  alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+                            		        	         errorFonction(); 
+                            		        	 		 alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		                     }
                             		        } )  
                             		        
-                            		       $(".btn-close").click(function(){
-                            		    	   
-                            		    	   idValue=-10;
-                            		    	   $("#depense-montant-field").val('');
-                            	    	    	$("#motif-field").val('');
+                            		       				 $(".btn-close").click(function(){
+                            		    	  			 idValue=-10;
+                            		    	  			 $("#depense-montant-field").val('');
+                            	    	    			 $("#motif-field").val('');
                             	    	    	
                             		    	   
                             		       })
@@ -553,11 +521,6 @@ function actions(type){
         	        });
         	        	
           }
-    
-    
-    
-    
-    
     
     
     </script>

@@ -136,10 +136,9 @@ public class Events {
 						 					  
 						 					     if(montant_restant >=0 && N>0 ) {						 						  
 						 						  
-						 					    	               Debiteur debit =debiteurRepo.getDebiteurByMatricule(enteredMatricule);								 						        	        
-			 						        	                  debiteurRepo.updateDetteCourante( debit.getId_debiteur(), getMontant_restant() ) ;
-			 						        	                  
-						 					    	              eventRepo.save(e);
+						 					    	             Debiteur debit =debiteurRepo.getDebiteurByMatricule(enteredMatricule);								 						        	        
+			 						        	                 debiteurRepo.updateDetteCourante( debit.getId_debiteur(), getMontant_restant() ) ;
+						 					    	             eventRepo.save(e);
 								 						         double reste=eventRepo.getMontantRestantByMatricule(getEntered_matricule()).get(eventRepo.getDetteByMatricule(getEntered_matricule()).size()-1);
 								 						         
 								 						         if(reste==0) {
@@ -149,14 +148,13 @@ public class Events {
 								 						        	        Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(enteredMatricule);
 								 						        	        Member memb = memberRepo.getUserByMatricule(getEnteredMatricule());
 								 						        	        double interetGenere=eventRepo.totalBenefitByMatricule(getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(getEnteredMatricule()): 0;
-								 						        	       Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite() );
-								 						        	       
-								 						        	       
-								 						        	       archivRepo.save(archiv);
+								 						        	        Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite() );
+								 						        	       								 						        	       
+								 						        	        archivRepo.save(archiv);
 								 						        	        
-								 						        	       debiteurRepo.deleteById(debiteur.getId_debiteur()) ;
-								 						        	      errorList.add("- Vous n avez plus de dettes");
-								 						        	        errorList.add("- Merci d'avoir tout rembourse");
+								 						        	        debiteurRepo.deleteById(debiteur.getId_debiteur()) ;
+								 						        	        errorList.add("Vous n avez plus de dettes");
+								 						        	        errorList.add("Merci d'avoir tout rembourse");
 
 								 						    	   			System.out.println( "Vous n avez plus de dettes " );
 								 						    	   		    
@@ -164,7 +162,7 @@ public class Events {
 								 											   
 								 										   }catch(Exception exc) {
 								 											   
-								 											  errorList.add("- Echec de l'archivage du debiteur");
+								 											  errorList.add("Echec de l'archivage du debiteur");
 								 											  System.out.println("Echec de l'archivage du debiteur ");
 								 											  
 								 											   System.out.println("Error "+exc.getMessage());
@@ -173,18 +171,18 @@ public class Events {
 								 						          }						 						       
 				 						       
 						 					     	}else {					  
-						 					     	  errorList.add("- Vous n avez pas de dettes ");
-						 						      System.out.println("- Vous n avez pas de dettes " );						 						  
+						 					     	  errorList.add("Vous n avez pas de dettes ");
+						 						      System.out.println("Vous n avez pas de dettes " );						 						  
 						 					    }		                	   
 		                	   		}else {
 		                	   			
-			                	   		errorList.add("- En vu de respecter l'echeance convenue lors de la prise de la dette  vous devez rembourser "+ trt.rounder( (dettePlusInteret/N)));
+			                	   		errorList.add("En vu de respecter l'echeance convenue lors de la prise de la dette  vous devez rembourser "+ trt.rounder( (dettePlusInteret/N)));
 
 		                	   		}
 		    	
 		                       }else {  
-		                    	 errorList.add("- Vous devez Rembourser une somme  superieur ou egale a "+ trt.rounder( (dettePlusInteret/N)));
-		                    	System.out.println( "Vous devez Rembourser une somme  superieur ou egale a "+ trt.rounder( (dettePlusInteret/N))) ;		                    	
+				                    	 errorList.add("Vous devez Rembourser une somme  superieur ou egale a "+ trt.rounder( (dettePlusInteret/N)));
+				                    	 System.out.println("Vous devez Rembourser une somme  superieur ou egale a "+ trt.rounder( (dettePlusInteret/N))) ;		                    	
 		                	
 		                       }				 
 		                   }
@@ -212,8 +210,8 @@ public class Events {
 		             
 		for(List<Double> obj: detteInfo) {		
 			
-			     taux= obj.get(1);	
-			     echeance= obj.get(2);
+			    taux= obj.get(1);	
+			    echeance= obj.get(2);
 				if( eventRepo.matricIsExist(e.getEntered_matricule())){					
 					
 					dette=eventRepo.getDetteByMatricule(e.getEntered_matricule()).get(eventRepo.getDetteByMatricule(e.getEntered_matricule()).size()-1);
@@ -245,8 +243,8 @@ public class Events {
 				}
 	
 	     	}		
-							System.out.println("======Avec N : ========="+N +"++++++++++++");
-							System.out.println("=======dettePlusInteret: ========"+dettePlusInteret +"++++++++++++");
+							 System.out.println("======Avec N : ========="+N +"++++++++++++");
+							 System.out.println("=======dettePlusInteret: ========"+dettePlusInteret +"++++++++++++");
 							 System.out.println("==============="+echeance +"++++++++++++");
 							 System.out.println("==============="+curent_echeance +"++++++++++++");
 							 System.out.println("==============="+(dettePlusInteret/echeance) +"++++++++++++");
@@ -292,7 +290,6 @@ public class Events {
 										 						        		double interetGenere=eventRepo.totalBenefitByMatricule(e.getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getEnteredMatricule()): 0;
 										 						        	        Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
 										 						        	        archivRepo.save(archiv);					 						        		
-										 						        	      								 						        	        
 										 						        	        debiteurRepo.deleteById(debiteur.getId_debiteur()) ;
 										 						        	        errorList.add("Vous n avez plus de dettes");
 										 						        	        errorList.add("Merci d'avoir tout rembourse");
@@ -308,20 +305,21 @@ public class Events {
 									 						           
 						 					    	             
 							 					     	}else {					  
-							 					     	  errorList.add("Vous n avez pas de dettes");
-							 						      System.out.println("Vous n avez pas de dettes " );						 						  
+							 					     	    errorList.add("Vous n avez pas de dettes");
+							 						        System.out.println("Vous n avez pas de dettes " );						 						  
 							 					       }
 						 					     
 						 					     
 		                	        	} else {
 		                	   		
-		                	   		  errorList.add("En vu de respecter l'echeance convenue lors de la prise de la dette  vous devez rembourser "+ trt.rounder( (dettePlusInteret/echeance)));
+		                	   		         errorList.add("En vu de respecter l'echeance convenue lors de la prise de la dette  vous devez rembourser "+ trt.rounder( (dettePlusInteret/echeance)));
 		                	   		
 		                	   	}
 		    	
-		                       }else {  
-		                    	errorList.add("Vous devez Rembourser une somme  egale a "+ trt.rounder( (dettePlusInteret/echeance)));
-		                    	System.out.println("Vous devez Rembourser une somme  superieur ou egale a "+ trt.rounder( (dettePlusInteret/echeance))) ;		                    	
+		                       }else { 
+		                    	   
+		                    	   errorList.add("Vous devez Rembourser une somme  egale a "+ trt.rounder( (dettePlusInteret/echeance)));
+		                    	   System.out.println("Vous devez Rembourser une somme  superieur ou egale a "+ trt.rounder( (dettePlusInteret/echeance))) ;		                    	
 		                	
 		                       }				 
 		        }

@@ -111,9 +111,9 @@ public void clearDb(List<String> errorList) {
 	List<String> allTables=new ArrayList<String>();
 	
 	
-	allTables.add("debiteur");
+	//allTables.add("debiteur");
 	allTables.add("payement");
-	allTables.add("events");
+	//allTables.add("events");
 	allTables.add("operation");	
 	allTables.add("archive");
 	allTables.add("depense");

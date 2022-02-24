@@ -45,10 +45,10 @@
 										                                </button>
 										                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 										                                        <p class="text-center dropdown-header">dropdown header:</p>
-										                                        <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
+										                                       <!--   <a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
 										                                        <a class="dropdown-item" href="#">&nbsp;Une autre action</a>
 										                                        <div class="dropdown-divider"></div>
-										                                        <a class="dropdown-item" href="#">Quelque chose d'autre ?</a>
+										                                        <a class="dropdown-item" href="#">Quelque chose d'autre ?</a>-->
 										                                 </div>
 									                                </div>
 									                            </div>
@@ -58,12 +58,13 @@
 									                                
 									                                    <div class="col-md-4 text-nowrap">
 									                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-									                                        <label>Show&nbsp;<select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
+									                                        <label>Show<select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
 										                                        <option th:value="5" selected>5</option>
 										                                        <option th:value="10">10</option>
 										                                        <option th:value="15">15</option>
 										                                        <option th:value="20">20</option>
-									                                        </select>&nbsp;</label></div>
+									                                        </select>
+									                                        </label></div>
 									                                    </div>
 									                                    <div class="col-md-4 text-nowrap">
 									                                         <button id="detail-button"   onclick ="autreDetailsProfile()" class="btn btn-primary col " style="height:32px;width: 250px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold">Detail d'un Profile</button>                                        
@@ -120,21 +121,14 @@
 									                            
 									                            <div class="card-body" id="card-bottom-body">
 									                                <div class="row">
-									                                    <div class="col-md-6 align-self-center">
+									                                    <div class="col-md-2 align-self-center">
 									                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 8</p>
 									                                    </div>
 									                                    
-									                                    <div class="col-md-6">
-									                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers" id="pagination">
-									                                            
-									                                            <ul th:each ="page,status:${pages}" class="pagination" id="pagin">
-									                                                 <li th:if="${status.first} and ${status.index != currentPage}" class="page-item"><a    class="page-link"   th:onclick="'javascript:paginationInProfile('+${currentPage-1}+')'"      aria-label="Previous"><span aria-hidden="true">&laquo</span></a></li>
-									                                                
-									                                                <li class="page-item" th:if="${(status.index+1)<=4} or ${status.index==currentPage}" ><a  th:class="${status.index==currentPage?' btn btn-primary':'btn page-link '}"  class="page-link"   th:onclick="'javascript:paginationInProfile('+${status.index}+')'"     th:text="${status.index+1}"></a></li>
-									                                                
-									                                                <li  th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item"><a  class="page-link"  th:onclick="'javascript:paginationInProfile('+${currentPage+1}+')'"       aria-label="Next"><span aria-hidden="true">&raquo</span></a></li> 
-									                                            </ul>
-									                                        </nav>
+									                                    <div class="col-md-10">
+									                                        <nav th:replace="fragments :: safePagination" >
+                                    
+       								  										</nav>
 									                                    </div>
 									                                </div>
 									                            </div>
@@ -169,7 +163,7 @@
 										<button type="button" id="deleteBtn"  onclick="deleteUser()" class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Supprimer"><i class="fa fa-remove"></i></button>
 									</div>
 							</div> 
-                       <!-- Teste pooooooooooooooooooooooooooo -->
+                       
                        
                        
                         <div role="dialog" tabindex="-1" class="modal fade justify-content-center" id="autreDetailDuProfilModal"   style="max-width:800px;max-height:700px;position:absolute;left:20%;top:10%;transform:translate(-50,-50)" >
@@ -269,67 +263,12 @@
 													      </div>
 													      
 												   </div> 
-                                                    
-                                                   
-                                               
+                                              
                                             </div>
                                         </div>
                                     </div>
                                   </div>
-                                          
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        
-				                        <!--
-				                            <div class="d-flex justify-content-center align-items-center" style="text-align: center;height: 150px;">
-				                                <div class="d-flex justify-content-center" style="width: 124px;height: 115px;"><img class="rounded-circle img-fluid" th:src="@{/assets/img/1.png}" style="width: 117px;height: 113px;box-shadow: 2px 2px 6px rgb(51,108,166);" /></div>
-				                            </div>
-				                            <h3 class="name" style="text-align: center;font-size: 26px;color: rgb(16,125,234);"  th:text="${nom}" > </h3>
-				                            <p class="title" style="text-align: center;font-size: 15px;font-weight: 600;font-family:century Gothic"><span>Matricule :</span><span th:text="${matricule}" > 49389</span></p>
-				                            <div class="d-flex justify-content-center" >
-				                                <div class="d-flex justify-content-center align-items-center" style="font-style: italic;opacity: 1;height: 150px;width: 322px;">
-				                                    <div style="width: 300px;height: 140px;font-size: 18px;box-shadow: 1px 1px 5px 2px rgb(162,185,208);border-radius: 15px;background: #e5e6ea;color: rgb(4,5,6);font-family:century Gothic;font-weight:bold">
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col" style="width: 197px;"><span style="color: rgb(5,130,255);">Numero du fiche d'adhesion :</span></div>
-				                                            <div class="col" style="width: 186px;padding: 0px;"><span class="shadowClass" style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${numero_fiche_adhesion}"></span></div>
-				                                        </div>
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col"><span style="color: rgb(11,125,238);">Adresse :</span></div>
-				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${adresse }" ></span></div>
-				                                        </div>
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col"><span style="color: rgb(5,125,244);">Genre :</span></div>
-				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244); " th:text="${genre}"></span></div>
-				                                        </div>
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col"><span style="color: rgb(5,125,244);">Type de piece :</span></div>
-				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244); " th:text="${typePiece}"></span></div>
-				                                        </div>
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col"><span  style="color: rgb(8,126,244); " >Numero de la piece d'identite :</span></div>
-				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px rgb(8,126,244);" th:text="${numeroPiece}" ></span></div>
-				                                        </div>
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col"><span style="color: rgb(11,125,238);">Montant du salaire :</span></div>
-				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${salaire}" ></span></div>
-				                                        </div>
-				                                        <div class="row" style="width: 300px;margin: 0px;">
-				                                            <div class="col"><span style="color: rgb(11,125,238);">Pourcentage de retenu :</span></div>
-				                                            <div class="col" style="padding: 0px;"><span style="text-shadow: 1px 1px 3px  rgb(8,126,244);" th:text="${retenu}" ></span></div>
-				                                        </div>
-				                                    </div>
-				                                </div>
-				                            </div>
-				                            -->
-				                        </div>
+                                       </div>
 				                    </div>
 				                </div>
 				            </div>	            
@@ -342,13 +281,8 @@
 				      </div>
 				   </div>
                        
-                       
-                       
-                       
-                       
-                       
-                       
-                       <!-- Teste pooooooooooooooooooooooooooo -->
+                      
+                       <!-- Teste -->
              
                  
                         <div   class="modal fade"  id="addModalProfile" role="dialog" tabindex="-1">
@@ -481,30 +415,28 @@
     function autreDetailsProfile()   {
         
 	      console.log( "Autre details du profile");
-  	 $(document).ready(function(){
+  	      $(document).ready(function(){
            
   		 $.ajax({
 				 url:"http://localhost:8080/autreDetailsProfile",
 				 type:"post",
 				 data:{
 					 idUser:idValue,
-					 
+					 size:$("#pageSize").val(),
 				      },
 		 
 		        success: function(data){
 		       	
 		        	
-		        		 console.log("data returned",data);
+		        		 
 		        	     $("#detailsModalContent").html(data);  
 		        	     $ ("#autreDetailDuProfilModal").modal("show");
-		        	              	     
-		            
-		        	console.log("Tout s'est bien passe");
+		        	     console.log("Tout s'est bien passe");
 		        	
 		                      },        		          
 		          error: function(error){
 		        	  
-		        	  alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
+		        	      alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
 		        	  
 		                     }
 		        } );
@@ -521,7 +453,7 @@ function updateAutreDetailsProfile()   {
 
 
 	   
-	   $.ajax({
+	 $.ajax({
 	 url:"http://localhost:8080/updateOtherUserDetails",
 	 type:"post",
 	 data:{
@@ -533,18 +465,21 @@ function updateAutreDetailsProfile()   {
 	      salaire: $("#salaire").val(),
 	      retenu:  $("#retenu").val(), 	    	      
 	      adresse: $("#adresse").val(),
-	      
+	      size:$("#pageSize").val(),
 	      },
 
     success: function(data){
    	
     	         
-     	     	$("#autreDetailDuProfilModal").modal("hide");   	         
+     	     	$("#autreDetailDuProfilModal").modal("hide"); 
+     	     	
+     	     	errorFonction(); 
    	
         },        		          
      error: function(error){
-    	  
-    	  alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
+    	 
+    	        errorFonction(); 
+    	  		alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
     	  
        }
         
@@ -555,7 +490,7 @@ function updateAutreDetailsProfile()   {
  
 }
     
-    function paginationInProfile(page)   {
+    function pagination1(page)   {
     
    	 $(document).ready(function(){
    	       
@@ -568,23 +503,24 @@ function updateAutreDetailsProfile()   {
        					 page:page,
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
+       					 size:$("#pageSize").val(),
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	           $("#mainContainerProfile").html(data);               	      	                    	     
-	                    	     
-       		        	            console.log("Tout s'est bien passe");
+       		        	           $("#mainContainerProfile").html(data);
+       		        	           errorFonction(); 
+       		        	           console.log("Tout s'est bien passe");
        		        	
        		                      },        		          
        		          error: function(error){
-       		        	  
-       		        	  alert("La Pagination n'a pas reussie")
+       		        	           errorFonction(); 
+       		        	  		  alert("La Pagination n'a pas reussie")
        		        	  
        		                     }
        		        } );
        		 
-       	            });  
+      });  
    	
 	 
 }   
@@ -599,9 +535,6 @@ function updateAutreDetailsProfile()   {
     	     console.log("Call",$("#pageSize").val(),);
     	     
        		 $("#pageSize").on('change',function(){
-       			 
-       			 
-       			 
        			$.ajax({
       				 url:"http://localhost:8080/searchUser",
       				 type:"post",
@@ -609,21 +542,20 @@ function updateAutreDetailsProfile()   {
       					 
       					 pageOpera:0,
       					 keyWord:$("#keyWord").val(),
-      					 pagination:false,
+      					 pagination:$("#keyWord").val()==""? true:false,
       					 size:$("#pageSize").val(),
       				      },
       		 
       		        success: function(data){
       		       	
-      		        	
-		        	              $("#mainContainerProfile").html(data);   		        	
+		        	              $("#mainContainerProfile").html(data); 
+		        	              errorFonction(); 
                                   console.log("Tout s'est bien passe");
       		        	
       		                      },        		          
       		          error: function(error){
-			       		        	
-      		        	  
-      		        	  alert("Error du cote serveur")
+      		        	          errorFonction(); 
+      		        	          alert("Error du cote serveur")
       		        	  
       		                     }
       		        } );
@@ -638,9 +570,6 @@ function updateAutreDetailsProfile()   {
     } 
     
     
-    
-    
-    
     function searcher()   {
     	
     	 $(document).ready(function(){
@@ -653,28 +582,25 @@ function updateAutreDetailsProfile()   {
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
+        					 size:$("#pageSize").val(),
         					 
         				      },
         		 
-        		        success: function(data){
-        		       	
+        		         success: function(data){
         		        	
+        		       	         $("#mainContainerProfile").html(data); 
+        		       	         errorFonction(); 
+        		        	     console.log("Tout s'est bien passe");
         		        	
-        		        	      $("#mainContainerProfile").html(data);      		        	
- 	                    	       
- 	                    	    
-        		            
-        		        	console.log("Tout s'est bien passe");
-        		        	
-        		                      },        		          
-        		          error: function(error){
+        		                },        		          
+        		         error: function(error){
+        		        	 errorFonction(); 
+        		        	      alert("L'operation de  recherche a echouee"+error);
         		        	  
-        		        	  alert("L'operation de  recherche a echouee"+error);
-        		        	  
-        		                     }
+        		               }
         		        } );
         		 
-        	            });  
+        	 });  
     	
 	 
  }    
@@ -685,30 +611,28 @@ function updateAutreDetailsProfile()   {
         $(document).ready(function(){
        
             // Delete Button
-            
-       	  
-       		 
+             
        		 $.ajax({
        				 url:"http://localhost:8080/deleteUser",
        				 type:"post",
        				 data:{
        					 idUser:idValue,
+       					 size:$("#pageSize").val(),
        					 
        				      },
        		 
        		        success: function(data){
        		       	
-       		        	console.log("===="+data);
+       		        	         
        		                     $("#mainContainerProfile").html(data);        		        	
-	                    	         idValue=-10;
-	                    	    
-       		            
-       		        	console.log("Tout s'est bien passe");
+	                    	     idValue=-10;
+	                    	     errorFonction(); 
+	                    	     console.log("Tout s'est bien passe");
        		        	
        		                      },        		          
        		          error: function(error){
-       		        	  
-       		        	  alert("Echec d'effacement cote serveur /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+       		        	         errorFonction(); 
+       		        	         alert("Echec d'effacement cote serveur /n Assurez-vous que vous avez le droit d'effectuer cette operation");
        		        	  
        		                     }
        		        } );
@@ -720,13 +644,8 @@ function updateAutreDetailsProfile()   {
         
           function  setNewUser()   {
         	       
-        	       	
-        	       	
         	       	$(document).ready(function(){ 
         	       		
-        	        
-        	       	
-                    		 
                     		 $.ajax({
                     				 url:"http://localhost:8080/register",
                     				 type:"get",                    				 
@@ -734,10 +653,11 @@ function updateAutreDetailsProfile()   {
                     		        success: function(data){
                     		        	
                       	    	    	console.log("Add user Method Success");
+                      	    	    	errorFonction(); 
                     		                      },       
                     		                      
                     		          error: function(error){
-                    		        	  
+                    		        	  errorFonction(); 
                     		        	  alert("L'operation d'ajout a echouee");
                     		        	  
                     		                     }
@@ -748,8 +668,6 @@ function updateAutreDetailsProfile()   {
 		              		    	   
               		       })
                     		 
-                    
-        	       	
         	       	
      }
          
@@ -760,15 +678,16 @@ function updateAutreDetailsProfile()   {
         	         $(document).ready(function(){
         	        	 
         	        	//Update Button
+        	        	
          	         	    	var list =mainList;
                       	    	var currentPassword;
                       	        
                       	       list.forEach(function(element){ 
                       	    	   
                       	    	    if(element[0]==idValue){
+                      	    	    	
                       	    	    	console.log( "From dataBase "+element[0]);
                       	    	    	console.log( "From View "+idValue);
-                      	    	    	 
                       	    	    	$("#nom-field").val(element[2]);
                       	    	    	$("#matricule").val(element[3]);
                       	    	    	$("#matricule").prop('disabled',true);                      	    	    	
@@ -779,7 +698,7 @@ function updateAutreDetailsProfile()   {
                       	    	    	$("#role-field").val(element[1]).change();
                       	    	    	element[1]==1 || element[1]==2 ? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
                       	    	    	
-                      	    	          }
+                      	    	    }
                       	    	
                       	       });
                       	    	   $("#updateButton").click( function(){   
@@ -797,14 +716,14 @@ function updateAutreDetailsProfile()   {
                            	    	    	      password:  $("#password-field").val(),
                            	    	    	      currentPassword:currentPassword,
                            	    	    	      role:     $("#role-field").val(),
+                           	    	    	      size:$("#pageSize").val(),
                             				      },
                             		 
                             		        success: function(data){
                             		       	
-                            		        	         $("#mainContainerProfile").html(data);      		        	
+                            		        	          $("#mainContainerProfile").html(data);      		        	
                  	                    	              $("#addModalProfile").modal("hide");  
-                 	                    	              
-                 	                    	             $("#main-form").load(location.href+ " #main-form");
+                 	                    	              $("#main-form").load(location.href+ " #main-form");
                                        	    	          idValue=-10;
                                        	    	          $("#nom-field").val('');
                                     	    	    	  $("#matricule").val('');
@@ -812,26 +731,25 @@ function updateAutreDetailsProfile()   {
                                     	    	    	  $("#mobile-field").val('');
                                     	    	    	  $("#password-field").val('');
                                     	    	    	  $("#role-field").val(''); 
-                            	        	
-                            		        	console.log("Tout s'est bien passe dans upda");
+                                    	    	    	  errorFonction(); 
+                            		        	          console.log("Tout s'est bien passe dans upda");
                             		        	
                             		                      },        		          
                             		          error: function(error){
-                            		        	  
-                            		        	  alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+                            		        	           errorFonction(); 
+                            		        	          alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		                     }
                             		        } )  
                             		        
-                            		       $(".btn-close").click(function(){
-                            		    	   
-                            		    	   idValue=-10;
-                            		    	   $("#nom-field").val('');
-                            	    	    	$("#matricule").val('');
-                            	    	    	$("#email-field").val('');
-                            	    	    	$("#mobile-field").val('');
-                            	    	    	$("#password-field").val('');
-                            	    	    	$("#role-field").val('');
+                            		                    $(".btn-close").click(function(){
+		                            		    	    idValue=-10;
+		                            		    	    $("#nom-field").val('');
+		                            	    	    	$("#matricule").val('');
+		                            	    	    	$("#email-field").val('');
+		                            	    	    	$("#mobile-field").val('');
+		                            	    	    	$("#password-field").val('');
+		                            	    	    	$("#role-field").val('');
                             		    	   
                             		       })
                             		       
