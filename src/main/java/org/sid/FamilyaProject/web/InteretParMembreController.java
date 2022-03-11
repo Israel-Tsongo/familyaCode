@@ -125,29 +125,29 @@ public class InteretParMembreController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/withDraw")
-	public ModelAndView withDrawInteret(@RequestParam() Long  idWithD , @RequestParam() String matricule,  @RequestParam() double montantRetrait,			
-            @RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="page",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size, @RequestParam(name="keyWord", defaultValue = "") String mc   )  {	
+	public ModelAndView withDrawInteret(@RequestParam() Long  idWithD , @RequestParam() String matricule,@RequestParam() String nom,  @RequestParam() double montantRetrait,			
+            @RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="page",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size, @RequestParam(name="keyWord", defaultValue = "") String mc   ) throws JRException, Exception  {	
 		     List<String> errorList=new ArrayList<String>();
 		     
-		     Traitement trt=new Traitement();
+		      Traitement trt=new Traitement();	     
+		 	  
 		      ModelAndView mv=null ;
 		      
 		           if(idWithD>0) {
 		        	    
 					         if( montantRetrait <= interetRepo.getInteretDuMembreParMatricule(matricule)) {
-					        	 
+					        	    
 							        	 double reste=(interetRepo.getInteretDuMembreParMatricule(matricule)-montantRetrait);
-										  operaRepo.save(new Operation("Un membre de matricule "+matricule+" a effectue un retrait d''une somme de "+montantRetrait+" $", new Date()));	
-										  
-							        	   interetRepo.updateInteret(idWithD, trt.rounder(reste), new Date());				        	   
-							        	  
-							        	   InteretParMembre itm=interetRepo.getUserByMatricule(matricule);
-							        	   if(interetRepo.getInteretDuMembreParMatricule(matricule)!=null){
+										 operaRepo.save(new Operation("Un membre de matricule "+matricule+" a effectue un retrait d''une somme de "+montantRetrait+" $", new Date()));	
+							        	 interetRepo.updateInteret(idWithD, trt.rounder(reste), new Date());			        	   
+							        	 InteretParMembre itm=interetRepo.getUserByMatricule(matricule);
+							        	 
+							        	 if(interetRepo.getInteretDuMembreParMatricule(matricule)!=null){
 							        		   
 								        		   if(interetRepo.getInteretDuMembreParMatricule(matricule)==0){ 
 								        			   
 									        			   interetRepo.deleteById(itm.getId_interet());
-									        			   errorList.add("Vous venez de tout retirer , desormais votre interet est de 0 $");
+									        			   errorList.add("Vous venez de tout retirer,desormais votre interet est de 0 $");
 								        		   
 								        		       }        		   
 							        		   
@@ -155,15 +155,15 @@ public class InteretParMembreController {
 					        		   
 					            }else {
 					        	  
-							        	     errorList.add("Vous ne pouvez pas retirer un montant superieur a l'interet disponible");
-								        	 System.out.println("Vous ne pouvez pas retirer un montant superieur a votre interet disponible");
-					        	 
+							        	     errorList.add("Vous ne pouvez pas retirer un montant superieur a l'interet disponible");								        	 
+							        	     System.out.println("Vous ne pouvez pas retirer un montant superieur a votre interet disponible");							        	     
+					        	             
 					             }
 					     
 				
 			            }else  {
 				  
-       	                    errorList.add("Veiller selectionner le membre qui veut effectuer un retrait ");
+       	                    errorList.add("Veiller selectionner le membre qui veut effectuer un retrait");
 	        	 				  
 			              }
 		          
@@ -191,7 +191,7 @@ public class InteretParMembreController {
 	
 	
 	@GetMapping("/interet/interetGeneratePDF/{type}/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc,@PathVariable(name="type") String type) throws Exception, JRException  {
+	public ResponseEntity<byte[]> generatePDF(@PathVariable(name="keyWord") String mc,@PathVariable(name="type") String type) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
@@ -213,10 +213,33 @@ public class InteretParMembreController {
 			   jasperFilePath="src/main/resources/interet.jrxml";
 			   map.put("nameFor", "Israel");			 	 
 			   return  trt.generatePDF(searchInteretList, jasperFilePath, map, fileName);
+			   
+		 	   
+		 	  
+		 	    
 	}
 	
 	
-	
+	@GetMapping("/proof/{nom}/{matricule}/{montantRetrait}")
+	public ResponseEntity<byte[]> generatePDF(@PathVariable(name="nom") String nom,@PathVariable(name="matricule") String matricule,@PathVariable(name="montantRetrait") double montantRetrait) throws JRException, Exception{
+		  
+		
+		  
+		 Traitement trt=new Traitement();
+		  HashMap<String,Object> map = new HashMap<>();
+	 	  String jasperFilePath="";
+	 	  String fileName="";
+		  
+	 	     fileName="retrait";
+		 	 jasperFilePath="src/main/resources/proof.jrxml";
+		 	 map.put("typeOperation", "RETRAIT");
+		 	 map.put("info", "le retrait");
+		 	 map.put("nom",nom);
+		 	 map.put("matricule",matricule);
+		 	 map.put("montant",montantRetrait);
+	 	    
+		 return	trt.generateProof(jasperFilePath, map, fileName);
+	}
 	
 
 }

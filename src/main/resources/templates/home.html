@@ -202,11 +202,10 @@
 			                                	</button>
 			                                    <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 			                                        <p class="text-center dropdown-header">dropdown header:</p>
-			                                        	<a class="dropdown-item btn" id="exportInPdf" onclick="actions(exportInPdf)" >Exporter sous PDF</a>
-			                                        	<a class="dropdown-item" href="#">Another action</a>
-			                                        <div class="dropdown-divider">
-			                                        </div>
-			                                        	<a class="dropdown-item" href="#">Something else here</a>
+			                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px;" id="exportInPdf"   onclick="actions(exportInPdf)">Exporter sous PDF </a>
+			                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px" id="rembourseBtn"  onclick="rembourseList()">Remboursements </a>
+			                                           <!--  <div class="dropdown-divider"> </div>			                                        
+			                                        	<a class="dropdown-item" href="#">Something else here</a>-->
 			                                    </div>
 			                                </div>
 			                            </div>
@@ -261,7 +260,41 @@
 			                                            
 			                                        </tbody>
 			                                    </table>
-			                                </div>			                                  
+			                                </div>
+			                                <div class="table-responsive" id="tableMember">
+	                                       <table class="table">
+	                                        <thead>
+	                                            <tr id="tab-header">
+	                                                <th></th>
+	                                                <th>Nom</th>
+	                                                <th>Matricule</th>
+	                                                <th>Dette</th>
+	                                                <th>Remboursement</th>
+	                                                <th style="max-width:200px">MontantRestant </th>
+	                                                <th>Echeance</th>
+	                                                <th>Interet</th>
+	                                                <th>Date payement</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                            <tr th:each="element:${lstR}">
+	                                                
+	                                                <td class="text-center" style="width: 36.8px;padding: 12px;font-size: 16px;border-width: 2px;">                                                  
+	                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInRembourse([[${element.get(0)}]],[[${lst}]]);" class="idMember" type="radio" name="chk" style="margin-top: 0px;">                                                                                                  
+	                                             </td>
+	                                                <td  th:text="${element.get(1)}" > </td>
+	                                                <td  th:text="${element.get(2)}" ></td>
+	                                                <td  th:text="${element.get(3)+'$'}" ></td>
+	                                                <td  th:text="${element.get(4)+' $'}"></td>
+	                                                <td  style="width:70px" th:text="${element.get(5)+' $'}"></td>
+	                                                <td  th:text="${element.get(6)}"></td>
+	                                                <td  th:text="${element.get(7)+' $'}"></td>
+	                                                <td  th:text="${element.get(8)}"></td>
+	                                            </tr>
+	                                           
+	                                        </tbody>
+	                                    </table>
+                                     </div>			                                  
 			                                
 			                                <div class="jumbotron jumbot"></div>
 			                            </div>
@@ -274,14 +307,17 @@
 			                            </div>
 			                            <div class="card-body" id="card-bottom-body">
 			                                <div class="row">
-			                                    <div class="col-md-2 align-self-center">
+			                                    <div class="col-md-3 align-self-center">
 			                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 7</p>
 			                                    </div>
 			                                    
-			                                    <div class="col-md-10">
+			                                    <div class="col-md-9">
 			                                         <nav th:replace="fragments :: safePagination" >
                                     
        												</nav>
+       												<nav th:replace="fragments :: safePagination2" >
+                                    
+       								               </nav>
 			                                    </div>
 			                                </div>
 			                            </div>
@@ -313,11 +349,125 @@
 		    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 		    <script src="assets/js/script.min.js"></script>
             
-            <script  th:inline="javascript" > 
-            
-			            var mainList;
-			            var toggle=false;
-			            var idValue=-10;
+ <script  th:inline="javascript" > 
+ 
+ 
+      	 var state="Contributions"
+         var mainList;
+         var toggle=true;
+         var idValue=-10;		            
+	     document.querySelector("#tableMember").style.display="none";
+	     document.querySelector("#table-member").style.display="block";
+	     document.querySelector(".pagin2").style.display="none";
+	     document.querySelector(".pagin1").style.display="block";
+ 
+ 
+
+			            
+function rembourseList()   {			            	
+			    	        
+                        	
+           	if(toggle){
+           		
+           		state="Remboursements";
+           		chiftTable("remboursementsByMatricule");
+        		$("#table-member").show();
+        		$("#tableMember").hide();
+        		$("#rembourseBtn").text("Remboursements");
+        		$("#montantARembourcer").show()        		
+        		$("#div-total").show();        		
+        		$("#div-total").load(location.href+ " #div-total");
+        		
+        		
+        		
+   	            //$("#empruntTitle").text("Tous les Emprunts");
+
+           	}
+            if(!toggle){
+         	   
+            	
+            	state="Contributions";
+         	    chiftTable("siteUserSearcher");
+ 	            $("#montantARembourcer").hide()
+ 	       		$("#table-member").hide();
+ 	       		$("#tableMember").show();
+ 	       		$("#div-total").hide();
+ 	       		$("#rembourseBtn").text("Contributions")	       		
+ 	       		
+ 	       		
+ 	       		//$("#empruntTitle").text("Tous les Emprunts Archives")
+       	
+        	}
+			                                   
+			    toggle=!toggle;
+			                         	 
+ }			            
+			            
+			            
+			            
+
+function chiftTable(url){
+	
+	console.log("++++tst+++++",state)
+	 $(document).ready(function(){
+ 	       
+         // Pagination
+ 	 
+    		 $.ajax({
+    				 url:"http://localhost:8080/"+url,
+    				 type:"post",
+    				 data:{
+    					 page:0,
+    					 keyWord:$("#keyWord").val(),
+    					 //pagination:url=="debSearcher"? false:true,
+    					 size:$("#pageSize").val(),
+    				      },
+    		 
+    		        success: function(data){
+    		       	
+  		        	           $("#userSiteContainer").html(data); 
+  		        	           
+  		        	           if(url=="remboursementsByMatricule"){  		        	        	   
+  		        	        	 $("#tableMember").show();
+  		        	        	 $("#table-member").hide();  		        	        	 
+  		        	        	 $("#montantARembourcer").hide();     		        	        	
+ 		        	        	 $("#rembourseBtn").text("Contributions");      		        	        	   
+  		        	        	 state="Remboursements";
+  		        	        	 $(".pagin1").hide();
+  		        	        	 $(".pagin2").show();
+  		        	        	 $("#div-total").hide();
+  		        	        	 
+  		        	           }else{
+  		        	        	   
+  		        	        	 $("#table-member").show();
+  		        	        	 $("#tableMember").hide();  		        	        	 
+  		        	        	 $("#montantARembourcer").show();
+  		        	        	 $("#archiveBtn").text("Remboursements");
+  		        	        	 state="Contributions";
+  		        	        	 $(".pagin1").show();
+  		        	        	 $(".pagin2").hide();
+  		        	        	 $("#div-total").show();
+  		        	           }
+  		        	           
+  		        	           //url=="archive"?$("#empruntTitle").text("Tous les Emprunts Archives"):$("#empruntTitle").text("Tous les Emprunts");
+      		        	       console.log("Tout s'est bien passe");
+                	           
+    		        	
+    		                      },        		          
+    		          error: function(error){
+    		        	  
+    		        	        alert("le serveur  ne repond pas ")
+    		        	  
+    		                     }
+    		        } );
+    		 
+     });
+}               		            
+			            
+			            
+			            
+			            
+			            
 			            
 			            
 			            
@@ -370,13 +520,13 @@
              
              
 	function pagination1(page)   {
-			       	    
+			       	   
 			          	 $(document).ready(function(){
 			          	       
 			                   // Pagination
-			           	 
+			           	       console.log("=========",state)
 			              		 $.ajax({
-			              				 url:"http://localhost:8080/siteUserSearcher",
+			              			     url: (state=="Remboursements")?"http://localhost:8080/remboursementsByMatricule":"http://localhost:8080/siteUserSearcher",
 			              				 type:"post",
 			              				 data:{
 			              					 page:page,
@@ -388,9 +538,30 @@
 			              		        success: function(data){
 			              		       	
 		              		        	           $("#userSiteContainer").html(data); 
-		       	                    	           $("#div-total-contrib").load(location.href+ " #div-total-contrib");	
+		       	                    	           $("#div-total-contrib").load(location.href+ " #div-total-contrib");		       	                    	          
 		       	                    	           $("#siteUseModal").modal("show");
-		       	                    	           console.log("Tout s'est bien passe");
+		       	                    	           
+			       	                    	        if(state=="Contributions"){
+			           			        	    	 
+				           			        	    	 $("#div-total").show();				           			        	    	
+				           			        	    	 $("#rembourseBtn").text("Remboursements");
+				               			        	     document.querySelector("#tableMember").style.display="none";
+				           	                    		 document.querySelector("#table-member").style.display="block";
+				           	                    		 $(".pagin2").hide();
+				           	                    		 $(".pagin1").show();
+			           	                    		 
+			           			        	        }else{
+			           			        	    	 
+				           			        	    	 $("#div-total").hide();				           			        	    	 
+				           			        	    	 $("#rembourseBtn").text("Contributions"); 
+				               			        	     document.querySelector("#tableMember").style.display="block";
+				           	                    		 document.querySelector("#table-member").style.display="none";
+				           	                    		 document.querySelector(".pagin2").style.display="block";
+				           	                    		 document.querySelector(".pagin1").style.display="none";
+			           			        	    	 
+			           			        	        }
+			       	                    		    
+			       	                    		    
 			              		        	
 			              		                      },        		          
 			              		         error: function(error){
@@ -403,53 +574,117 @@
 			                  });  
 			          	
 			       	 
-			       }   
+			       }
+	
+	
+	
+	function pagination2(page)   {
+   	    
+     	 $(document).ready(function(){
+     	       
+              // Pagination
+      	 
+         		 $.ajax({
+         				 url:"http://localhost:8080/remboursementsByMatricule",
+         				 type:"post",
+         				 data:{
+         					 page:page,
+         					 keyWord:$("#keyWord").val()!="undefined" || $("#keyWord").val()!=null || $("#keyWord").val()!="" ? $("#keyWord").val(): "" ,
+         					 pagination:$("#keyWord").val()==""? true:false,
+         					 size:$("#pageSize").val(),
+         				      },
+         		 
+         		        success: function(data){
+         		       	
+     		        	               $("#userSiteContainer").html(data); 
+	                    	           $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+	                    	           $("#div-total").hide(); 
+	                    	           $("#rembourseBtn").text("Remboursements"); 
+  	                    	           $("#tableMember").show();
+  	                    		       $("#table-member").hide();
+  	                    		       $(".pagin2").show();
+  	                    		       $(".pagin1").hide();
+         		        	            
+         		                      },        		          
+         		         error: function(error){
+         		        	  
+         		        	           alert("Une error s'est produit lors de l'affichage de la liste des contribution")
+         		        	  
+         		              }
+         		        } );
+         		 
+             });  
+     	
+  	 
+  }
 			       	
 			       	
 			     // Page Size 
 			        
-			        function setPageSize()	{
-			        	$(document).ready(function(){
-			        	       
-			                // Pagination
-			        	     console.log("Call",$("#pageSize").val(),);
-			        	     
-			           		 $("#pageSize").on('change',function(){
+	 function setPageSize()	{
+        	$(document).ready(function(){
+        	       
+                // Pagination
+        	     console.log("Call",$("#pageSize").val(),);
+                
+        	     var url=(state=="Remboursements")?"http://localhost:8080/remboursementsByMatricule":"http://localhost:8080/siteUserSearcher";
+        	     
+           		 $("#pageSize").on('change',function(){
+           			console.log("the state is",state,);
+           			 
+           			$.ajax({
+          				 url: url,
+          				 type:"post",
+          				 data:{          					 
+          					 
+          					 keyWord:$("#keyWord").val(),
+          					 pagination:$("#keyWord").val()==""? true:false,
+          					 size:$("#pageSize").val(),
+          					 
+          				      },
+          		 
+          		        success: function(data){
+          		        	
+          		       	         $("#userSiteContainer").html(data);     		        	
+    			        	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+    			        	     
+    			        	     if(state=="Contributions"){
+    			        	    	 
+    			        	    	 $("#div-total").show();    			        	    	 
+    			        	    	 $("#rembourseBtn").text("Contributions");
+        			        	     $("#tableMember").hide();
+    	                    		 $("#table-member").show();
+    	                    		 $(".pagin2").hide();
+    	                    		 $(".pagin1").show();
+    	                    		 
+    			        	     }else{
+    			        	    	 
+    			        	    	 $("#div-total").hide();    			        	    	 
+    			        	    	 $("#rembourseBtn").text("Remboursements"); 
+        			        	     $("#tableMember").show();
+    	                    		 $("#table-member").hide();
+    	                    		 $(".pagin2").show();
+    	                    		 $(".pagin1").hide();
+    			        	    	 
+    			        	     }    			        	     
+	                    		    
+          		           },
+          		           
+          		          error: function(error){
+    			       		     alert("error in select")
+          		        	  
+          		           }
+          		           
+          		} );
 			           			 
 			           			 
-			           			$.ajax({
-			          				 url:"http://localhost:8080/siteUserSearcher",
-			          				 type:"post",
-			          				 data:{
-			          					 
-			          					 
-			          					 keyWord:$("#keyWord").val(),
-			          					 pagination:$("#keyWord").val()==""? true:false,
-			          					 size:$("#pageSize").val(),
-			          					 
-			          				      },
-			          		 
-			          		        success: function(data){
-			          		        	
-			          		       	         $("#userSiteContainer").html(data);     		        	
-			    			        	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
-			    		               	  
-			          		           },        		          
-			          		          error: function(error){
-			    			       		     alert("error in select")
-			          		        	  
-			          		           }
-			          		           
-			          		        } );
-			           			 
-			           			 
-			           		 })
+		})
 			           		 
-			     });
+	 });
 			        	
-			        }  	
+}  	
              
              
-            </script>
+ </script>
 </body>
 </html>

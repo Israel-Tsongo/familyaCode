@@ -6,6 +6,7 @@ import java.util.List;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
+import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.web.RemboursementController;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 public interface EventsRepository extends JpaRepository<Events, Long>{
 	
 	@Query(value= "SELECT * FROM `events` WHERE entered_matricule=:matricule", nativeQuery=true )
+	public Page<Events> getEventsByMatricule(@Param("matricule") String matricule, org.springframework.data.domain.Pageable pageable);
+	
+	
+	@Query(value= "SELECT * FROM `events` WHERE entered_matricule=:matricule", nativeQuery=true )
 	public List<Events> getEventByMatricule(@Param("matricule") String matricule);
+	
+	
 	
 	   @Query(value="SELECT events.id_event, nom, matricule, dette,echeance_courant,remboursement_courant,montant_restant, interet_partiel,date_event FROM events INNER JOIN member ON member.id_member IN  (events.foreign_key_for_members)", nativeQuery=true)
 	   Page <List<List<Object>>> historyRemboursementDette(org.springframework.data.domain.Pageable pageable);
@@ -62,6 +69,11 @@ public interface EventsRepository extends JpaRepository<Events, Long>{
 	   
 	   @Query(value="SELECT  SUM(`remboursement_courant`)  FROM events", nativeQuery=true)
 		Double getTotalRemboursement();
+	   
+	   
+	   @Query(value= "SELECT * FROM events WHERE entered_matricule=:matricule AND  date_event LIKE %:mc%", nativeQuery=true )
+	   public Page<Events> findByDateRemboursementsContains(@Param("matricule")String matricule , String mc, org.springframework.data.domain.Pageable pageable );
+		
 	   
 	   public Page <Events> findByEnteredMatriculeContains(String mc, org.springframework.data.domain.Pageable pageable);
 

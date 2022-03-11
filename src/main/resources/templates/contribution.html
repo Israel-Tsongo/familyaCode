@@ -130,7 +130,7 @@
                                                 <td  th:text="${element.get(2)}" ></td>
                                                 <td  th:text="${element.get(3)+' $'}" ></td>
                                                 <td  th:text="${element.get(4)+' $'}" ></td>
-                                               <td   th:text="${element.get(5) + ' $'}" ></td>                                              
+                                                <td  th:text="${element.get(5) + ' $'}" ></td>                                              
                                               
                                             </tr>
                                             
@@ -149,11 +149,11 @@
                             </div>
                             <div class="card-body" id="card-bottom-body">
                                 <div class="row">
-                                    <div class="col-md-2 align-self-center">
+                                    <div class="col-md-3 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 7</p>
                                     </div>
                                    
-                                    <div class="col-md-10">
+                                    <div class="col-md-9">
                                     
                                     <nav th:replace="fragments :: safePagination" >
                                     
@@ -470,8 +470,8 @@
        		        	
        		                      },        		          
        		          error: function(error){
-       		        			   errorFonction()
-       		        	          alert("La Pagination n'a pas reussie")
+       		        	            errorFonction();
+       		        	            
        		        	  
        		                     }
        		        } );
@@ -685,7 +685,7 @@
                     				 url:"http://localhost:8080/contribPost",
                     				 type:"post",
                     				 data:{
-                    					 matricule:    $("#contrib-matricule-field").val(),
+                    					 matricule:  $("#contrib-matricule-field").val(),
                      	    	    	 contribution:  $("#contrib-field").val(),
                      	    	    	 page:((pa.length-1) <= 0) ? 0:(pa.length-1),
                      	    	    	 size:$("#pageSize").val(),
@@ -704,6 +704,19 @@
              	                    	    $(".pagin1").show();
           	                    		    $(".pagin2").hide();
           	                    		    errorFonction()
+          	                    		    
+          	                    		    var w;
+                 		        			errorList.length==0?w=window.open("http://localhost:8080/proofContrib/"+$("#contrib-matricule-field").val()+"/"+$("#contrib-field").val(), "_blank"): errorList.forEach((item,index)=>{ 
+                 		        				  																											
+																							                    		        				  if((item !=="Le matricule entre ne correspond a aucun membre") && (item !=="Veiller recharger la page et reessayer avec le bon matricule")){																							                    		        					  
+																							                    		        					  
+																							                    		        					 var w =window.open("http://localhost:8080/proofContrib/"+$("#contrib-matricule-field").val()+"/"+ $("#contrib-field").val(), "_blank")
+																							                    		        				  }
+																							                    		        				  
+									       })
+          	                    		    
+          	                    		    
+          	                    		    
                     		          },       
                     		                      
                     		          error: function(error){
@@ -782,7 +795,8 @@
                             		        	  
                             		           },        		          
                             		          error: function(error){
-                            		        	  errorFonction()
+                            		        	          
+                            		        	          errorFonction()
                             		        	          alert("L'operation Modification a echouee");
                             		        	  
                             		           }
@@ -805,17 +819,10 @@
         	        	
           }
     
-    
-    
-    
-    
-    
-    
+   
     </script>
     
-    
-    
-    
+   
 </body>
 
 </html>

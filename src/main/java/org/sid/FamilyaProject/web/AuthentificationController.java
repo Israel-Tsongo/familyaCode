@@ -6,9 +6,11 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.sid.FamilyaProject.dao.DebiteurRepository;
+import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
@@ -55,9 +57,10 @@ public class AuthentificationController {
 		@Autowired
 		private PayementRepository payeRepo;
 		
+		@Autowired
+		private EventsRepository eventRepo;
 		
-	    
-	
+		
 	  // private static final Logger log = LoggerFactory.getLogger(AuthentificationController.class)
 	
 	
@@ -213,10 +216,11 @@ public class AuthentificationController {
 				    	}
 						 						
 				    	     modelAndView.addObject("detteCourante",detteCourante);			    		
-						     modelAndView.addObject("interet",interet);
-						     
+						     modelAndView.addObject("interet",interet);						     
 						     modelAndView.addObject("pages", new int[0]);
+						     modelAndView.addObject("pages2", new int[0]);
 						     modelAndView.addObject("currentPage",0);
+						     modelAndView.addObject("currentPage2",0);
 						     modelAndView.addObject("currentSize",5);
 						     modelAndView.setViewName("home"); // resources/template/home.html
 			
@@ -252,8 +256,10 @@ public class AuthentificationController {
 				       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
 				       ModelAndView mv = new ModelAndView("/home::userSiteContainer");	
 			             mv.addObject("lst", trt.searchConverterPaye(searchContribList));
-			             mv.addObject("pages", new int[searchContribList.getTotalPages()]);				            	
+			             mv.addObject("pages", new int[searchContribList.getTotalPages()]);	
+			             mv.addObject("pages2", new int[0]);
 			             mv.addObject("currentPage",page);
+			             mv.addObject("currentPage2",0);
 			             mv.addObject("currentSize",size);	
 			             mv.addObject("pageTitle","user_site_contribution");
 			             mv.addObject("totalContribution", String.format("%.3f",totalContribution));  
@@ -262,22 +268,75 @@ public class AuthentificationController {
 			             
 				  
 			   }else {
-			        
+			               
+				           
 						   Page <Payement> siteUserList = payeRepo.getPayementByMatric(matricule,PageRequest.of(page,size));
 					       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
 					       ModelAndView mv = new ModelAndView();						   
 				           mv.addObject("lst", trt.searchConverterPaye(siteUserList));
 				           mv.addObject("pages", new int[siteUserList.getTotalPages()]);
+				           mv.addObject("pages2", new int[0]);
 				           mv.addObject("pageTitle","Contribution");
 				           mv.addObject("currentPage",page);
+				           mv.addObject("currentPage2",0);
 				           mv.addObject("currentSize",size);
 				           mv.addObject("totalContribution",String.format("%.3f", totalContribution));  
 				           mv.addObject("keyWord", mc);
-						   mv.setViewName("/home::userSiteContainer");						  
+						   mv.setViewName("/home::userSiteContainer");
+						   
 						   return  mv;
 				   
 				
 			   }
 		}
 
+		
+		
+		@PostMapping(path="/remboursementsByMatricule")
+		public ModelAndView remboursementsByMatricule( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+			
+				 Traitement trt = new Traitement();
+				 String email="";
+				 String matricule="";
+				 User usr=null;			   
+				 email= authentication.getName();
+				 usr= userDetailsService.getUserByEmail(email);
+				 matricule=usr.getMatricule();
+				 
+				 
+				 if(mc!=null && !mc.isEmpty()) {	   	
+					 
+					         Page <Events> searchRembourseList =eventRepo.findByDateRemboursementsContains(matricule,mc,PageRequest.of(page,size));
+					         ModelAndView mv = new ModelAndView("/home::userSiteContainer");	
+				             mv.addObject("lstR", trt.searchRembourseConverter(searchRembourseList));
+				             mv.addObject("pages2", new int[searchRembourseList.getTotalPages()]);
+				             mv.addObject("pages", new int[0]);
+				             mv.addObject("currentPage",0);
+				             mv.addObject("currentPage2",page);
+				             mv.addObject("currentSize",size);
+				             mv.addObject("keyWord", mc);			
+				             return  mv;
+				             
+					  
+				   }else {
+					          
+					           
+							   Page <Events> rembourseUserList = eventRepo.getEventsByMatricule(matricule,PageRequest.of(page,size));
+						       ModelAndView mv = new ModelAndView();						   
+					           mv.addObject("lstR", trt.searchRembourseConverter(rembourseUserList));
+					           mv.addObject("pages2", new int[rembourseUserList.getTotalPages()]);
+					           mv.addObject("pages", new int[0]);
+					           mv.addObject("currentPage",0);
+					           mv.addObject("currentPage2",page);
+					           mv.addObject("currentSize",size);					            
+					           mv.addObject("keyWord", mc);
+							   mv.setViewName("/home::userSiteContainer");
+							   
+							   return  mv;
+					   
+					
+				   }
+				 
+				 
+		}
 }

@@ -245,7 +245,7 @@
                                          
                                          <option value="" disabled selected hidden >Type d'interet</option>
                                          <option value="Constant">Constant</option>
-                                         <option value="Degressif">Degressif</option>
+                                         <option value="Degressif" disabled >Degressif</option>
                                     
                                     </select>
                                     
@@ -272,17 +272,17 @@
 </div>
 
 
-    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>
-    <script src="assets/js/script.min.js?h=9b20e2f15b170d8c8330230170292640"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
     
-    <script  th:inline="javascript" > 
+
+<script  th:inline="javascript" > 
     
-           var mainList;
-           var idValue=-10;
-           var toggle=true;
-           var state="Dette"
-                         
+      var mainList;
+      var idValue=-10;
+      var toggle=true;
+      var state="Dette"                         
   
 function archiveList()   {
 	

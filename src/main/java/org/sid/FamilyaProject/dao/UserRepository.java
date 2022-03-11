@@ -77,6 +77,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	@Query(value="SELECT auth_user.salaire FROM auth_user WHERE auth_user.matricule = ?1", nativeQuery=true )
 	public double getSalaryByMatricule(String matric);
+	
+	@Query(value="SELECT auth_user.nom FROM auth_user WHERE auth_user.matricule = ?1", nativeQuery=true )
+	public String getUserNameByMatricule(String matric);
 
 	public List<User> findByNomContains(String string);
 	

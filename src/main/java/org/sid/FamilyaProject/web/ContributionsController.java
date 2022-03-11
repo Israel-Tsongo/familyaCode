@@ -12,7 +12,7 @@ import java.util.Set;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
-
+import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.entities.Payement;
@@ -48,6 +48,8 @@ public class ContributionsController {
 	@Autowired
 	private MemberRepository memberRepo;
 	
+	@Autowired
+	private UserRepository userRepo;
 	
 	@Autowired
 	private OperationRepository operaRepo;
@@ -188,18 +190,17 @@ public class ContributionsController {
 					  
 			}else {
 				
-				errorList.add("Le matricule entre ne correspond a aucun membre");
-			
+				errorList.add("Le matricule entre ne correspond a aucun membre");			
 				
 			}
 			
 		}catch(Exception exc) {			
 		     
 			errorList.add("Une erreur  est survenu lors de l'enregistrement d'une contribution");
-			errorList.add("Veiller recharger la page et reessayer avec le bon matricule ") ;
+			errorList.add("Veiller recharger la page et reessayer avec le bon matricule") ;
 			
 			System.out.println("Une erreur s'est produite lors de l'enregistrement dune contribution");			
-			System.out.println(exc.getMessage()   );
+			System.out.println(exc.getMessage());
 			
 			//mv.addObject("errorList",errorList);
 			
@@ -341,6 +342,25 @@ public class ContributionsController {
 	   
 	}
 	
+	@GetMapping("/proofContrib/{matricule}/{montant}")
+	public ResponseEntity<byte[]> generateContribProof(@PathVariable(name="matricule") String matricule,@PathVariable(name="montant") double montant) throws JRException, Exception{
+		  
+		
+		 Traitement trt=new Traitement();
+		  HashMap<String,Object> map = new HashMap<>();
+	 	  String jasperFilePath="";
+	 	  String fileName="";
+		  
+	 	     fileName="contribution";
+		 	 jasperFilePath="src/main/resources/proof.jrxml";
+		 	 map.put("typeOperation","COTISATION");
+		 	 map.put("info", "la contribution");
+		 	 map.put("nom",userRepo.getUserNameByMatricule(matricule));
+		 	 map.put("matricule",matricule);
+		 	 map.put("montant",montant);
+	 	    
+		 return	trt.generateProof(jasperFilePath, map, fileName);
+	}
 	
 	
 

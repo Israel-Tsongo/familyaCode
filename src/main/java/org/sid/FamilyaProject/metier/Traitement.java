@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.DepenseRepository;
@@ -491,5 +492,29 @@ public List<List<Object>> converter(List<List<Object>> listMemb ){
 	   
 }
 
+ 
+ public  ResponseEntity<byte[]> generateProof(String jasperFilePath, Map<String, Object> map, String fileName) throws Exception, JRException  {
+		
+	 
+	   
+	   List<String> lst = new  ArrayList<String>();
+	   
+	   lst.add("salut");
+	   
+	   JRBeanCollectionDataSource beanCollection=new JRBeanCollectionDataSource(lst);
+	   JasperReport compileReport =JasperCompileManager.compileReport(new FileInputStream(jasperFilePath));
+	   
+	   JasperPrint report =JasperFillManager.fillReport(compileReport,map,beanCollection);
+	   
+		//JasperExportManager.exportReportToPdfFile(report,"contributionList.pdf");
+	   
+	   byte[] data =JasperExportManager.exportReportToPdf(report);
+	   
+	   HttpHeaders headers = new HttpHeaders();
+	   headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename="+fileName+".pdf");	   
+       return  ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
+ 
+ 
+}
         
 }

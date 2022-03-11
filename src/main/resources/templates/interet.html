@@ -19,11 +19,14 @@
                 <div class="d-sm-flex justify-content-between align-items-center mb-4">
                     <h3 class="text-dark mb-0" id="membre-title">Interet par membre</h3>
                 </div>
-                <script th:inline="javascript">                
+                <script th:inline="javascript"> 
                 
+                      var mainList;
+                      
 					  var pag=(function pages(){ var p=[[${pages}]]; return p ;}());											                
 					  var errorList=(function errors(){ var error=[[${errorList}]];  return error; }());
-					  
+					  var mainList=(function List(){ var lst=[[${lst}]];  return lst; }());
+
 					  $(document).ready(function(){
 						  $("#pageSize").val([[${currentSize}]]);			                    
 					  })
@@ -78,8 +81,8 @@
                                             <tr id="tab-header">
                                                 <th style="width: 1px;padding: 0px;font-size: 15px;"></th>
                                                 <th>Nom</th>
-                                                <th >Matricule</th>
-                                                <th >Interet du membre</th>
+                                                <th>Matricule</th>
+                                                <th>Interet du membre</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -185,7 +188,7 @@
                     <div class="text-center" id="main-div">
                         <h4 class="text-dark mb-4"> Operation: Retirer de l'argent</h4>
                     </div>
-                    <form id="main-form-contrib" class="user">
+                    <form id="interetForm" class="user">
                         
                            <div class="form-group row" >
 	                             <p style="margin-right:10px;margin-left:20%;font-size:20px;font-style:italique" id="name"> <p>
@@ -225,7 +228,7 @@
     <script  th:inline="javascript" > 
         
 
-    var mainList;
+    
     document.querySelector("#tableMember").style.display="none";
     document.querySelector("#table-member").style.display="block";
     var toggle=false;    
@@ -268,7 +271,7 @@
                            		
   	}	
                               
-    }       
+}       
       
       
       
@@ -288,15 +291,13 @@
     function isCheckedInInteret(x,list)   {
     	idValue=x;    
     	console.log("========"+x);
-    	mainList=list;    
+    	//mainList=list;    
     	console.log("====Main List====");
 	 
  }  
     
     
     function historiqueOpera()   {
-    	
-    	
     	
     	if(toggle){
     		
@@ -340,9 +341,7 @@
     	     console.log("Call",$("#pageSize").val(),);
     	     
        		 $("#pageSize").on('change',function(){
-       			 
-       			 
-       			 
+       				 
        			$.ajax({
       				 url:"http://localhost:8080/interetSearcher",
       				 type:"post",
@@ -542,7 +541,7 @@
 	                    		 errorFonction(); 
         		        	     alert("L'operation de  recherche a echouee"+error);
         		        	  
-        		                     }
+        		        }
         	 } );
         		 
          });  
@@ -557,14 +556,17 @@
   	        	 
   	        	//Update Button
    	            
-                	       var list=mainList;  	        	           
+                	       var list=mainList; 
+  	        	           var nom;
+  	        	           var matricule;
                 	       list.forEach(function(element){ 
                 	    	   
                 	    	    if(element[0]==idValue){
                 	    	    	
                 	    	    	$("#name").text("Nom : "+element[1]);
+                	    	    	nom=element[1];
                 	    	    	$("#matr").text("Matricule : "+element[2]);
-                	    	    	matric=element[2];
+                	    	    	matricule=element[2];
                 	    	    	console.log( "======"+element[2]);
                 	    	    	
                 	    	    	
@@ -572,16 +574,19 @@
                 	    	
                 	       });
        	    	    	       console.log( "======"+idValue);
-
-                	    	   $("#withDrawButtonInInteret").unbind("click").click( function(){   
-                            	   console.log("Salut tout le monde in With Draw");
+       	    	    	       
+                	    	   $("#withDrawButtonInInteret").unbind("click").click( function(){
+                	    		   
+                	    		   var montant=$("#montant-retrait-field").val();                	    		   
+                            	   
                     	    	   $.ajax({
                       				 url:"http://localhost:8080/withDraw",
                       				 type:"post",
                       				 data:{
-                      					 idWithD:  idValue,
-                      					 matricule:  matric,
-                     	    	    	 montantRetrait:  $("#montant-retrait-field").val(),
+                      					 idWithD: idValue,
+                      					 matricule: matricule,
+                      					 nom: nom,
+                     	    	    	 montantRetrait: montant,
                      	    	    	 size:$("#pageSize").val(),
                       				      },
                       		 
@@ -589,21 +594,36 @@
                       		       	               
                       		        	          $("#interetModal").modal("hide");  
                       		        	          $("#containerMainInInteret").html(data);      		        	
-           	                    	              $("#div-total").load(location.href+ " #div-total");
-           	                    	              $("#main-form").load(location.href+ " #main-form");
+           	                    	              $("#div-total").load(location.href+"#div-total");
+           	                    	              $("#interetForm").load(location.href+"#interetForm");           	                    	              
+           	                    	              
            	                    	              $("#tableMember").hide();
            	                    	              $("#table-member").show();
            	                    	              $("#montant-retrait-field").val("");
                                	    	          idValue=-10;
                                	    	          $(".pagin1").show();
-                 	 	                    	  $(".pagin2").hide();
-                    		        			  console.log("Tout s'est bien passe dans upda");
-                    		        			  errorFonction(); 
+                 	 	                    	  $(".pagin2").hide();                    		        			  
+                    		        			  errorFonction();                    		        			  
+                    		        			  var w;
+                    		        			  errorList.length==0?w=window.open("http://localhost:8080/proof/"+nom+"/"+matricule+"/"+montant, "_blank"): errorList.forEach((item,index)=>{ 
+                    		        				  																											console.log("Vous venez de tout retirer")
+																										                    		        				  if(item=="Vous venez de tout retirer,desormais votre interet est de 0 $"){
+																										                    		        					  
+																										                    		        					  console.log("Vous venez de tout retirer ====")
+																										                    		        					  var w=window.open("http://localhost:8080/proof/"+nom+"/"+matricule+"/"+montant, "_blank");
+																										                    		        				  }
+																										                    		        				  
+												 })
+                    		        			  
+                    		        			  
                       		          },        		          
                       		          error: function(error){
+                      		        	           console.log("Salut tout le monde in With Draw");
+                      		        	            $("#interetForm").load(location.href+"#interetForm");
+                      		        	            $("#tableMember").load(location.href+"#tableMember");
+                      		        	            errorFonction()
 			                      		        	$(".pagin1").show();
-			       	 	                    	    $(".pagin2").hide();
-			       	 	                    	    errorFonction()
+			       	 	                    	    $(".pagin2").hide();			       	 	                    	    
                       		        	            alert("Assurez-vous que vous avez le droit d'effectuer cette operation");
                       		        	  
                       		                     }
