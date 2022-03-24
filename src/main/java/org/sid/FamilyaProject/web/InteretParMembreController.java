@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -73,49 +73,48 @@ public class InteretParMembreController {
 	//************** RECHERCHER PAR NOM ************************
 	
 	@PostMapping(path="/interetSearcher")
-	public ModelAndView searchInteretByName(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pageOpera",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchInteretByName(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pageOpera",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
-		   //System.out.println("interet searcher=== 0 >>");
+		   
 		   if(pagin) {			   	
-			  // System.out.println("interet searcher=== 1 >>");
+			  
 			   Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));
 			   Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));	
 			   double totalInteretNet=interetRepo.totalInteretNet() !=null? interetRepo.totalInteretNet() : 0;			   
-			   ModelAndView mv = new ModelAndView();	
 			   
-			   mv.addObject("lst",trt.converter(interetList));	    
-			   mv.addObject("pages",new int[interetList.getTotalPages()]);
+			   model.addAttribute("lst",trt.converter(interetList));	    
+			   model.addAttribute("pages",new int[interetList.getTotalPages()]);
 				
-	           mv.addObject("lstOpera",trt.converter(operaList));
-	           mv.addObject("pages2", new int[operaList.getTotalPages()]);	
-	           mv.addObject("currentPage",page);
-	           mv.addObject("currentSize",size);
-	           mv.addObject("currentPage2",pageOpera);
-	           mv.addObject("totalInteretNet", String.format("%.3f" ,totalInteretNet));  
-	           mv.addObject("keyWord", mc);
-			   mv.setViewName("/interet::mainContainerInInteret");
-	           return  mv;
+	           model.addAttribute("lstOpera",trt.converter(operaList));
+	           model.addAttribute("pages2", new int[operaList.getTotalPages()]);	
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("currentPage2",pageOpera);
+	           model.addAttribute("totalInteretNet", String.format("%.3f" ,totalInteretNet));  
+	           model.addAttribute("keyWord", mc);
+			   
+	           return  "interet::containerMainInInteret";
 		   }else {
-			     System.out.println("=>"+size);
+			     
 			       Page <InteretParMembre> searchInteretList =interetRepo.findByMatriculeEnteredContains(mc,PageRequest.of(page,size));
 			       Page <Operation> searchOperaList =operaRepo.findByOperationContains(mc,PageRequest.of(pageOpera,size));
 
 				   double totalInteretNet=interetRepo.totalInteretNet() !=null? interetRepo.totalInteretNet() : 0;			   
 			       
-			       ModelAndView mv = new ModelAndView("/interet::mainContainerInInteret");		           
-		             mv.addObject("lst", trt.searchInteretConverter(searchInteretList));
-		             mv.addObject("pages", new int[searchInteretList.getTotalPages()]);
-		             mv.addObject("lstOpera", trt.searchOperaConverter(searchOperaList));
-			         mv.addObject("pages2", new int[searchOperaList.getTotalPages()]);
-			         mv.addObject("currentPage2",pageOpera);
-			         mv.addObject("currentSize",size);			         
-		             mv.addObject("currentPage",page);
-		             mv.addObject("totalInteretNet",String.format("%.3f" ,totalInteretNet));  
-		             mv.addObject("keyWord", mc);
+			       		           
+		             model.addAttribute("lst", trt.searchInteretConverter(searchInteretList));
+		             model.addAttribute("pages", new int[searchInteretList.getTotalPages()]);
+		             model.addAttribute("lstOpera", trt.searchOperaConverter(searchOperaList));
+			         model.addAttribute("pages2", new int[searchOperaList.getTotalPages()]);
+			         model.addAttribute("currentPage2",pageOpera);
+			         model.addAttribute("currentSize",size);			         
+		             model.addAttribute("currentPage",page);
+		             model.addAttribute("totalInteretNet",String.format("%.3f" ,totalInteretNet));  
+		             model.addAttribute("keyWord", mc);
 		
-		             return  mv;
+		             return  "interet::containerMainInInteret";
 		   
 		   }
 	}
@@ -125,13 +124,13 @@ public class InteretParMembreController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/withDraw")
-	public ModelAndView withDrawInteret(@RequestParam() Long  idWithD , @RequestParam() String matricule,@RequestParam() String nom,  @RequestParam() double montantRetrait,			
+	public String withDrawInteret(Model model, @RequestParam() Long  idWithD , @RequestParam() String matricule,@RequestParam() String nom,  @RequestParam() double montantRetrait,			
             @RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="page",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size, @RequestParam(name="keyWord", defaultValue = "") String mc   ) throws JRException, Exception  {	
 		     List<String> errorList=new ArrayList<String>();
 		     
 		      Traitement trt=new Traitement();	     
 		 	  
-		      ModelAndView mv=null ;
+		      
 		      
 		           if(idWithD>0) {
 		        	    
@@ -171,31 +170,31 @@ public class InteretParMembreController {
 	           Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));
 			   Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));	
 			   double totalInteretNet=interetRepo.totalInteretNet()!=null? interetRepo.totalInteretNet() : 0;	
-			   mv = new ModelAndView("/interet::mainContainerInInteret");	
-			   mv.addObject("lst",trt.converter(interetList));	    
-			   mv.addObject("pages",new int[interetList.getTotalPages()]);								
-	           mv.addObject("lstOpera",trt.converter(operaList));
-	           mv.addObject("pages2", new int[operaList.getTotalPages()]);	
-	           mv.addObject("currentPage",page);
-	           mv.addObject("currentSize",size);
-	           mv.addObject("currentPage2",pageOpera);
-	           mv.addObject("totalInteretNet", String.format("%.3f" ,totalInteretNet));  
-	           mv.addObject("keyWord", mc);
-		       mv.addObject("errorList",errorList);
+			  	
+			   model.addAttribute("lst",trt.converter(interetList));	    
+			   model.addAttribute("pages",new int[interetList.getTotalPages()]);								
+	           model.addAttribute("lstOpera",trt.converter(operaList));
+	           model.addAttribute("pages2", new int[operaList.getTotalPages()]);	
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("currentPage2",pageOpera);
+	           model.addAttribute("totalInteretNet", String.format("%.3f" ,totalInteretNet));  
+	           model.addAttribute("keyWord", mc);
+		       model.addAttribute("errorList",errorList);
 		       
-			return mv;
+			  return "interet::containerMainInInteret";
 		
 	   
 	
 	}
 	
 	
-	@GetMapping("/interet/interetGeneratePDF/{type}/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(@PathVariable(name="keyWord") String mc,@PathVariable(name="type") String type) throws Exception, JRException  {
+	@PostMapping(value="/interet/interetGeneratePDF/",produces="application/pdf")
+	public ResponseEntity<byte[]> generatePDF(@RequestParam(name="currentTable") String type, @RequestParam(name="keyWord") String mc) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="";
+		 	   String jasperFileName="";
 		 	   String fileName="";
 		 	   
 		 	   
@@ -203,16 +202,16 @@ public class InteretParMembreController {
 		 		   
 				     List<Operation> searchOperaList =operaRepo.findByOperationContains(!mc.equals("all")? mc:"");
 				 	 fileName="operations";
-				 	 jasperFilePath="src/main/resources/operations.jrxml";
+				 	 jasperFileName="operations.jrxml";
 				 	 map.put("nameFor", "Israel");				 	 
-				 	 return  trt.generatePDF(searchOperaList, jasperFilePath, map, fileName);
+				 	 return  trt.generatePDF(searchOperaList, jasperFileName, map, fileName);
 		 	   }
 		 	    
 		 	   List<InteretParMembre> searchInteretList =interetRepo.findByMatriculeEnteredContains(!mc.equals("all")? mc:"");
 			   fileName="interets";
-			   jasperFilePath="src/main/resources/interet.jrxml";
+			   jasperFileName="interet.jrxml";
 			   map.put("nameFor", "Israel");			 	 
-			   return  trt.generatePDF(searchInteretList, jasperFilePath, map, fileName);
+			   return  trt.generatePDF(searchInteretList, jasperFileName, map, fileName);
 			   
 		 	   
 		 	  
@@ -220,25 +219,23 @@ public class InteretParMembreController {
 	}
 	
 	
-	@GetMapping("/proof/{nom}/{matricule}/{montantRetrait}")
-	public ResponseEntity<byte[]> generatePDF(@PathVariable(name="nom") String nom,@PathVariable(name="matricule") String matricule,@PathVariable(name="montantRetrait") double montantRetrait) throws JRException, Exception{
-		  
-		
-		  
+	@PostMapping(value="/proof/",produces="application/pdf")
+	public ResponseEntity<byte[]> generatePDF(@RequestParam(name="name") String nom, @RequestParam(name="matricule") String matricule, @RequestParam(name="montant") double montantRetrait) throws JRException, Exception{
+		 
 		 Traitement trt=new Traitement();
 		  HashMap<String,Object> map = new HashMap<>();
-	 	  String jasperFilePath="";
+	 	  String jasperFileName="";
 	 	  String fileName="";
 		  
 	 	     fileName="retrait";
-		 	 jasperFilePath="src/main/resources/proof.jrxml";
+	 	     jasperFileName="proof.jrxml";
 		 	 map.put("typeOperation", "RETRAIT");
 		 	 map.put("info", "le retrait");
 		 	 map.put("nom",nom);
 		 	 map.put("matricule",matricule);
 		 	 map.put("montant",montantRetrait);
 	 	    
-		 return	trt.generateProof(jasperFilePath, map, fileName);
+		 return	trt.generateProof(jasperFileName, map, fileName);
 	}
 	
 

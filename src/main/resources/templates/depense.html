@@ -82,7 +82,7 @@
                                         <tbody>
                                             <tr th:each="element:${lst}">
                                                 <td >
-                                                     <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInDep([[${element.get(0)}]],[[${lst}]]);" type="radio">
+                                                     <input th:value="${element.get(0)}" name="chk"  th:onclick="javascript:isCheckedInDep([[${element.get(0)}]],[[${lst}]]);" type="radio">
                                                 </td>
                                                 <td class="tab-cells all-col" th:text="${element.get(1)+' $'}"  >$ 129&nbsp;</td>
                                                 <td class="all-col" th:text="${element.get(2)}"  >Visite chez claudine</td>
@@ -194,30 +194,41 @@
                          
 
 function actions(type){
-   	
- 	 $(document).ready(function(){
- 		 
-		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-  		           var w=window.open("http://localhost:8080/depense/generatePDF/"+keyWord, "_blank");
-		 		
-		 		   setTimeout(function(){
-		 			   
-		 			 //var a = w.document.createElement('A');
-					 //var filePath = w.location.href;
-					 // a.href = filePath;
-					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-					 // w.document.body.appendChild(a);
-					  //a.click();
-					  //w.document.body.removeChild(a);
-		 			   
-		 		   },600)
-	   
- 	 })
- 	 
+	
+	
+	       
+	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
+	     var request = new XMLHttpRequest();	
+	     request.open("POST","http://localhost:8080/depense/generatePDF/",true)
+	     request.responseType='blob';
+	     request.onload=function(e){
+	    	 
+	    	 if(this.status===200){
+	    		 	    		 
+	    		 var file=window.URL.createObjectURL(this.response)
+	    		 var w= window.open(file,"_blank")
+	    		 var a=w.document.createElement("a");
+	    		 a.href=file;	    		 
+	    		 a.download=this.response.name || "depense"
+	    		 w.document.body.appendChild(a)
+	    		 a.click()
+	    		 w.onfocus=function(){
+	    			 w.document.body.removeChild(a)
+	    		 }
+	    		 
+	    	 }
+	     }
+	     
+	    var data= new FormData();
+	    data.append('keyWord',keyWord)
+	    request.send(data)
+
+	 
  	 
   }  
     
-    
+   
+
     function isCheckedInDep(x,list)   {
     	idValue=x;
     	mainList=list;

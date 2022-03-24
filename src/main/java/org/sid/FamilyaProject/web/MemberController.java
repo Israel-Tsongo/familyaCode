@@ -1,5 +1,7 @@
 package org.sid.FamilyaProject.web;
 
+import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,16 +20,20 @@ import org.sid.FamilyaProject.metier.Traitement;
 
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.sf.jasperreports.engine.JRException;
@@ -82,7 +88,7 @@ public class MemberController {
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping(path="/indexSearcher")
-	public ModelAndView searchByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String  searchByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -92,22 +98,22 @@ public class MemberController {
 			   Page <List<List<Object>>> MemberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
 			   double totalCapitauxInitiaux1=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 
-			   ModelAndView mv = new ModelAndView();		           
-	           mv.addObject("lst", trt.converter(MemberList));
-	           mv.addObject("pages", new int[MemberList.getTotalPages()]);	
-	           mv.addObject("currentPage",page);
-	           mv.addObject("currentSize",size);
-	           mv.addObject("totalCapitaux", totalCapitauxInitiaux1);	           
-	           mv.addObject("keyWord", mc);
-			   mv.setViewName("/index::mainContainer");
+			   		           
+	           model.addAttribute("lst", trt.converter(MemberList));
+	           model.addAttribute("pages", new int[MemberList.getTotalPages()]);	
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("totalCapitaux", totalCapitauxInitiaux1);	           
+	           model.addAttribute("keyWord", mc);
 			   
 			   
-	           return  mv;
+			   
+	           return "index::mainContainer";
 		   }else {
 			       Page <Member> searchMemberList =memberRepo.findByNomContains(mc,PageRequest.of(page,size));
 				   double totalCapitauxInitiaux2=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 			       
-			       ModelAndView mv = new ModelAndView("/index::mainContainer");		           
+			       		           
 		             model.addAttribute("lst", trt.searchConverter(searchMemberList));
 		             model.addAttribute("pages", new int[searchMemberList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
@@ -116,7 +122,7 @@ public class MemberController {
 		             model.addAttribute("keyWord", mc);
 		             
 		
-		             return  mv;
+		             return "index::mainContainer";
 		   
 		   }
 	}
@@ -126,14 +132,14 @@ public class MemberController {
 	
 	
 	@PostMapping("/indexPost")
-	public ModelAndView postIndexData( @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandataire,			
+	public String postIndexData(Model model,  @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandataire,			
 			                                     @RequestParam() double capital,@RequestParam() String fonction,
 			                                     @RequestParam() String categorie,@RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
 			                                     ) {
 		
 		List<String> errorList = new ArrayList<String>();
 		Traitement trt = new Traitement();
-		ModelAndView mv=null ;
+		String mv="" ;
 		
 		
 		 
@@ -178,7 +184,8 @@ public class MemberController {
 			}
 			
 		}catch(Exception exc) {	
-			mv = new ModelAndView("/index::mainContainer");
+			
+			mv = "index::mainContainer";			
 		    errorList.add("Une erreur s'est produite lors de l'enregistrement d un nouveau membre");
 			System.out.println("Une erreur s'est produite lors de l'enregistrement d un nouveau membre");			
 			System.out.println(exc.getMessage()   );
@@ -187,13 +194,13 @@ public class MemberController {
 		Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
 		double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 		   
-		mv = new ModelAndView("/index::mainContainer");					   
-		mv.addObject("lst", trt.converter(memberList));
-		mv.addObject("pages",new int[memberList.getTotalPages()]);
-		mv.addObject("currentSize",size);
-		mv.addObject("currentPage",page);					   
-        mv.addObject("totalCapitaux",String.format("%.3f", totalCapitauxInitiaux));		
-		mv.addObject("errorList",errorList);
+		mv = "index::mainContainer";					   
+		model.addAttribute("lst", trt.converter(memberList));
+		model.addAttribute("pages",new int[memberList.getTotalPages()]);
+		model.addAttribute("currentSize",size);
+		model.addAttribute("currentPage",page);					   
+        model.addAttribute("totalCapitaux",String.format("%.3f", totalCapitauxInitiaux));		
+		model.addAttribute("errorList",errorList);
 		return mv ;
 	}
 	
@@ -203,9 +210,9 @@ public class MemberController {
 	
 	@PostMapping("/deteteMember")
 	
-	public ModelAndView deleteMember(@RequestParam() Long  idMember,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
+	public String deleteMember(Model model, @RequestParam() Long  idMember,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
 		 Traitement trt=new Traitement();
-		 ModelAndView mv=null ;
+		 
 		 
 		  if (idMember>0) {
 			  
@@ -216,14 +223,14 @@ public class MemberController {
 		     Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
 		     double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 		            
-	         mv = new ModelAndView("/index::mainContainer");		   
-	         mv.addObject("lst", trt.converter(memberList));
-	         mv.addObject("pages", new int[memberList.getTotalPages()]);
-	         mv.addObject("currentSize",size);
-	         mv.addObject("currentPage",page);
-	         mv.addObject("totalCapitaux", totalCapitauxInitiaux);
+	         		   
+	         model.addAttribute("lst", trt.converter(memberList));
+	         model.addAttribute("pages", new int[memberList.getTotalPages()]);
+	         model.addAttribute("currentSize",size);
+	         model.addAttribute("currentPage",page);
+	         model.addAttribute("totalCapitaux", totalCapitauxInitiaux);
 	         
-		    return  mv;
+		    return  "index::mainContainer";
 	}
 	
 	
@@ -231,7 +238,7 @@ public class MemberController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/update")
-	public ModelAndView updateMember(@RequestParam() Long  idMember , @RequestParam(defaultValue="") String mandataire,  @RequestParam() String matricule,			
+	public String updateMember(Model model, @RequestParam() Long  idMember , @RequestParam(defaultValue="") String mandataire,  @RequestParam() String matricule,			
             @RequestParam() String capital,@RequestParam() String fonction,
             @RequestParam() String categorie,@RequestParam() String contrat, @RequestParam() String date, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
@@ -247,21 +254,21 @@ public class MemberController {
 		      Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
 			 double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 					 
-			 mv = new ModelAndView("/index::mainContainer");								   
-			 mv.addObject("lst", trt.converter(memberList));
-			 mv.addObject("pages", new int[memberList.getTotalPages()]);
-			 mv.addObject("currentSize",size);
-		     mv.addObject("currentPage",page);
-		     mv.addObject("totalCapitaux", totalCapitauxInitiaux);
+			 								   
+			 model.addAttribute("lst", trt.converter(memberList));
+			 model.addAttribute("pages", new int[memberList.getTotalPages()]);
+			 model.addAttribute("currentSize",size);
+		     model.addAttribute("currentPage",page);
+		     model.addAttribute("totalCapitaux", totalCapitauxInitiaux);
 		 
-			return mv;
+			return "index::mainContainer";
 		
 	   
 	
 	}
 	
 	@PostMapping("/detailMembre")
-	public ModelAndView detail(@RequestParam(required=true) Long  idMember) {
+	public String detail(Model model, @RequestParam(required=true) Long idMember) {
 		
 		String matricule= memberRepo.getMatriculeById(idMember);
 		
@@ -269,8 +276,6 @@ public class MemberController {
     	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
     	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
     	
-		 ModelAndView modelAndView=null ;
-		 modelAndView = new ModelAndView("/index::detailModalContent");		
 		 
 		 
 		 if(memberRepo.getUserByMatricule(matricule)!=null) {
@@ -278,47 +283,49 @@ public class MemberController {
 		    	
 		    	if(payeRepo.getPayementByMatricule(matricule)==null || payeRepo.getPayementByMatricule(matricule).isEmpty() ) {
 		    		
-			    	List<List<Object>> lst=memberRepo.getCapitalMatriculeNom(matricule);
-			    	modelAndView.addObject("nom",lst.get(0).get(0));
-					 modelAndView.addObject("matricule",lst.get(0).get(1));
-					 modelAndView.addObject("capital",lst.get(0).get(2));
-					 modelAndView.addObject("pageTitle","Authentification");
-					 modelAndView.addObject("contributions",0.0);
-					 modelAndView.addObject("solde",lst.get(0).get(2));
+			    	 List<List<Object>> lst=memberRepo.getCapitalMatriculeNom(matricule);
+			    	 model.addAttribute("nom",lst.get(0).get(0));
+					 model.addAttribute("matricule",lst.get(0).get(1));
+					 model.addAttribute("capital",lst.get(0).get(2));
+					 model.addAttribute("pageTitle","Authentification");
+					 model.addAttribute("contributions",0.0);
+					 model.addAttribute("solde",lst.get(0).get(2));
 		    		
 		    		
 		    	}else {
-		    		 modelAndView.addObject("nom",detailMembre.get(0).get(0));
-					 modelAndView.addObject("matricule",detailMembre.get(0).get(1));
-					 modelAndView.addObject("capital",detailMembre.get(0).get(2));
-					 modelAndView.addObject("contributions",detailMembre.get(0).get(3));
-					 modelAndView.addObject("solde",detailMembre.get(0).get(4));
+		    		 model.addAttribute("nom",detailMembre.get(0).get(0));
+					 model.addAttribute("matricule",detailMembre.get(0).get(1));
+					 model.addAttribute("capital",detailMembre.get(0).get(2));
+					 model.addAttribute("contributions",detailMembre.get(0).get(3));
+					 model.addAttribute("solde",detailMembre.get(0).get(4));
 					 
 		    	}
 				 						
-		    	     modelAndView.addObject("detteCourante",detteCourante);			    		
-				     modelAndView.addObject("interet",interet);
+		    	     model.addAttribute("detteCourante",detteCourante);			    		
+				     model.addAttribute("interet",interet);
 		
 		 
 		 }
-		 return modelAndView;
+		 return "index::detailModalContent";
 	
 	}
 	
-	@GetMapping("membre/generatePDF/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
+	@PostMapping(value="/membre/generatePDF/",produces="application/pdf")
+	
+	public ResponseEntity<byte[]> generatePDF(Model model ,@RequestParam(name="keyWord") String mc) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/membre.jrxml";
+//		 	   
+		 	   String jasperFileName="membre.jrxml";	 	   
+		 	   
 		 	   String fileName="Membre";
 		       List <Member> searchMemberList =memberRepo.findByNomContains(!mc.equals("all")? mc:"");
 
 		 	   map.put("membre", "Israel");			   
 			   
-			   //List<Payement> testList=payeRepo.findAll();
-
-		       return  trt.generatePDF(searchMemberList, jasperFilePath, map, fileName);
+			   
+		       return  trt.generatePDF(searchMemberList, jasperFileName, map, fileName);
 	   
 	}
 	

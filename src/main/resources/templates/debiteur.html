@@ -85,6 +85,7 @@
                                                 <th>Echeance</th>                                                
                                                 <th>DetteCourante</th>
                                                 <th>TypeInteret</th>
+                                                <th>Penalites</th>
                                                 <th>Date emprunt</th>                                                
                                                 
                                             </tr>
@@ -92,7 +93,7 @@
                                         <tbody>
                                             <tr th:each="element:${lst}">
                                                 <td>
-                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isChecked([[${element.get(0)}]],[[${lst}]]);" class="idMember"  type="radio">
+                                                    <input name="chk" th:value="${element.get(0)}"  th:onclick="javascript:isChecked([[${element.get(0)}]],[[${lst}]]);" class="idMember"  type="radio">
                                                 </td>
                                                 <td  th:text="${element.get(1)}" ></td>
                                                 <td  th:text="${element.get(2)}" ></td>
@@ -100,9 +101,10 @@
                                                 <td  th:text="${element.get(4)+' %'}" ></td>
                                                 <td  th:text="${element.get(5) }" ></td>                                                
                                                 <td  th:text="${element.get(6)}" ></td>
-                                                <td  th:text="${element.get(7)}" ></td>
+                                                <td  th:text="${element.get(7)}" ></td>                                                
                                                 <td  th:text="${element.get(8)}" ></td>
-                                                <td  th:text="${element.get(9)}" ></td>
+                                                <td  th:text="${element.get(9)+' %'}" ></td>
+                                                <td  th:text="${element.get(10)}" ></td>
                                                 
                                                 
                                             </tr>
@@ -123,7 +125,7 @@
                                                 <th>Echeance</th>              
                                                 <th>TypeInteret</th>
                                                 <th>Date emprunt</th>
-                                                <th>Penalites</th>
+                                                <th>Penalites</th><!-- Somme de toutes les penalites -->
                                                 <th>Benefices</th>
                                                                                                 
                                                 
@@ -352,7 +354,7 @@ function archiveList()   {
       		        	        	 $("#tableMember").show();
       		        	        	 $("#table-member").hide();
       		        	        	 $("#floatingBtn").hide();
-      		        	        	 $("#montantARembourcer").hide();     		        	        	
+      		        	        	 $("#montantARembourcer").hide();
      		        	        	 $("#archiveBtn").text("Dettes en cours");      		        	        	   
       		        	        	 state="Archive";
       		        	        	 $(".pagin1").hide();
@@ -363,13 +365,14 @@ function archiveList()   {
       		        	        	   
       		        	        	 $("#table-member").show();
       		        	        	 $("#tableMember").hide();
-      		        	        	 $("#floatingBtn").show();
+      		        	        	 $("#floatingBtn").show();      		        	        	
       		        	        	 $("#montantARembourcer").show();
       		        	        	 $("#archiveBtn").text("archives");
       		        	        	 state="Dette";
       		        	        	 $(".pagin1").show();
       		        	        	 $(".pagin2").hide();
       		        	        	 $("#div-total").show();
+      		        	        	$("#div-total").load(location.href+ " #div-total");
       		        	           }
       		        	           
       		        	           //url=="archive"?$("#empruntTitle").text("Tous les Emprunts Archives"):$("#empruntTitle").text("Tous les Emprunts");
@@ -402,26 +405,37 @@ function archiveList()   {
     
                          
    function actions(type){
+    	
+    	
+ 	       
+   	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
+   	     var request = new XMLHttpRequest();	
+   	     request.open("POST","http://localhost:8080/debiteur/generatePDF/",true)
+   	     request.responseType='blob';
+   	     request.onload=function(e){
+   	    	 
+   	    	 if(this.status===200){
+   	    		 	    		 
+   	    		 var file=window.URL.createObjectURL(this.response)
+   	    		 var w= window.open(file,"_blank")
+   	    		 var a=w.document.createElement("a");
+   	    		 a.href=file;	    		 
+   	    		 a.download=this.response.name || "debiteur"
+   	    		 w.document.body.appendChild(a)
+   	    		 a.click()
+   	    		 w.onfocus=function(){
+   	    			 w.document.body.removeChild(a)
+   	    		 }
+   	    		 
+   	    	 }
+   	     }
+   	     
+   	    var data= new FormData();
+   	    data.append('keyWord',keyWord)
+   	    data.append('state',state)
+   	    request.send(data)
    	
-  	 $(document).ready(function(){
-  		 
- 		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-   		           var w=window.open("http://localhost:8080/debiteur/generatePDF/"+state+"/"+keyWord, "_blank");
- 		 		   setTimeout(function(){
- 		 			   
- 		 			 //var a = w.document.createElement('A');
- 					 //var filePath = w.location.href;
- 					 // a.href = filePath;
- 					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
- 					 // w.document.body.appendChild(a);
- 					  //a.click();
- 					  //w.document.body.removeChild(a);
- 		 			   
- 		 		   },600)
-		  
-	
-  		 
-  	 })
+   
   	 
   	 
    }                      
@@ -474,7 +488,7 @@ function archiveList()   {
        		        	        $("#containerMainInDeb").html(data); 
        		        	        $("#table-member").show();
 	       		         		$("#tableMember").hide();
-	       		         	   $("#floatingBtn").show();
+	       		         	    $("#floatingBtn").show();
 	       		         		$("#archiveBtn").text("archives");
 	       		         		$("#montantARembourcer").show()
 	       		         		$(".pagin1").show();

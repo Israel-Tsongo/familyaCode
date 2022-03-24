@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
 import net.sf.jasperreports.engine.JRException;
 
 
@@ -62,7 +62,7 @@ public class DepenseController {
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping(path="/depSearcher")
-	public ModelAndView searchDepense(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchDepense(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -73,27 +73,27 @@ public class DepenseController {
 			  
 			   Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
 			   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
-			   ModelAndView mv = new ModelAndView();		           
-	           mv.addObject("lst", trt.converter(DepList));
-	           mv.addObject("pages", new int[DepList.getTotalPages()]);	
-	           mv.addObject("currentSize",size);
-	           mv.addObject("currentPage",page);
-	           mv.addObject("totalDepense", String.format("%.3f",  totalDepense));  
-	           mv.addObject("keyWord", mc);
-			   mv.setViewName("/depense::mainContainerInDep");
-	           return  mv;
+			   		           
+	           model.addAttribute("lst", trt.converter(DepList));
+	           model.addAttribute("pages", new int[DepList.getTotalPages()]);	
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("totalDepense", String.format("%.3f",  totalDepense));  
+	           model.addAttribute("keyWord", mc);
+			   
+	           return "/depense::mainContainerInDep";
 		   }else {
 			       Page <Depense> depList =depRepo.findByMotifContains(mc,PageRequest.of(page,size));
 				   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
-			       ModelAndView mv = new ModelAndView();		           
-		             mv.addObject("lst", trt.searchDepConverter(depList));
-		             mv.addObject("pages", new int[depList.getTotalPages()]);	
-		             mv.addObject("currentPage",page);
-		             mv.addObject("totalDepense",  String.format("%.3f", totalDepense));
-		             mv.addObject("currentSize",size);	
-		             mv.addObject("keyWord", mc);
-		             mv.setViewName("/depense::mainContainerInDep");
-		             return  mv;
+			       		           
+		             model.addAttribute("lst", trt.searchDepConverter(depList));
+		             model.addAttribute("pages", new int[depList.getTotalPages()]);	
+		             model.addAttribute("currentPage",page);
+		             model.addAttribute("totalDepense",  String.format("%.3f", totalDepense));
+		             model.addAttribute("currentSize",size);	
+		             model.addAttribute("keyWord", mc);
+		            
+		             return  "depense::mainContainerInDep";
 		   
 		   }
 	}
@@ -103,13 +103,13 @@ public class DepenseController {
 	
 	
 	@PostMapping("/depPost")
-	public ModelAndView postDepenseData(@RequestParam() double depenseMontant,  @RequestParam() String motif,			
+	public String postDepenseData(Model model, @RequestParam() double depenseMontant,  @RequestParam() String motif,			
 			                                    @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
 		                                    ) {
 		
 		List<String> errorList= new ArrayList<String>()	; 
 		Traitement trt = new Traitement();
-		ModelAndView mv=null ;
+		
 		 
 		try {
 		
@@ -125,14 +125,14 @@ public class DepenseController {
 		Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
 		double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
 		   
-		mv = new ModelAndView("/depense::mainContainerInDep");					   
-		mv.addObject("lst", trt.converter(DepList));
-		mv.addObject("pages", new int[DepList.getTotalPages()]);	
-		mv.addObject("currentPage",page);
-		mv.addObject("currentSize",size);
-        mv.addObject("totalDepense", String.format("%.3f",  totalDepense));
-        mv.addObject("errorList",errorList);
-		return mv;
+							   
+		model.addAttribute("lst", trt.converter(DepList));
+		model.addAttribute("pages", new int[DepList.getTotalPages()]);	
+		model.addAttribute("currentPage",page);
+		model.addAttribute("currentSize",size);
+        model.addAttribute("totalDepense", String.format("%.3f",  totalDepense));
+        model.addAttribute("errorList",errorList);
+		return "depense::mainContainerInDep";
 	}
 	
 	
@@ -141,9 +141,10 @@ public class DepenseController {
 	
 	@PostMapping("/deteteDep")
 	
-	public ModelAndView deleteDepense(@RequestParam() Long  idDep,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
-		 Traitement trt=new Traitement();
-		  ModelAndView mv=null ;
+	public String  deleteDepense(Model model, @RequestParam() Long idDep,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
+		 
+		  Traitement trt=new Traitement();
+		 
 		 
 		  if (idDep>0) {
 			  
@@ -155,14 +156,14 @@ public class DepenseController {
 		 Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
 		 double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo():0 ;   
 		            
-         mv = new ModelAndView("/depense::mainContainerInDep");		   
-         mv.addObject("lst", trt.converter(DepList));
-         mv.addObject("pages", new int[DepList.getTotalPages()]);
-         mv.addObject("currentPage",page);
-         mv.addObject("currentSize",size);
-         mv.addObject("totalDepense", String.format("%.3f",  totalDepense));
+         		   
+         model.addAttribute("lst", trt.converter(DepList));
+         model.addAttribute("pages", new int[DepList.getTotalPages()]);
+         model.addAttribute("currentPage",page);
+         model.addAttribute("currentSize",size);
+         model.addAttribute("totalDepense", String.format("%.3f",  totalDepense));
 		
-		return  mv;
+		return "depense::mainContainerInDep";
 	}
 	
 	
@@ -170,49 +171,45 @@ public class DepenseController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/updateDep")
-	public ModelAndView updateDepense(@RequestParam() Long  idDep , @RequestParam() double depenseMontant ,  @RequestParam() String motif,			
+	public String updateDepense(Model model, @RequestParam() Long  idDep , @RequestParam() double depenseMontant ,  @RequestParam() String motif,			
             @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
 		     Traitement trt=new Traitement();
-		      ModelAndView mv=null ;
+		      
 		           if(idDep>0) {
 			
 					     depRepo.updateDepense(idDep,depenseMontant,motif, new Date());	
 					     
-					     
-			     
-			   
+					    
 			  }else  { System.out.println("Rien a Update");}
 		
              Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
 		     double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0 ;
 		 
-		     mv = new ModelAndView("/depense::mainContainerInDep");								   
-		     mv.addObject("lst", trt.converter(DepList));
-		     mv.addObject("pages", new int[DepList.getTotalPages()]);
-		     mv.addObject("currentSize",size);
-		     mv.addObject("currentPage",page);
-		     mv.addObject("totalDepense",  String.format("%.3f", totalDepense));
-			 return mv;
+		     								   
+		     model.addAttribute("lst", trt.converter(DepList));
+		     model.addAttribute("pages", new int[DepList.getTotalPages()]);
+		     model.addAttribute("currentSize",size);
+		     model.addAttribute("currentPage",page);
+		     model.addAttribute("totalDepense",  String.format("%.3f", totalDepense));
+			 return "depense::mainContainerInDep";
 	
 	}
 	
 	
-	@GetMapping("/depense/generatePDF/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
+	@PostMapping(value="/depense/generatePDF/",produces="application/pdf")
+	public ResponseEntity<byte[]> generatePDF(Model model ,@RequestParam(name="keyWord") String mc) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/depenses.jrxml";
+		 	   String jasperFileName="depenses.jrxml";
 		 	   String fileName="depense";
 		 	   
 		       List<Depense> depList =depRepo.findByMotifContains(!mc.equals("all")? mc:"");
   
-		 	   map.put("nameFor", "Israel");			   
+		 	   map.put("nameFor", "Israel");  
 			   
-			   //List<Payement> testList=payeRepo.findAll();
-
-		       return  trt.generatePDF(depList, jasperFilePath, map, fileName);
+		       return  trt.generatePDF(depList, jasperFileName, map, fileName);
 	   
 	}
 	

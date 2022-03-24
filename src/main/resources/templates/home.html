@@ -178,7 +178,11 @@
 			            <div class="container-fluid" id="userSiteContainer" th:fragment="userSiteContainer" >
 			                
 			                <script th:inline="javascript">
-			                
+			                	
+			                   document.querySelector("#tableMember").style.display="none";
+					       	   document.querySelector("#table-member").style.display="block";
+					       	   document.querySelector(".pagin2").style.display="none";
+					       	   document.querySelector(".pagin1").style.display="block";
 			                
 			                   var pa=(function pages(){ var p=[[${pages}]]; return p; }());
 			                   var errorList=(function errors(){ var error=[[${errorList}]];return error; }());	   
@@ -356,10 +360,7 @@
          var mainList;
          var toggle=true;
          var idValue=-10;		            
-	     document.querySelector("#tableMember").style.display="none";
-	     document.querySelector("#table-member").style.display="block";
-	     document.querySelector(".pagin2").style.display="none";
-	     document.querySelector(".pagin1").style.display="block";
+	     
  
  
 

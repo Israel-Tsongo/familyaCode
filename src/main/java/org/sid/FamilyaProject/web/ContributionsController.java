@@ -20,20 +20,15 @@ import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import net.sf.jasperreports.engine.JRException;
 
 
@@ -86,33 +81,34 @@ public class ContributionsController {
 	
 @GetMapping("/tableViewContrib")
 	
-	public ModelAndView tableViewContrib(@RequestParam(name="page",defaultValue = "0") int page,  @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size )  {	
-		 Traitement trt=new Traitement();
-		 ModelAndView mv=null ;			  
+	public String tableViewContrib(Model model ,@RequestParam(name="page",defaultValue = "0") int page,  @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size )  {	
+		 
+		Traitement trt=new Traitement();
+		 		  
 		   	   
 		 Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));		   
 		 double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
     
-			mv = new ModelAndView("/index::mainContainer");		   
-			mv.addObject("lst", trt.converter(memberList));
-		    mv.addObject("pages", new int[memberList.getTotalPages()]);
-		    mv.addObject("currentPage",page);
-		    mv.addObject("currentPage2",pageAllInfo);
-		    mv.addObject("currentSize",size);
-		    mv.addObject("totalCapitaux", totalCapitauxInitiaux); 
-		    mv.addObject("pageTitle","Contribution");
+					   
+			model.addAttribute("lst", trt.converter(memberList));
+		    model.addAttribute("pages", new int[memberList.getTotalPages()]);
+		    model.addAttribute("currentPage",page);
+		    model.addAttribute("currentPage2",pageAllInfo);
+		    model.addAttribute("currentSize",size);
+		    model.addAttribute("totalCapitaux", totalCapitauxInitiaux); 
+		    model.addAttribute("pageTitle","Contribution");
 		             
 		 
 		  
 		
-		return  mv;
+		return  "/index::mainContainer";
 	}
 	
 	
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping(path="/contribSearcher")
-	public ModelAndView searchByMatriculeInContrib(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchByMatriculeInContrib(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -123,41 +119,41 @@ public class ContributionsController {
 			  Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
 			  
 			  double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-			   ModelAndView mv = new ModelAndView();	
+			   	
 			   
-			   mv.addObject("lstSolde",trt.converter(capitalContribList));
-	           mv.addObject("lst", trt.converter(contribList));
-	           mv.addObject("pages", new int[contribList.getTotalPages()]);	
-	           mv.addObject("pages2",new int[capitalContribList.getTotalPages()]);
-	           mv.addObject("pageTitle","Contribution");
-	           mv.addObject("currentPage",page);
-	           mv.addObject("currentPage2",pageAllInfo);
-	           mv.addObject("currentSize",size);
-	           mv.addObject("totalContribution",String.format("%.3f", totalContribution));  
-	           mv.addObject("keyWord", mc);
-			   mv.setViewName("/contribution::mainContainerContrib");
+			   model.addAttribute("lstSolde",trt.converter(capitalContribList));
+	           model.addAttribute("lst", trt.converter(contribList));
+	           model.addAttribute("pages", new int[contribList.getTotalPages()]);	
+	           model.addAttribute("pages2",new int[capitalContribList.getTotalPages()]);
+	           model.addAttribute("pageTitle","Contribution");
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("currentPage2",pageAllInfo);
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("totalContribution",String.format("%.3f", totalContribution));  
+	           model.addAttribute("keyWord", mc);
+			   
 			  
-	           return  mv;
+	           return "contribution::mainContainerContrib";
 		   }else {
 			   Page <Payement> searchContribList =payeRepo.findByenteredMatricContains(mc,PageRequest.of(page,size));
 			   Page <List<List<Object>>>  searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMember(mc,PageRequest.of(page,size));
 
 			       double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 			       
-			       ModelAndView mv = new ModelAndView("/contribution::mainContainerContrib");	
+			       	
 			      
-			       mv.addObject("lstSolde",trt.converter(searchByMatricContribList));
-		             mv.addObject("lst", trt.searchConverterPaye(searchContribList));
-		             mv.addObject("pages", new int[searchContribList.getTotalPages()]);	
-		             mv.addObject("pages2", new int[searchByMatricContribList.getTotalPages()]);	
-		             mv.addObject("currentPage",page);
-		             mv.addObject("currentPage2",pageAllInfo);
-		             mv.addObject("currentSize",size);	
-		             mv.addObject("pageTitle","Contribution");
-		             mv.addObject("totalContribution", String.format("%.3f",totalContribution));  
-		             mv.addObject("keyWord", mc);
+			         model.addAttribute("lstSolde",trt.converter(searchByMatricContribList));
+		             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
+		             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
+		             model.addAttribute("pages2", new int[searchByMatricContribList.getTotalPages()]);	
+		             model.addAttribute("currentPage",page);
+		             model.addAttribute("currentPage2",pageAllInfo);
+		             model.addAttribute("currentSize",size);	
+		             model.addAttribute("pageTitle","Contribution");
+		             model.addAttribute("totalContribution", String.format("%.3f",totalContribution));  
+		             model.addAttribute("keyWord", mc);
 		
-		             return  mv;
+		             return "/contribution::mainContainerContrib";
 		   
 		   }
 	}
@@ -167,12 +163,12 @@ public class ContributionsController {
 	
 	
 	@RequestMapping(value="/contribPost",method=RequestMethod.POST)
-	public ModelAndView postIndexData(@RequestParam() String matricule,  @RequestParam() double contribution,			
+	public String postIndexData(Model model,@RequestParam() String matricule,  @RequestParam() double contribution,			
 			                                     @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size		                                     
 			                                     ) {
 		List<String> errorList =new ArrayList<String>();
 		Traitement trt = new Traitement();
-		ModelAndView mv=null ;
+		
 		 
 		try {
 			
@@ -202,7 +198,7 @@ public class ContributionsController {
 			System.out.println("Une erreur s'est produite lors de l'enregistrement dune contribution");			
 			System.out.println(exc.getMessage());
 			
-			//mv.addObject("errorList",errorList);
+			//model.addAttribute("errorList",errorList);
 			
 		}
 		
@@ -210,18 +206,19 @@ public class ContributionsController {
 		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
 	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 		   
-		mv = new ModelAndView("/contribution::mainContainerContrib");					   
-		mv.addObject("lst", trt.converter(contribList));
-		mv.addObject("lstSolde",trt.converter(capitalContribList));
-		mv.addObject("pages2", new int[capitalContribList.getTotalPages()]);
-		mv.addObject("pages", new int[contribList.getTotalPages()]);
-		mv.addObject("pageTitle","Contribution");
-		mv.addObject("currentPage",page);
-		mv.addObject("currentPage2",pageAllInfo);
-		mv.addObject("currentSize",size);
-        mv.addObject("totalContribution",String.format("%.3f",totalContribution));		
-		mv.addObject("errorList",errorList);
-		return mv;
+		//mv = new ModelAndView("/contribution::mainContainerContrib");
+		
+		model.addAttribute("lst", trt.converter(contribList));
+		model.addAttribute("lstSolde",trt.converter(capitalContribList));
+		model.addAttribute("pages2", new int[capitalContribList.getTotalPages()]);
+		model.addAttribute("pages", new int[contribList.getTotalPages()]);
+		model.addAttribute("pageTitle","Contribution");
+		model.addAttribute("currentPage",page);
+		model.addAttribute("currentPage2",pageAllInfo);
+		model.addAttribute("currentSize",size);
+		model.addAttribute("totalContribution",String.format("%.3f",totalContribution));		
+		model.addAttribute("errorList",errorList);
+		return "contribution::mainContainerContrib";
 	}
 	
 	
@@ -230,11 +227,11 @@ public class ContributionsController {
 	
 	@PostMapping("/deteteContrib")
 	
-	public ModelAndView deleteMember(@RequestParam() Long  idContrib,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size )  {	
+	public String deleteMember(Model model ,@RequestParam() Long  idContrib,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size )  {	
 		
 		 List<String> errorList = new ArrayList<String>();
 		 Traitement trt=new Traitement();
-		  ModelAndView mv=null ;
+		  String mv="" ;
 		 
 		  if (idContrib>0) {
 			  
@@ -245,28 +242,28 @@ public class ContributionsController {
 	       double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 		   
 		            
-		             mv = new ModelAndView("/contribution::mainContainerContrib");
-		             mv.addObject("lstSolde", trt.converter(capitalContribList ));
-		             mv.addObject("lst", trt.converter(contribList ));
-		             mv.addObject("pages", new int[contribList .getTotalPages()]);
-		             mv.addObject("pages2", new int[capitalContribList .getTotalPages()]);
-		             mv.addObject("currentPage",page);
-		             mv.addObject("currentPage2",pageAllInfo);
-		             mv.addObject("currentSize",size);
-		             mv.addObject("pageTitle","Contribution");
-		             mv.addObject("totalContribution", String.format("%.3f",totalContribution));          
+		             mv="contribution::mainContainerContrib";
+		             model.addAttribute("lstSolde", trt.converter(capitalContribList ));
+		             model.addAttribute("lst", trt.converter(contribList ));
+		             model.addAttribute("pages", new int[contribList .getTotalPages()]);
+		             model.addAttribute("pages2", new int[capitalContribList .getTotalPages()]);
+		             model.addAttribute("currentPage",page);
+		             model.addAttribute("currentPage2",pageAllInfo);
+		             model.addAttribute("currentSize",size);
+		             model.addAttribute("pageTitle","Contribution");
+		             model.addAttribute("totalContribution", String.format("%.3f",totalContribution));          
 		             
 		  }else  {
 			  
 				errorList.add("Une erreur  est survenu lors de la suppression d'une contribution , selectionner le sujet puis supprimer");
 				
-				mv = new ModelAndView("/contribution::mainContainerContrib");
-				//mv.setViewName();
+				mv="contribution::mainContainerContrib";
+				
 				
 			  }
 		  
-	    mv.addObject("errorList",errorList);
-		return  mv;
+	            model.addAttribute("errorList",errorList);
+		        return  mv;
 	}
 	
 	
@@ -274,10 +271,10 @@ public class ContributionsController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/updateContrib")
-	public ModelAndView updateMember(@RequestParam() Long  idContrib , @RequestParam() String matricule,  @RequestParam() double contribution,@RequestParam(name="page",defaultValue = "0") int page,  @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size   )  {	
+	public String updateMember(Model model ,@RequestParam() Long  idContrib , @RequestParam() String matricule,  @RequestParam() double contribution,@RequestParam(name="page",defaultValue = "0") int page,  @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		    
 		     Traitement trt=new Traitement();
-		      ModelAndView mv=null ;
+		      String mv="" ;
 		           if(idContrib>0) {
 			
 					     payeRepo.updateContribution(idContrib, matricule, trt.rounder(contribution), new Date());						   
@@ -287,23 +284,23 @@ public class ContributionsController {
 					     
 					      double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 						 
-						  mv = new ModelAndView("/contribution::mainContainerContrib");								   
-						  mv.addObject("lst", trt.converter(contribList));
-						  mv.addObject("lstSolde",trt.converter(capitalContribList));
+						  mv="contribution::mainContainerContrib";								   
+						  model.addAttribute("lst", trt.converter(contribList));
+						  model.addAttribute("lstSolde",trt.converter(capitalContribList));
 
-						  mv.addObject("pages", new int[contribList.getTotalPages()]);
-						  mv.addObject("pages2", new int[capitalContribList.getTotalPages()]);
-						  mv.addObject("currentPage",page);
-						  mv.addObject("currentPage2",pageAllInfo);
-						  mv.addObject("currentSize",size);
-						  mv.addObject("pageTitle","Contribution");
-						  mv.addObject("totalContribution", String.format("%.3f",totalContribution));
+						  model.addAttribute("pages", new int[contribList.getTotalPages()]);
+						  model.addAttribute("pages2", new int[capitalContribList.getTotalPages()]);
+						  model.addAttribute("currentPage",page);
+						  model.addAttribute("currentPage2",pageAllInfo);
+						  model.addAttribute("currentSize",size);
+						  model.addAttribute("pageTitle","Contribution");
+						  model.addAttribute("totalContribution", String.format("%.3f",totalContribution));
 			     
 			   
 			  }else  { 
 				  
 				  
-				  mv = new ModelAndView("/contribution::mainContainerContrib");
+				  mv = "contribution::mainContainerContrib";
 				  
 				
 			  }
@@ -316,12 +313,12 @@ public class ContributionsController {
 	}
 	
 	
-	@GetMapping("/contrib/generatePDF/{currentTable}/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc,@PathVariable(name="currentTable") String currentTable) throws Exception, JRException  {
+	@PostMapping(value="/contrib/generatePDF/",produces="application/pdf")
+	public ResponseEntity<byte[]> generatePDF(Model model ,@RequestParam(name="keyWord") String mc,@RequestParam(name="currentTable") String currentTable) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="";
+		 	   String jasperFileName="";
 		 	   String fileName="";
 		 	 
 		 	   if(currentTable.equals("soldes")) {
@@ -329,37 +326,37 @@ public class ContributionsController {
 					 List<Object>  searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMembers(!mc.equals("all")? mc:"");
 
 				     fileName="operations";
-				 	 jasperFilePath="src/main/resources/contribution.jrxml";
+				     jasperFileName="contribution.jrxml";
 				 	 map.put("nameFor", "Israel");				 	 
-				 	 return  trt.generatePDF(searchByMatricContribList, jasperFilePath, map, fileName);
+				 	 return  trt.generatePDF(searchByMatricContribList, jasperFileName, map, fileName);
 		 	   }
 		 	    
 			   List <Payement> searchContribList = payeRepo.findByenteredMatricContains(!mc.equals("all")? mc:"");
-			   jasperFilePath="src/main/resources/contribution.jrxml";
+			   jasperFileName="contribution.jrxml";
 		 	   fileName="contributions";
 		 	   map.put("nameFor", "Israel");			 	 
-			   return  trt.generatePDF(searchContribList, jasperFilePath, map, fileName);
+			   return  trt.generatePDF(searchContribList, jasperFileName, map, fileName);
 	   
 	}
 	
-	@GetMapping("/proofContrib/{matricule}/{montant}")
-	public ResponseEntity<byte[]> generateContribProof(@PathVariable(name="matricule") String matricule,@PathVariable(name="montant") double montant) throws JRException, Exception{
+	@PostMapping(value="/proofContrib/",produces="application/pdf")
+	public ResponseEntity<byte[]> generateContribProof(@RequestParam(name="matricule") String matricule,@RequestParam(name="montant") double montant) throws JRException, Exception{
 		  
 		
 		 Traitement trt=new Traitement();
 		  HashMap<String,Object> map = new HashMap<>();
-	 	  String jasperFilePath="";
+	 	  String jasperFileName="";
 	 	  String fileName="";
 		  
 	 	     fileName="contribution";
-		 	 jasperFilePath="src/main/resources/proof.jrxml";
+	 	     jasperFileName="proof.jrxml";
 		 	 map.put("typeOperation","COTISATION");
 		 	 map.put("info", "la contribution");
 		 	 map.put("nom",userRepo.getUserNameByMatricule(matricule));
 		 	 map.put("matricule",matricule);
 		 	 map.put("montant",montant);
 	 	    
-		 return	trt.generateProof(jasperFilePath, map, fileName);
+		 return	trt.generateProof(jasperFileName, map, fileName);
 	}
 	
 	

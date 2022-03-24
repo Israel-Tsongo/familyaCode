@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
 import net.sf.jasperreports.engine.JRException;
 
 @Controller
@@ -48,8 +48,7 @@ public class ProfileController {
 		model.addAttribute("pages",new int[profilList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
 		model.addAttribute("pageTitle","Profile");
-		model.addAttribute("currentSize",size);
-		
+		model.addAttribute("currentSize",size);		
 		model.addAttribute("keyWord", mc);		
 		return "userDetails";
 	   
@@ -63,7 +62,7 @@ public class ProfileController {
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping(path="/searchUser")
-	public ModelAndView searchUserByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchUserByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -72,19 +71,19 @@ public class ProfileController {
 			
 				Page <List<List<Object>>> userList =userRepo.getAllUsers(PageRequest.of(page,size));		
 
-			   ModelAndView mv = new ModelAndView();		           
-	           mv.addObject("lst", trt.converter(userList));
-	           mv.addObject("pages", new int[userList.getTotalPages()]);	
-	           mv.addObject("currentPage",page);
-	           mv.addObject("currentSize",size);
-	           mv.addObject("keyWord", mc);
-			   mv.setViewName("/userDetails::mainContainerProfile");
+			   		           
+	           model.addAttribute("lst", trt.converter(userList));
+	           model.addAttribute("pages", new int[userList.getTotalPages()]);	
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("keyWord", mc);
 			   
 			   
-	           return  mv;
+			   
+	           return  "userDetails::mainContainerProfile";
 		   }else {
 			       Page <User> searchUserList =userRepo.findByNomContains(mc,PageRequest.of(page,size));
-			       ModelAndView mv = new ModelAndView("/userDetails::mainContainerProfile");		           
+			       	           
 		             model.addAttribute("lst", trt.searchUserConverter(searchUserList));
 		             model.addAttribute("pages", new int[searchUserList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
@@ -92,7 +91,7 @@ public class ProfileController {
 		             model.addAttribute("keyWord", mc);
 		             
 		
-		             return  mv;
+		             return  "userDetails::mainContainerProfile";
 		   
 		   }
 	}
@@ -113,9 +112,9 @@ public class ProfileController {
 	
 	@PostMapping("/deleteUser")
 	
-	public ModelAndView deleteMember(@RequestParam() Long  idUser,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
+	public String deleteMember(Model model, @RequestParam() Long  idUser,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
 		 Traitement trt=new Traitement();
-		 ModelAndView mv=null ;
+		 
 		 
 		  if (idUser>0) {
 			  
@@ -140,14 +139,14 @@ public class ProfileController {
 		  
 		  Page <List<List<Object>>> UserList =userRepo.getAllUsers(PageRequest.of(page,size));		
 		     
-          mv = new ModelAndView("/userDetails::mainContainerProfile");		   
-          mv.addObject("lst", trt.converter(UserList));
-          mv.addObject("pages", new int[UserList.getTotalPages()]);
-          mv.addObject("currentSize",size);
-          mv.addObject("currentPage",page);
-          mv.setViewName("/userDetails::mainContainerProfile"); 
+          		   
+          model.addAttribute("lst", trt.converter(UserList));
+          model.addAttribute("pages", new int[UserList.getTotalPages()]);
+          model.addAttribute("currentSize",size);
+          model.addAttribute("currentPage",page);
+          
 		
-		return  mv;
+		return  "userDetails::mainContainerProfile";
 	}
 	
 	
@@ -155,12 +154,12 @@ public class ProfileController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/updateUserProf")
-	public ModelAndView updateUserProfile(@RequestParam() Long  idUser ,@RequestParam() Long  idRole ,@RequestParam() String nom,  @RequestParam() String matricule,			
+	public String updateUserProfile(Model model, @RequestParam() Long  idUser ,@RequestParam() Long  idRole ,@RequestParam() String nom,  @RequestParam() String matricule,			
             @RequestParam() String email,@RequestParam() String mobile,
             @RequestParam(defaultValue=" ") String password,@RequestParam(defaultValue=" ") String currentPassword, @RequestParam() Long role,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     BCryptPasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
 		     Traitement trt=new Traitement();
-		     ModelAndView mv=null ;
+		    
 		           if(idUser>0) {
 		        	   
 		        	    if(idUser !=1) {
@@ -175,39 +174,37 @@ public class ProfileController {
 			  }else  { System.out.println("error when updating");}
 		           
 	           Page <List<List<Object>>> userList =userRepo.getAllUsers(PageRequest.of(page,size));		
-
-				  mv = new ModelAndView("/userDetails::mainContainerProfile");								   
-				  mv.addObject("lst", trt.converter(userList));
-				  mv.addObject("pages", new int[userList.getTotalPages()]);
-				  mv.addObject("currentSize",size);
-				  mv.addObject("currentPage",page);				  
-	              mv.setViewName("/userDetails::mainContainerProfile");
-		 
-			return mv;
+				 								   
+				  model.addAttribute("lst", trt.converter(userList));
+				  model.addAttribute("pages", new int[userList.getTotalPages()]);
+				  model.addAttribute("currentSize",size);
+				  model.addAttribute("currentPage",page);			  
+	           
+			      return "userDetails::mainContainerProfile";
 	
 	}
 	
 	@PostMapping("/autreDetailsProfile")
-	public ModelAndView detail(@RequestParam(required=true) Long  idUser) {		
+	public String detail(Model model, @RequestParam(required=true) Long  idUser) {		
 		
 		
-		 User usr=userRepo.getUserById(idUser);		
-		 ModelAndView modelAndView=null ;
-		 modelAndView = new ModelAndView("/userDetails::detailsModalContent");
+		 User usr=userRepo.getUserById(idUser);	
+		 
+		 String modelAndView ="userDetails::detailsModalContent";
 		 
 		 if(usr!=null) {	    		
 			    	
-			 		modelAndView.addObject("userId",usr.getUser_id());
-			 		modelAndView.addObject("userRole",usr.getRoles());
-			    	modelAndView.addObject("matricule",usr.getMatricule());
-			    	modelAndView.addObject("nom",usr.getNom());
-			    	modelAndView.addObject("numero_fiche_adhesion",usr.getNumeroFiche());
-					modelAndView.addObject("adresse",usr.getAdresse());
-					modelAndView.addObject("genre",usr.getGenre());
-					modelAndView.addObject("typePiece",usr.getTypePiece());
-					modelAndView.addObject("numeroPiece",usr.getNumeroPiece());
-					modelAndView.addObject("salaire",usr.getSalaire());
-					modelAndView.addObject("retenu",usr.getRetenu());
+			 		model.addAttribute("userId",usr.getUser_id());
+			 		model.addAttribute("userRole",usr.getRoles());
+			    	model.addAttribute("matricule",usr.getMatricule());
+			    	model.addAttribute("nom",usr.getNom());
+			    	model.addAttribute("numero_fiche_adhesion",usr.getNumeroFiche());
+					model.addAttribute("adresse",usr.getAdresse());
+					model.addAttribute("genre",usr.getGenre());
+					model.addAttribute("typePiece",usr.getTypePiece());
+					model.addAttribute("numeroPiece",usr.getNumeroPiece());
+					model.addAttribute("salaire",usr.getSalaire());
+					model.addAttribute("retenu",usr.getRetenu());
 					return modelAndView;
 		 
 		 }else {
@@ -223,13 +220,12 @@ public class ProfileController {
 	//************** UPDATE OTHER USER ************************
 	
 		@PostMapping("/updateOtherUserDetails")
-		public ModelAndView updateUserOtherDetails(@RequestParam() Long  idUser ,@RequestParam() String genre,  @RequestParam() String typePiece,			
+		public String updateUserOtherDetails(Model model, @RequestParam() Long  idUser ,@RequestParam() String genre,  @RequestParam() String typePiece,			
 	            @RequestParam() String numeroPiece,@RequestParam() String salaire,
 	            @RequestParam(defaultValue=" ") String retenu,@RequestParam(defaultValue=" ") String adresse,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 			     
 			     Traitement trt=new Traitement();
-			     ModelAndView mv=null ;
-			     System.out.println("==========ytytyty");
+			     
 			           if(idUser>0) {
 			        	   
 			        	    if(idUser !=0 ) {
@@ -245,31 +241,29 @@ public class ProfileController {
 			           
 		           Page <List<List<Object>>> userList =userRepo.getAllUsers(PageRequest.of(page,size));		
 
-					  mv = new ModelAndView("/userDetails::mainContainerProfile");								   
-					  mv.addObject("lst", trt.converter(userList));
-					  mv.addObject("pages", new int[userList.getTotalPages()]);
-					  mv.addObject("currentSize",size);
-					  mv.addObject("currentPage",page);				  
-		              mv.setViewName("/userDetails::mainContainerProfile");
+					  								   
+					  model.addAttribute("lst", trt.converter(userList));
+					  model.addAttribute("pages", new int[userList.getTotalPages()]);
+					  model.addAttribute("currentSize",size);
+					  model.addAttribute("currentPage",page);				  
+		              
 			 
-				return mv;
+				return "userDetails::mainContainerProfile";
 		
 		}
 		
-		@GetMapping("/profile/generatePDF/{keyWord}")
-		public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
+		@PostMapping(value="/profile/generatePDF/",produces="application/pdf")
+		public ResponseEntity<byte[]> generatePDF(Model model ,@RequestParam(name="keyWord") String mc) throws Exception, JRException  {
 			
 			 	   Traitement trt = new Traitement();
 			 	   HashMap<String,Object> map = new HashMap<>();
-			 	   String jasperFilePath="src/main/resources/Coffee.jrxml";
+			 	   String jasperFileName="Coffee.jrxml";
 			 	   String fileName="profile";
 			       List<User> searchUserList =userRepo.findByNomContains(!mc.equals("all")? mc:"");
 
-			 	   map.put("nameFor", "Israel");			   
+			 	   map.put("nameFor", "Israel");		   
 				   
-				   //List<Payement> testList=payeRepo.findAll();
-
-			       return  trt.generatePDF(searchUserList, jasperFilePath, map, fileName);
+			       return  trt.generatePDF(searchUserList, jasperFileName, map, fileName);
 		   
 		}
 	

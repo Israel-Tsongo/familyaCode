@@ -4,6 +4,7 @@
 <head th:replace="fragments :: html_head"></head>
 
 <body id="page-top">
+
     <div id="wrapper">
     
         <nav th:replace="fragments :: left_nav">
@@ -15,7 +16,7 @@
                 <nav th:replace="fragments :: centered_nav">
                 </nav>
                 
-            <div class="container-fluid"   id="containerMainInInteret" th:fragment="mainContainerInInteret">
+            <div id="containerMainInInteret"  class="container-fluid"    th:fragment="containerMainInInteret">
                 <div class="d-sm-flex justify-content-between align-items-center mb-4">
                     <h3 class="text-dark mb-0" id="membre-title">Interet par membre</h3>
                 </div>
@@ -45,7 +46,7 @@
 	                                </button>
 	                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 	                                        <p class="text-center dropdown-header">dropdown header:</p>
-	                                        <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF </a>
+	                                        <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(type=true)">Exporter en PDF </a>
 	                                        <!--<a class="dropdown-item" href="#">&nbsp;Another action</a>
 	                                        <div class="dropdown-divider"></div>
 	                                        <a class="dropdown-item" href="#">&nbsp;Something else here</a>-->
@@ -88,7 +89,7 @@
                                         <tbody>
                                             <tr th:each="element:${lst}">
                                                  <td style="padding: 12px;width: 36px;">
-                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInInteret([[${element.get(0)}]],[[${lst}]]);" type="radio">                                                
+                                                    <input name="chk"  type="radio" th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInInteret([[${element.get(0)}]],[[${lst}]]);" />                                                
                                                 </td> 
                                                 <td  th:text="${element.get(1)}" ></td>
                                                 <td  th:text="${element.get(2)}" ></td>
@@ -125,17 +126,24 @@
                             </div>
                         </div>
                         
-                         <div  th:fragment="pagination_card"  id="card-center-1" class="card shadow mb-12">
-                            <div id="div-total">
-                                <div class="d-inline" id="total-content" style="width:320px">
-                                    <p class="d-inline" id="title-total">TOTAL :&nbsp;</p><button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalInteretNet+" $"}]]</button></div>
+                       <div    id="card-center-1" class="card shadow mb-12">
+                             
+                              <div id="div-total">
+                                 <div class="d-inline" id="total-content" style="width:320px">
+                                      <p class="d-inline" id="title-total">TOTAL :</p>
+                                    
+                                   <button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalInteretNet+" $"}]]</button>
+                                
+                                </div> 
                             </div>
+                            
+                            
                             <div class="card-body" id="card-bottom-body">
                                 <div class="row">
-                                    <div class="col-md-2 align-self-center">
+                                    <div class="col-md-3 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 5 of 8</p>
                                     </div>
-                                    <div class="col-md-10">
+                                    <div class="col-md-9">
                                         <nav th:replace="fragments :: safePagination" >                                    
        								   </nav>
        								   
@@ -159,9 +167,10 @@
        </footer>
     </div>
     </div>
+    
     <div  id="floating-button-interet" class="btn-group-fab"  role="group" aria-label="FAB Menu" >
 	<div>
-		<button type="button" id="withDraw"  onclick="setTheWithDrawerInInteret()" data-toggle="modal" data-target="#interetModal" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Retrait"><i class="fa fa-money"></i></button>
+		<button type="button" id="withDraw" onclick="setValueForWithDrawer()"  data-toggle="modal" data-target="#interetModal" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Retrait"><i class="fa fa-money"></i></button>
 
 		<!--<button type="button"  id="addBtnInContrib" onclick="setVariableAddInContrib()"  data-toggle="modal" data-target="#contribAddModal" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter"><i class="fa fa-plus"></i></button>
 		<button type="button" id="updateBtnInContrib"  onclick="setVariableUpdateInContrib(idValue)"  data-toggle="modal" data-target="#contribAddModal" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Mettre a jour"><i class="fa fa-refresh"></i></button>
@@ -202,7 +211,7 @@
                     </form>
                     <div class="text-center" id="div-button">
                         <div class="form-group d-flex flex-column align-items-center" id="form-btn">
-	                        <button id ="withDrawButtonInInteret" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Retirer</button>
+	                        <button onclick="setTheWithDrawerInInteret()" id ="withDrawButtonInInteret" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Retirer</button>
 	                        
 	                        <button  class="btn btn-primary btn-block text-white btn-user btn-close" type="submit"  data-dismiss="modal">Annuler</button>
                         </div>
@@ -233,35 +242,60 @@
     document.querySelector("#table-member").style.display="block";
     var toggle=false;    
     var idValue=-10;
+    var nom;    
+    var matricule;
+    var montant
     var matric;
     var currentTable="interet"
       
       
-    function actions(type){
-       	
-     	 $(document).ready(function(){
-     		 
-    		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-      		           var w=window.open("http://localhost:8080/interet/interetGeneratePDF/"+currentTable+"/"+keyWord, "_blank");    		 		
-    		 		   setTimeout(function(){
-    		 			   
-    		 			 //var a = w.document.createElement('A');
-    					 //var filePath = w.location.href;
-    					 // a.href = filePath;
-    					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-    					 // w.document.body.appendChild(a);
-    					  //a.click();
-    					  //w.document.body.removeChild(a);
-    		 			   
-    		 		   },600)
-   				 
-     	 })
-     	 
-     	 
+    function actions(type=true){
+    	
+    	         var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
+    		     var request = new XMLHttpRequest();
+    	         url=type?"http://localhost:8080/interet/interetGeneratePDF/":"http://localhost:8080/proof/" ;
+    		     request.open("POST",url,true)
+    		     request.responseType='blob';
+    		     request.onload=function(e){
+    		    	 
+    		    	 if(this.status===200){
+    		    		 	    		 
+    		    		 var file=window.URL.createObjectURL(this.response)
+    		    		 var w= window.open(file,"_blank")
+    		    		 var a=w.document.createElement("a");
+    		    		 a.href=file;	    		 
+    		    		 a.download=this.response.name || type?currentTable:"retrait"+matricule;
+    		    		 w.document.body.appendChild(a)
+    		    		 a.click()
+    		    		 w.onfocus=function(){
+    		    			 w.document.body.removeChild(a)
+    		    		 }
+    		    		 
+    		    	 }
+    		     }
+    		     
+    		     
+    		     var data= new FormData();
+    		     
+    		     if(type){    		    	 
+    		    	    
+    	    		    data.append('keyWord',keyWord)
+    	    		    data.append('currentTable',currentTable)
+    	    		    request.send(data)
+    		    	 
+    		     }else{
+	    		    	data.append('name',nom)
+	 	    		    data.append('matricule',matricule)
+	 	    		    data.append('montant',montant)
+	 	    		    request.send(data)
+    		    	 
+    		     }
+    	 
       }     
       
  
       function errorFonction() {
+    	  
           if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
              var messages="";
              console.log("===>",errorList);
@@ -280,7 +314,7 @@
       $(document).ready(function(){
      	 
      	 $(".pagin1").show();
-     	$(".pagin2").hide();
+     	 $(".pagin2").hide();
      	 
      	 
       })
@@ -308,8 +342,8 @@
     		$(".pagin1").show();
     		$(".pagin2").hide();
     		$("#div-total").show();
-    		$("#interet").load(location.href+ " #interet");	
-    		$("#div-total").load(location.href+ " #div-total");
+    		//$("#interet").load(location.href+ " #interet");	
+    		// $("#div-total").load(location.href+ " #div-total");
     		$("#floating-button-interet").show();
     		
     	}
@@ -371,7 +405,7 @@
 			 	                    	 $(".pagin2").show();
       		        	           }
       		        	                              	       
-	                    	       $("#div-total").load(location.href+ " #div-total");	                    	      
+	                    	                           	      
       		        	           console.log("Tout s'est bien passe");
       		        	           errorFonction(); 
       		        	
@@ -420,8 +454,7 @@
        		        	           $("#containerMainInInteret").html(data);   
        		        	           $("#table-member").show();
      		          		       $("#tableMember").hide();
-     		        	           $("#div-total").show() ;	                    	       
-	                    	       $("#div-total").load(location.href+ " #div-total");
+     		        	           $("#div-total").show() ;                   	       
 	                    	       $(".pagin1").show();
 	 	                    	   $(".pagin2").hide();
        		        	           console.log("Tout s'est bien passe");
@@ -466,7 +499,7 @@
          		        	     $("#table-member").hide();
       		          		     $("#tableMember").show();
       		        	         $("#div-total").hide() ;   	                    	       
-   	                    	     $("#div-total").load(location.href+ " #div-total");	                    	     
+   	                    	     	                    	     
    	                    	     $(".pagin2").show();
 	                    		 $(".pagin1").hide();
 	                    		 $("#opera-button").text("Voir interet par Membre")
@@ -508,8 +541,7 @@
  	                    	      
  	                    	    if(!toggle){
  	                    	    	
- 	                    	    	$("#containerMainInInteret").html(data); 
- 	                    	    	$("#div-total").load(location.href+ " #div-total");
+ 	                    	    	$("#containerMainInInteret").html(data); 	                    	    	
  	                    	    	$("#div-total").show() ;
  	                    	    	$("#table-member").show();
  	                    	    	$("#tableMember").hide();
@@ -519,8 +551,7 @@
  	                    		
  	                    	    }else if(toggle){
  	                    	    	
- 	                    	    	$("#containerMainInInteret").html(data); 
- 	                    	    	$("#div-total").load(location.href+ " #div-total");
+ 	                    	    	$("#containerMainInInteret").html(data);  	                    	    	
  	                    	    	$("#div-total").hide() ;
  	                    	    	$(".pagin1").hide();
  	                    		    $(".pagin2").show();
@@ -548,37 +579,42 @@
     	
 	 
  }   
+    
+    function  setValueForWithDrawer()   {
+    	$(document).ready(function(){
+	        	 
+	        	//Update Button
+	            
+            	       var list=mainList; 
+	        	        
+            	       list.forEach(function(element){ 
+            	    	   
+            	    	    if(element[0]==idValue){
+            	    	    	
+            	    	    	$("#name").text("Nom : "+element[1]);
+            	    	    	nom=element[1];
+            	    	    	$("#matr").text("Matricule : "+element[2]);
+            	    	    	matricule=element[2];
+            	    	    	console.log( "======"+element[2]);
+            	    	    	
+            	    	    	
+            	    	     }
+            	    	
+            	       });
+   	    	    	          
+            	          
+    	
+        })
+    	
+    }
+    
+    
     //Retrait
 
     function  setTheWithDrawerInInteret()   {
   		  
-  	         $(document).ready(function(){
-  	        	 
-  	        	//Update Button
-   	            
-                	       var list=mainList; 
-  	        	           var nom;
-  	        	           var matricule;
-                	       list.forEach(function(element){ 
-                	    	   
-                	    	    if(element[0]==idValue){
-                	    	    	
-                	    	    	$("#name").text("Nom : "+element[1]);
-                	    	    	nom=element[1];
-                	    	    	$("#matr").text("Matricule : "+element[2]);
-                	    	    	matricule=element[2];
-                	    	    	console.log( "======"+element[2]);
-                	    	    	
-                	    	    	
-                	    	     }
-                	    	
-                	       });
-       	    	    	       console.log( "======"+idValue);
-       	    	    	       
-                	    	   $("#withDrawButtonInInteret").unbind("click").click( function(){
-                	    		   
-                	    		   var montant=$("#montant-retrait-field").val();                	    		   
-                            	   
+    	              $(document).ready(function(){	    		   
+    	            	           montant=$("#montant-retrait-field").val();
                     	    	   $.ajax({
                       				 url:"http://localhost:8080/withDraw",
                       				 type:"post",
@@ -592,12 +628,10 @@
                       		 
                       		        success: function(data){
                       		       	               
-                      		        	          $("#interetModal").modal("hide");  
-                      		        	          $("#containerMainInInteret").html(data);      		        	
-           	                    	              $("#div-total").load(location.href+"#div-total");
-           	                    	              $("#interetForm").load(location.href+"#interetForm");           	                    	              
-           	                    	              
-           	                    	              $("#tableMember").hide();
+                      		        	          $("#interetModal").modal("hide");
+                      		        	          console.log()
+                      		        			  $("#containerMainInInteret").html(data);        		        			
+                      		        	          $("#tableMember").hide();
            	                    	              $("#table-member").show();
            	                    	              $("#montant-retrait-field").val("");
                                	    	          idValue=-10;
@@ -605,22 +639,26 @@
                  	 	                    	  $(".pagin2").hide();                    		        			  
                     		        			  errorFonction();                    		        			  
                     		        			  var w;
-                    		        			  errorList.length==0?w=window.open("http://localhost:8080/proof/"+nom+"/"+matricule+"/"+montant, "_blank"): errorList.forEach((item,index)=>{ 
-                    		        				  																											console.log("Vous venez de tout retirer")
-																										                    		        				  if(item=="Vous venez de tout retirer,desormais votre interet est de 0 $"){
-																										                    		        					  
-																										                    		        					  console.log("Vous venez de tout retirer ====")
-																										                    		        					  var w=window.open("http://localhost:8080/proof/"+nom+"/"+matricule+"/"+montant, "_blank");
-																										                    		        				  }
+                    		        			  errorList.length==0?actions(type=false): errorList.forEach((item,index)=>{ 
+                    		        				  
+    		        				  															console.log("Vous venez de tout retirer")
+										                    		        				    if(item=="Vous venez de tout retirer,desormais votre interet est de 0 $"){
+										                    		        					  
+										                    		        					     console.log("Vous venez de tout retirer ====")
+										                    		        					     actions(type=false)
+										                    		        				  }
 																										                    		        				  
 												 })
                     		        			  
-                    		        			  
+												  idValue=-10;
+                    		        			  nom="";
+                    		        			  matricule;
                       		          },        		          
                       		          error: function(error){
+                      		        	           idValue=-10
+                      		        	           nom="";
+                     		        			   matricule;
                       		        	           console.log("Salut tout le monde in With Draw");
-                      		        	            $("#interetForm").load(location.href+"#interetForm");
-                      		        	            $("#tableMember").load(location.href+"#tableMember");
                       		        	            errorFonction()
 			                      		        	$(".pagin1").show();
 			       	 	                    	    $(".pagin2").hide();			       	 	                    	    
@@ -636,8 +674,14 @@
                       		       })                      		       
                 	    	   
                 	    	   
-                	    	   });                    		 
-           });
+                	    	   }); 
+                	    	   
+                	    	  // $("#interetForm").load(location.href+"#interetForm");
+ 		        	           // $("#tableMember").load(location.href+"#tableMember");  
+                	    	   
+          // });
+  	         
+  	         
   	        	
     }
     

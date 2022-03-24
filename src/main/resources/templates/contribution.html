@@ -45,11 +45,8 @@
                                 	</button>
                                     <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
                                         <p class="text-center dropdown-header">dropdown header:</p>
-                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)" >Exporter sous PDF </a>
-                                        	<!--<a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>                                        
-                                        	<a class="dropdown-item" href="#">Something else here</a>-->
-                                        	
+                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(type=true)" >Exporter sous PDF </a>
+                                        	                                        	
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +94,7 @@
                                         <tbody>
                                             <tr th:each="element:${lst}">
                                                 <td style="padding: 12px;width: 36px;">
-                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInContrib([[${element.get(0)}]] , [[${lst}]])" type="radio">
+                                                    <input name="chk" th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInContrib([[${element.get(0)}]] , [[${lst}]])" type="radio">
                                                 </td>                                                
                                                 <td  th:text="${element.get(1)}" ></td>
                                                 <td  th:text="${element.get(2)}" ></td>
@@ -142,7 +139,7 @@
                             </div>
                         </div>
                         
-                       <div  th:fragment="pagination_card"  id="card-center-1" class="card shadow mb-12">
+                       <div    id="card-center-1" class="card shadow mb-12">
                             <div id="div-total">
                                 <div class="d-inline" id="total-content" style="width:320px">
                                     <p class="d-inline" id="title-total">TOTAL :&nbsp;</p><button class="btn btn-primary" id="button-total" type="button" style="padding-bottom: 0px;padding-top: 0px;padding-right: 0px;padding-left: 0px;">[[${totalContribution+' $'}]]</button></div>
@@ -163,74 +160,6 @@
        								</nav>
        								
        								
-       								
-                                    <!--  
-                                        <nav th:if="${pages.length >= 1}" class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers pagin1" id="pagination">
-                                            
-                                            
-                                             <ul class="pagination justify-content-center flex-wrap">
-                                                <li class="${currentPage > 1 ?'page-item':'page-item disabled'}">
-                                                   <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(1)}+')'">First</a>
-                                                </li>
-                                                
-                                                 <li th:class="${currentPage>1 ?'page-item':'page-item disabled'}">
-                                                   <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(currentPage-1)}+')'" aria-label="Previous">&laquo</a>
-                                                </li>
-                                                
-                                                <th:block th:if="${(pages.length-1) <= 10}">
-                                                  <li th:each="i:${#numbers.sequence(1,(pages.length-1) )}" th:class="${currentPage !=i ?'page-item':'page-item active'}">
-                                                     <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(i)}+')'">[[${i}]]</a>
-                                                  </li>
-                                               </th:block>
-                                               
-	                                               <th:block th:if="${(pages.length-1) > 10}">
-	                                               	                                               
-	                                                  <th:block th:if="${currentPage <=5 || currentPage > (pages.length-1)-4}">
-		                                                  <li th:each="i:${#numbers.sequence(1,5)}" th:class="${currentPage !=i ?'page-item':'page-item active'}">
-		                                                     <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(i)}+')'">[[${i}]]</a>
-		                                                  </li>
-		                                                  
-		                                                   <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(6)}+')'">...</a>
-		                                                  
-		                                                  <li th:each="i:${#numbers.sequence((pages.length-1)-4,(pages.length-1) )}" th:class="${currentPage !=i ?'page-item':'page-item active'}">
-		                                                     <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(i)}+')'">[[${i}]]</a>
-		                                                  </li>
-	                                                </th:block>
-	                                                
-	                                                <th:block th:if="${currentPage > 5 && currentPage < (pages.length-1) -3}">
-	                                                    <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(currentPage-5)}+')'">...</a>
-	                                                    
-                                                     	<li th:each="i:${#numbers.sequence(currentPage-4,currentPage+4)}" th:class="${currentPage !=i ?'page-item':'page-item active'}">
-	                                                     	<a class="page-link" th:onclick="'javascript:paginationInContrib('+${(i)}+')'">[[${i}]]</a>
-	                                                 	</li>
-	                                                 	<a class="page-link" th:onclick="'javascript:paginationInContrib('+${(currentPage+5)}+')'">...</a>
-	                                                </th:block>
-	                                                
-	                                                
-	                                                
-                                               </th:block>
-                                               
-                                               
-                                               <li th:class="${currentPage < (pages.length-1) ?'page-item':'page-item disabled'}">
-                                                   <a class="page-link" th:onclick="'javascript:paginationInContrib('+${(currentPage+1)}+')'" aria-label="Next">&raquo</a>
-                                                
-                                                </li>
-                                                 <li th:class="${currentPage < (pages.length-1)  ?'page-item':'page-item disabled'}">
-                                                   <a class="page-link" th:onclick="'javascript:paginationInContrib('+${((pages.length-1) )}+')'">Last</a>
-                                                </li>
-                                             </ul>
-                                            
-                                            
-                                            
-                                             <ul th:each ="page,status:${pagesSolde}" class="pagination pagin2" id="pagin">
-                                             
-                                                <li    th:if="${status.first} and ${status.index != currentPage}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage-1}+')'"  aria-label="Previous"><span class="pagin2" aria-hidden="true">&laquo</span></a></li>
-                                                
-                                                <li    th:if="${(status.index+1)<=4} or ${status.index==currentPage}" th:class="${status.index==currentPage?' page-item active':'page-item pagin2'}"><a  class="page-link pagin2" th:onclick="'javascript:paginationInContrib2('+${status.index}+')'"   th:text="${status.index+1}"></a></li>
-                                                
-                                                <li    th:if="${status.last} and ${currentPage <= pages.length-2}" class="page-item pagin2"><a class="page-link pagin2"  th:onclick="'javascript:paginationInContrib2('+${currentPage+1}+')'"  aria-label="Next"><span class="pagin2" aria-hidden="true">&raquo</span></a></li>
-                                            </ul>
-                                        </nav> -->
                                     </div>
                                 </div>
                             </div>
@@ -326,36 +255,51 @@
      
      
      
-     function actions(type){
-    	
-    	 $(document).ready(function(){
-    		 
-   		 		  var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-	    		   var w=window.open("http://localhost:8080/contrib/generatePDF/"+currentTable+"/"+keyWord, "_blank");
-   		 		
-   		 		   setTimeout(function(){
-   		 			   
-   		 			 //var a = w.document.createElement('A');
-   					 //var filePath = w.location.href;
-   					 // a.href = filePath;
-   					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-   					 // w.document.body.appendChild(a);
-   					  //a.click();
-   					  //w.document.body.removeChild(a);
-   		 			   
-   		 		   },600)
-				  
-			
-    		 
-    	 })
+     function actions(type=true){    	 
     	 
+  	       
+    	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
+    	     var request = new XMLHttpRequest();
+    	     var url=type?"http://localhost:8080/contrib/generatePDF/":"http://localhost:8080/proofContrib/";
+    	     request.open("POST",url,true)
+    	     request.responseType='blob';
+    	     request.onload=function(e){
+    	    	 
+    	    	 if(this.status===200){
+    	    		 	    		 
+    	    		 var file=window.URL.createObjectURL(this.response)
+    	    		 var w= window.open(file,"_blank")
+    	    		 var a=w.document.createElement("a");
+    	    		 a.href=file;	    		 
+    	    		 a.download=this.response.name || "contribution"+$("#contrib-matricule-field").val()
+    	    		 w.document.body.appendChild(a)
+    	    		 a.click()
+    	    		 w.onfocus=function(){
+    	    			 w.document.body.removeChild(a)
+    	    		 }
+    	    		 
+    	    	 }
+    	     }
+    	     
+    	    var data= new FormData();
+    	    if(type){
+    	    	
+    	    	data.append('keyWord',keyWord)
+        	    data.append('currentTable',currentTable)
+        	    request.send(data)
+    	    	
+    	    }else{
+    	    	
+    	    	data.append('matricule',$("#contrib-matricule-field").val())
+        	    data.append('montant',$("#contrib-field").val())
+        	    request.send(data)
+    	    }
+    	    
+    	
+   	 
     	 
      }
-     
-     
-     
-     
-     
+    
   	 
     function errorFonction() {
      if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
@@ -411,6 +355,7 @@
     		$("#solde-button").text("Voir le solde par membre")
     		$(".pagin1").show();
     		$(".pagin2").hide();
+    		$("#exportInPdf").show();
     		$("#div-total").show();
     		$("#interet").load(location.href+ " #interet");	
     		$("#div-total").load(location.href+ " #div-total");
@@ -419,6 +364,7 @@
             if(!toggle){
     		
             currentTable="soldes";
+            $("#exportInPdf").hide();
     		$("#table-member").hide();
     		$("#tableMember").show();
     		$("#div-total").hide();
@@ -605,8 +551,8 @@
  	                    	      $("#div-total-contrib").load(location.href+ " #div-total-contrib");
  	                    	      $(".pagin1").show();
  	                    		  $(".pagin2").hide();
- 	                    		 errorFonction()
-        		        	     console.log("Tout s'est bien passe");
+ 	                    		  errorFonction()
+        		        	      console.log("Tout s'est bien passe");
         		        	
         		            },        		          
         		          error: function(error){
@@ -706,12 +652,12 @@
           	                    		    errorFonction()
           	                    		    
           	                    		    var w;
-                 		        			errorList.length==0?w=window.open("http://localhost:8080/proofContrib/"+$("#contrib-matricule-field").val()+"/"+$("#contrib-field").val(), "_blank"): errorList.forEach((item,index)=>{ 
+                 		        			errorList.length==0?actions(type=false): errorList.forEach((item,index)=>{ 
                  		        				  																											
-																							                    		        				  if((item !=="Le matricule entre ne correspond a aucun membre") && (item !=="Veiller recharger la page et reessayer avec le bon matricule")){																							                    		        					  
-																							                    		        					  
-																							                    		        					 var w =window.open("http://localhost:8080/proofContrib/"+$("#contrib-matricule-field").val()+"/"+ $("#contrib-field").val(), "_blank")
-																							                    		        				  }
+														   				  if((item !=="Le matricule entre ne correspond a aucun membre") && (item !=="Veiller recharger la page et reessayer avec le bon matricule")){																							                    		        					  
+														   					  
+														   					  actions(type=false)
+														   				  }
 																							                    		        				  
 									       })
           	                    		    

@@ -14,8 +14,8 @@
 							        <div class="d-flex flex-column" id="content-wrapper">
 									              <div id="content">
 									            
-									                     <nav th:replace="fragments :: centered_nav">
-									                     </nav> 
+								                     <nav th:replace="fragments :: centered_nav">
+								                     </nav> 
 									               
 									            <div class="container-fluid" id="containerMain" th:fragment="mainContainer" >
 									                <div class="d-sm-flex justify-content-between align-items-center mb-4">
@@ -147,10 +147,24 @@
 									                
 									            </div>
 									            
-															            
 														
-									        </div>
+									            </div>
+									            
+									                <!--Details  --> 
+									                
+									                
+									                
+									                
+									                
+									                
+									                
+									                
+									                
+									                
+									                
+									                
 									                <!-- Footer -->
+									                
 									              <footer th:replace="fragments :: html_footer">       
 									              </footer>
 							   	   </div>        
@@ -167,7 +181,7 @@
 									</div>
 							</div>
 							
-							<!--  --> 
+							
 							
 							
 							<div role="dialog" tabindex="-1" class="modal fade justify-content-center" id="detailModal"   style="max-width: 600px;position:absolute;left:30%;top:10%;transform:translate(-50,-50)" >
@@ -224,6 +238,13 @@
 				                    </div>
 				      </div>
                
+                           
+                           
+                           
+                           
+                           
+                           
+                           
                             <!--  -->
                  
                         <div   class="modal fade"  id="addModal" role="dialog" tabindex="-1">
@@ -316,26 +337,34 @@
                          
                          
 function actions(type){
-   	
-	 $(document).ready(function(){
-		 
-	 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
- 		       var w=window.open("http://localhost:8080/membre/generatePDF/"+keyWord, "_blank");
-	 		
-	 		   setTimeout(function(){
-	 			   
-	 			 //var a = w.document.createElement('A');
-				 //var filePath = w.location.href;
-				 // a.href = filePath;
-				 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-				 // w.document.body.appendChild(a);
-				  //a.click();
-				  //w.document.body.removeChild(a);
-	 			   
-	 		   },600)
-   
-	 })
-	 
+	       
+	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
+	     var request = new XMLHttpRequest();	
+	     request.open("POST","http://localhost:8080/membre/generatePDF/",true)
+	     request.responseType='blob';
+	     request.onload=function(e){
+	    	 
+	    	 if(this.status===200){
+	    		 	    		 
+	    		 var file=window.URL.createObjectURL(this.response)
+	    		 var w= window.open(file,"_blank")
+	    		 var a=w.document.createElement("a");
+	    		 a.href=file;	    		 
+	    		 a.download=this.response.name || "member"
+	    		 w.document.body.appendChild(a)
+	    		 a.click()
+	    		 w.onfocus=function(){
+	    			 w.document.body.removeChild(a)
+	    		 }
+	    		 
+	    	 }
+	     }
+	     
+	    var data= new FormData();
+	    data.append('keyWord',keyWord)
+	    request.send(data)
+	
+	
 	 
  }                      
 

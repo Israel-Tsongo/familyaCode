@@ -94,11 +94,11 @@ public class RemboursementController {
 			   Page <List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));
 			   
 			   ModelAndView mv = new ModelAndView();		           
-	           mv.addObject("lst", trt.converter(eventList));
-	           mv.addObject("pages", new int[eventList.getTotalPages()]);	
-	           mv.addObject("currentPage",page);
-	           mv.addObject("currentSize",size);
-	           mv.addObject("keyWord", mc);
+	           model.addAttribute("lst", trt.converter(eventList));
+	           model.addAttribute("pages", new int[eventList.getTotalPages()]);	
+	           model.addAttribute("currentPage",page);
+	           model.addAttribute("currentSize",size);
+	           model.addAttribute("keyWord", mc);
 			   mv.setViewName("/remboursement::mainContainerInRembourse");
 	           return  mv;
 		   }else {
@@ -106,11 +106,11 @@ public class RemboursementController {
 			       Page <Events> searchEventList =eventRepo.findByEnteredMatriculeContains(mc,PageRequest.of(page,size));
 			       
 			       ModelAndView mv = new ModelAndView("/remboursement::mainContainerInRembourse");		           
-		             mv.addObject("lst", trt.searchRembourseConverter(searchEventList));
-		             mv.addObject("pages", new int[searchEventList.getTotalPages()]);	
-		             mv.addObject("currentPage",page);
-		             mv.addObject("currentSize",size);	
-		             mv.addObject("keyWord", mc);
+		             model.addAttribute("lst", trt.searchRembourseConverter(searchEventList));
+		             model.addAttribute("pages", new int[searchEventList.getTotalPages()]);	
+		             model.addAttribute("currentPage",page);
+		             model.addAttribute("currentSize",size);	
+		             model.addAttribute("keyWord", mc);
 		
 		             return  mv;
 		   
@@ -122,13 +122,13 @@ public class RemboursementController {
 	
 	
 	@PostMapping("/remboursePost")
-	public ModelAndView postRembourseData(@RequestParam() String matricule,  @RequestParam() double remboursement,				                                     
+	public String postRembourseData(Model model, @RequestParam() String matricule,  @RequestParam() double remboursement,				                                     
 			                                     @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
 		                                    ) {
 		String currentDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
 		List<String> errorList = new ArrayList<String>()	; 
 		Traitement trt = new Traitement();
-		ModelAndView mv=null ;
+		String mv="";
 		double remboursementTempo=0.0;
 		String date=eventRepo.matricIsExist(matricule) ? eventRepo.getDateEventByMatricule(matricule).get(eventRepo.getDateEventByMatricule(matricule).size()-1):debiteurRepo.getDebiteurDateByMatricule(matricule) ;
 		double prochainRembourcement=eventRepo.matricIsExist(matricule) ? eventRepo.getEventByMatricule(matricule).get(eventRepo.getEventByMatricule(matricule).size()-1).getProchainMontant():debiteurRepo.getDebiteurByMatricule(matricule).getPremierRemboursement() ;
@@ -218,7 +218,7 @@ public class RemboursementController {
 			}
 			
 		}catch(Exception exc) {			
-			mv = new ModelAndView("/remboursement::mainContainerInRembourse");
+			mv = "remboursement::mainContainerInRembourse";
 			errorList.add("Une erreur s'est produite lors de l'enregistrement d un nouveau remboursement");
 
 			System.out.println("Une erreur s'est produite lors de l'enregistrement d un nouveau remboursement");			
@@ -228,12 +228,12 @@ public class RemboursementController {
 		
 		   Page<List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));					   
 		   
-		   mv = new ModelAndView("/remboursement::mainContainerInRembourse");					   
-		   mv.addObject("lst", trt.converter(eventList));
-		   mv.addObject("pages", new int[eventList.getTotalPages()]);
-		   mv.addObject("currentSize",size);
-		   mv.addObject("currentPage",page);
-		   mv.addObject("errorList",errorList);
+		   mv = "remboursement::mainContainerInRembourse";					   
+		   model.addAttribute("lst", trt.converter(eventList));
+		   model.addAttribute("pages", new int[eventList.getTotalPages()]);
+		   model.addAttribute("currentSize",size);
+		   model.addAttribute("currentPage",page);
+		   model.addAttribute("errorList",errorList);
 		return mv;
 	}
 	
@@ -243,9 +243,9 @@ public class RemboursementController {
 	
 	@PostMapping("/deteteRembourse")
 	
-	public ModelAndView deleteRembourse(@RequestParam() Long  idRemb,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
+	public String deleteRembourse(Model model, @RequestParam() Long  idRemb,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size )  {	
 		 Traitement trt=new Traitement();
-		  ModelAndView mv=null ;
+		  
 		 
 		  if (idRemb>0) {
 			  
@@ -254,13 +254,13 @@ public class RemboursementController {
 		  }else  { System.out.println("error lors de la suppression");}
 		  Page <List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));
 
-		  mv = new ModelAndView("/remboursement::mainContainerInRembourse");		   
-	      mv.addObject("lst", trt.converter(eventList));
-	      mv.addObject("pages", new int[eventList.getTotalPages()]);
-	      mv.addObject("currentSize",size);
-	      mv.addObject("currentPage",page);  
+		  		   
+	      model.addAttribute("lst", trt.converter(eventList));
+	      model.addAttribute("pages", new int[eventList.getTotalPages()]);
+	      model.addAttribute("currentSize",size);
+	      model.addAttribute("currentPage",page);  
 		
-		return  mv;
+		return  "remboursement::mainContainerInRembourse";
 	}
 	
 	
@@ -268,10 +268,10 @@ public class RemboursementController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/updateRembourse")
-	public ModelAndView updateRembourse(@RequestParam() Long idRemb,@RequestParam() String matricule,  @RequestParam() double remboursement,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
+	public String updateRembourse(Model model, @RequestParam() Long idRemb,@RequestParam() String matricule,  @RequestParam() double remboursement,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
 		     Traitement trt=new Traitement();
-		      ModelAndView mv=null ;
+		      
 		      
 		       if(idRemb>0) {
 			
@@ -281,12 +281,13 @@ public class RemboursementController {
 			  }else  { System.out.println("Rien a Update");}
 		           
 	              Page<List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));				 
-				  mv = new ModelAndView("/remboursement::mainContainerInRembourse");								   
-				  mv.addObject("lst", trt.converter(eventList));
-				  mv.addObject("pages", new int[eventList.getTotalPages()]);
-				  mv.addObject("currentSize",size);
-				  mv.addObject("currentPage",page);
-			      return mv;
+				 								   
+				  model.addAttribute("lst", trt.converter(eventList));
+				  model.addAttribute("pages", new int[eventList.getTotalPages()]);
+				  model.addAttribute("currentSize",size);
+				  model.addAttribute("currentPage",page);
+				  
+			      return "remboursement::mainContainerInRembourse";
 		
 	   
 	
@@ -295,20 +296,16 @@ public class RemboursementController {
 	
 	
 	
-	@GetMapping("/rembourse/generatePDF/{keyWord}")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@PathVariable(name="keyWord") String mc) throws Exception, JRException  {
+	@PostMapping(value="/rembourse/generatePDF/",produces="application/pdf")
+	public ResponseEntity<byte[]> generatePDF(Model model, @RequestParam(name="keyWord") String mc) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
-		 	   String jasperFilePath="src/main/resources/remboursement.jrxml";
+		 	   String jasperFileName="remboursement.jrxml";
 		 	   String fileName="remboursements";
 		       List<Events> searchEventList =eventRepo.findByEnteredMatriculeContains(!mc.equals("all")? mc:"");
-
-		 	   map.put("nameFor", "Israel");			   
-			   
-			   //List<Payement> testList=payeRepo.findAll();
-
-		       return  trt.generatePDF(searchEventList, jasperFilePath, map, fileName);
+		 	   map.put("nameFor", "Israel");		   
+			   return  trt.generatePDF(searchEventList, jasperFileName, map, fileName);
 	   
 	}
 	

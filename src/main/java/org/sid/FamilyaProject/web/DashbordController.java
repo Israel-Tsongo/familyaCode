@@ -90,11 +90,11 @@ public class DashbordController {
 		
 		
 		@PostMapping("/setPost")
-		public ModelAndView setterBtn(Authentication authentication,ModelMap  modelMap ,@RequestParam(defaultValue="false") boolean btnEnd , @RequestParam(defaultValue="") String password ) {	
+		public String setterBtn(Model model,Authentication authentication,ModelMap  modelMap ,@RequestParam(defaultValue="false") boolean btnEnd , @RequestParam(defaultValue="") String password ) {	
 			     
 			      List<String> errorList = new ArrayList<String>();			      
 			      Traitement trt = new Traitement();
-			      ModelAndView mv= null;
+			      
 			      InteretParMembre interetParMem=new  InteretParMembre();
 			      BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
 			      User usr=null;
@@ -102,7 +102,7 @@ public class DashbordController {
 			      String userPassword="";
 			      Set<Role> currentRoles=null;
 			      String role="";
-			      mv= new ModelAndView();
+			      
 			      
 				 if(authentication !=null) {
 					 
@@ -150,18 +150,17 @@ public class DashbordController {
 				   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;
 				   double soldeTotal= (totalCapitauxInitiaux +totalContribution+sommePenalite);
 				   
-				    mv.addObject("pageTitle","Authentification");
-				    mv.addObject("totalEnCaisse",String.format("%.3f",soldeTotal));
-				    mv.addObject("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
-				    mv.addObject("totalContribution",String.format("%.3f", totalContribution));
-				    mv.addObject("totalDepense",String.format("%.3f", totalDepense));
-				    mv.addObject("totalInteret",String.format("%.3f", interetGeneral));
-				    mv.addObject("sommePenalite",String.format("%.3f", sommePenalite));
-				    mv.addObject("interetNet",String.format("%.3f", interetNet));
-				    mv.addObject("totalDette",String.format("%.3f", totalDette));	
-				    mv.setViewName("/dashbord::mainDash");
-				    mv.addObject("errorList",errorList);
-				    return mv;
+				    model.addAttribute("pageTitle","Authentification");
+				    model.addAttribute("totalEnCaisse",String.format("%.3f",soldeTotal));
+				    model.addAttribute("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
+				    model.addAttribute("totalContribution",String.format("%.3f", totalContribution));
+				    model.addAttribute("totalDepense",String.format("%.3f", totalDepense));
+				    model.addAttribute("totalInteret",String.format("%.3f", interetGeneral));
+				    model.addAttribute("sommePenalite",String.format("%.3f", sommePenalite));
+				    model.addAttribute("interetNet",String.format("%.3f", interetNet));
+				    model.addAttribute("totalDette",String.format("%.3f", totalDette));					    
+				    model.addAttribute("errorList",errorList);
+				    return "dashbord::mainDash";
 			
 		}	
 		

@@ -42,7 +42,7 @@ public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
 	@Query(value= "SELECT  CASE    WHEN  NOT EXISTS (SELECT * FROM debiteur  WHERE  entered_matric = ?1) THEN 0    ELSE 1   END", nativeQuery=true )
 	public String matricIsExist(String matric);
 	
-	@Query(value="SELECT `id_debiteur`,`nom`,`entered_matric`,`somme_emprunt`,`taux`,`dette_plus_interet`,`duree_echeance`, `dette_courante`, `type_interet` , `date_emprunt`,premier_remboursement FROM `debiteur` INNER JOIN member WHERE member.id_member=debiteur.foreign_key_member", nativeQuery=true )
+	@Query(value="SELECT `id_debiteur`,`nom`,`entered_matric`,`somme_emprunt`,`taux`,`dette_plus_interet`,`duree_echeance`, `dette_courante`, `type_interet` ,`current_penalite`, `date_emprunt`,premier_remboursement FROM `debiteur` INNER JOIN member WHERE member.id_member=debiteur.foreign_key_member", nativeQuery=true )
 	public Page<List<List<Object>>> getDetteWithMembers(org.springframework.data.domain.Pageable pageable);
 	
 	@Query(value="SELECT  `type_interet` FROM debiteur  WHERE entered_matric=?1", nativeQuery=true )

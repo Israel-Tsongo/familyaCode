@@ -255,9 +255,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="text-center" id="div-button" style="height:50px;margin-top:15px">
-													     <div class="form-group d-flex flex-column align-items-center" style="height:50px" id="form-btn">
-													           <button style="width:80%" onclick="updateAutreDetailsProfile()" id="updateOthersUserDetails" class="btn btn-primary btn-block text-white btn-user"  type="submit">Modifier</button>
+                                                    <div class="text-center d-flex align-items-center" id="div-button" style="height:70px;width:100%;margin-top:15px">
+													     <div class="form-group d-flex flex-column align-items-center" style="height:70px;" id="form-btn">
+													           <button style="width:80%" onclick="updateAutreDetailsProfile()" id="updateOthersUserDetails" class="btn btn-primary btn-block text-white btn-user btn-close"  type="submit">Modifier</button>
 													           <button style="width:80%"  class="btn btn-primary btn-block text-white btn-user btn-close" type="button" data-dismiss="modal">Fermer</button>
 													           
 													      </div>
@@ -377,26 +377,34 @@
   
            
   function actions(type){
-   	
- 	 $(document).ready(function(){
- 		 
-		 		   var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-  		           var w=window.open("http://localhost:8080/profile/generatePDF/"+keyWord, "_blank");
-		 		
-		 		   setTimeout(function(){
-		 			   
-		 			 //var a = w.document.createElement('A');
-					 //var filePath = w.location.href;
-					 // a.href = filePath;
-					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-					 // w.document.body.appendChild(a);
-					  //a.click();
-					  //w.document.body.removeChild(a);
-		 			   
-		 		   },600)
-	   
- 	 })
- 	 
+	  
+	  var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
+			     var request = new XMLHttpRequest();	
+			     request.open("POST","http://localhost:8080/profile/generatePDF/",true)
+			     request.responseType='blob';
+			     request.onload=function(e){
+			    	 
+			    	 if(this.status===200){
+			    		 	    		 
+			    		 var file=window.URL.createObjectURL(this.response)
+			    		 var w= window.open(file,"_blank")
+			    		 var a=w.document.createElement("a");
+			    		 a.href=file;	    		 
+			    		 a.download=this.response.name || "profileMembers"
+			    		 w.document.body.appendChild(a)
+			    		 a.click()
+			    		 w.onfocus=function(){
+			    			 w.document.body.removeChild(a)
+			    		 }
+			    		 
+			    	 }
+			     }
+			     
+			    var data= new FormData();
+			    data.append('keyWord',keyWord)
+			    request.send(data)
+	  
+	 
  	 
   }           
            

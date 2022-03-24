@@ -1,6 +1,7 @@
 package org.sid.FamilyaProject.metier;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -175,7 +177,8 @@ public List<List<Object>> searchConverterPaye(Page <Payement> searchPayeList ){
 							 newList.add(ob.getDettePlusInteret());							 
 							 newList.add(ob.getDuree_echeance());
 							 newList.add(ob.getDetteCourante());							 
-							 newList.add(ob.getTypeInteret());							 
+							 newList.add(ob.getTypeInteret());
+							 newList.add(ob.getCurrentPenalite());
 							 newList.add((ob.getDate_emprunt().toString()).substring(0, 10));							 
 							 newList.add(ob.getPremierRemboursement());
 							 viewList.add(newList);				              
@@ -472,12 +475,17 @@ public List<List<Object>> converter(List<List<Object>> listMemb ){
 		return viewList;
 	}
 
- public  ResponseEntity<byte[]> generatePDF(List<?> searchContribList,String jasperFilePath,HashMap<String,Object> map,String fileName) throws Exception, JRException  {
+ public  ResponseEntity<byte[]> generatePDF(List<?> searchContribList,String jasperFileName,HashMap<String,Object> map,String fileName) throws Exception, JRException  {
 	
 	 
 		   
 		   JRBeanCollectionDataSource beanCollection=new JRBeanCollectionDataSource(searchContribList);
-		   JasperReport compileReport =JasperCompileManager.compileReport(new FileInputStream(jasperFilePath));
+		 
+		   
+		   ClassPathResource classPathResource =new ClassPathResource(jasperFileName);
+		   InputStream inpout =classPathResource.getInputStream();
+		 	 
+		   JasperReport compileReport =JasperCompileManager.compileReport(inpout);
 		   
 		   JasperPrint report =JasperFillManager.fillReport(compileReport,map, beanCollection);
 			//JasperExportManager.exportReportToPdfFile(report,"contributionList.pdf");
@@ -493,7 +501,7 @@ public List<List<Object>> converter(List<List<Object>> listMemb ){
 }
 
  
- public  ResponseEntity<byte[]> generateProof(String jasperFilePath, Map<String, Object> map, String fileName) throws Exception, JRException  {
+ public  ResponseEntity<byte[]> generateProof(String jasperFileName, Map<String, Object> map, String fileName) throws Exception, JRException  {
 		
 	 
 	   
@@ -502,7 +510,11 @@ public List<List<Object>> converter(List<List<Object>> listMemb ){
 	   lst.add("salut");
 	   
 	   JRBeanCollectionDataSource beanCollection=new JRBeanCollectionDataSource(lst);
-	   JasperReport compileReport =JasperCompileManager.compileReport(new FileInputStream(jasperFilePath));
+	   
+	   ClassPathResource classPathResource =new ClassPathResource(jasperFileName);
+	   InputStream inpout =classPathResource.getInputStream();
+	   
+	   JasperReport compileReport =JasperCompileManager.compileReport(inpout);
 	   
 	   JasperPrint report =JasperFillManager.fillReport(compileReport,map,beanCollection);
 	   

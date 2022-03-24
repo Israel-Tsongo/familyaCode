@@ -81,12 +81,12 @@ public class AuthentificationController {
 		
 		
 		@GetMapping(value="/register")
-		public ModelAndView register() {
+		public ModelAndView register(Model model) {
 			ModelAndView modelAndView = new ModelAndView();
 			
 			 User user = new User();
-			 modelAndView.addObject("user", user);
-			 modelAndView.addObject("pageTitle","Authentification");
+			 model.addAttribute("user", user);
+			 model.addAttribute("pageTitle","Authentification");
 			
 			modelAndView.setViewName("signup"); // resources/template/login.html
 			
@@ -94,19 +94,19 @@ public class AuthentificationController {
 		}
 		
 		@PostMapping(value = "/register")
-		public ModelAndView registerSave(@Valid User user, BindingResult bindingResult ,ModelMap  modelMap , @RequestParam(name="repeatPassword",defaultValue=" ") String repeatPassword) {
+		public String registerSave(Model model, @Valid User user, BindingResult bindingResult ,ModelMap  modelMap , @RequestParam(name="repeatPassword",defaultValue=" ") String repeatPassword) {
 			
 			
 			
-			ModelAndView modelAndView = new ModelAndView();
+			String modelAndView = "";
 			//Check for the validation errors
 			if(bindingResult.hasErrors()) {		
 			    
 				
 				
 				modelMap.addAttribute("bindingResult",bindingResult);
-				modelAndView.addObject("pageTitle","Authentification");
-				modelAndView.setViewName("signup");
+				model.addAttribute("pageTitle","Authentification");
+				modelAndView="signup";
 				
 				return modelAndView;
 				
@@ -117,9 +117,9 @@ public class AuthentificationController {
 				
 				bindingResult.addError(new FieldError("user","email","Email address already in use"));
 				
-				modelAndView.addObject("successMessage","user already exists !");
-				modelAndView.addObject("pageTitle","Authentification");
-				modelAndView.setViewName("signup");
+				model.addAttribute("successMessage","user already exists !");
+				model.addAttribute("pageTitle","Authentification");
+				modelAndView="signup";
 				
 				return modelAndView;
 				
@@ -130,8 +130,8 @@ public class AuthentificationController {
 						    if(!(user.getPassword().equals(repeatPassword))) {
 						    	
 								bindingResult.addError(new FieldError("user","password","Password must match"));
-								modelAndView.addObject("pageTitle","Authentification");
-								modelAndView.setViewName("signup");
+								model.addAttribute("pageTitle","Authentification");
+								modelAndView="signup";
 								
 								return modelAndView;
 								
@@ -140,8 +140,8 @@ public class AuthentificationController {
 						    	//System.out.println("in Reapetpasword");
 						    	userDetailsService.saveUser(user);
 								
-								modelAndView.addObject("successMessage","User is registered successfully");
-								modelAndView.setViewName("signin");	
+								model.addAttribute("successMessage","User is registered successfully");								
+								modelAndView="signin";
 								
 						    }
 				    
@@ -159,14 +159,14 @@ public class AuthentificationController {
 		
 		
 		@RequestMapping(value = "/home", method = RequestMethod.GET)
-		public ModelAndView home(Model model, Authentication authentication) {
+		public String home(Model model, Authentication authentication) {
 			
 			String email="";
 			String matricule="";
 			Set<Role> currentRoles=null;
 			String role="";
 			User usr=null;
-			ModelAndView modelAndView = new ModelAndView();
+			String modelAndView = "";
 			
 			
 			if(authentication !=null) {
@@ -175,14 +175,14 @@ public class AuthentificationController {
 				usr= userDetailsService.getUserByEmail(email);
 				matricule=usr.getMatricule();
 				currentRoles=usr.getRoles();				
-				modelAndView.addObject("user",usr);
+				model.addAttribute("user",usr);
 				
 				for (Role rol : currentRoles) {
 					
 					if  (rol.getRole_name().equals("ADMIN_USER") || rol.getRole_name().equals("SUPER_USER") ) {
 						
 					    role="ADMIN_USER";					    
-						modelAndView.setViewName("redirect:/dashboard"); 
+						modelAndView="redirect:/dashboard"; 
 					}
 				}
 				
@@ -197,37 +197,37 @@ public class AuthentificationController {
 				    	
 				    	if(!(payeRepo.getPayementByMatricule(matricule).isEmpty())) {
 				    		
-				    		modelAndView.addObject("nom",detailMembre.get(0).get(0));
-							 modelAndView.addObject("matricule",detailMembre.get(0).get(1));
-							 modelAndView.addObject("capital",detailMembre.get(0).get(2));
-							 modelAndView.addObject("contributions",detailMembre.get(0).get(3));
-							 modelAndView.addObject("solde",detailMembre.get(0).get(4));			    		
+				    		model.addAttribute("nom",detailMembre.get(0).get(0));
+							 model.addAttribute("matricule",detailMembre.get(0).get(1));
+							 model.addAttribute("capital",detailMembre.get(0).get(2));
+							 model.addAttribute("contributions",detailMembre.get(0).get(3));
+							 model.addAttribute("solde",detailMembre.get(0).get(4));			    		
 				    		
 				    	}else {
 				    		
 				    		List<List<Object>> lst=memberRepo.getCapitalMatriculeNom(matricule);
-				    		modelAndView.addObject("nom",lst.get(0).get(0));
-							 modelAndView.addObject("matricule",lst.get(0).get(1));
-							 modelAndView.addObject("capital",lst.get(0).get(2));
-							 modelAndView.addObject("pageTitle","Authentification");
-							 modelAndView.addObject("contributions",0.0);
-							 modelAndView.addObject("solde",lst.get(0).get(2));
+				    		model.addAttribute("nom",lst.get(0).get(0));
+							 model.addAttribute("matricule",lst.get(0).get(1));
+							 model.addAttribute("capital",lst.get(0).get(2));
+							 model.addAttribute("pageTitle","Authentification");
+							 model.addAttribute("contributions",0.0);
+							 model.addAttribute("solde",lst.get(0).get(2));
 							 
 				    	}
 						 						
-				    	     modelAndView.addObject("detteCourante",detteCourante);			    		
-						     modelAndView.addObject("interet",interet);						     
-						     modelAndView.addObject("pages", new int[0]);
-						     modelAndView.addObject("pages2", new int[0]);
-						     modelAndView.addObject("currentPage",0);
-						     modelAndView.addObject("currentPage2",0);
-						     modelAndView.addObject("currentSize",5);
-						     modelAndView.setViewName("home"); // resources/template/home.html
+				    	     model.addAttribute("detteCourante",detteCourante);			    		
+						     model.addAttribute("interet",interet);						     
+						     model.addAttribute("pages", new int[0]);
+						     model.addAttribute("pages2", new int[0]);
+						     model.addAttribute("currentPage",0);
+						     model.addAttribute("currentPage2",0);
+						     model.addAttribute("currentSize",5);
+						     modelAndView="home"; // resources/template/home.html
 			
 		     	}else if(memberRepo.getUserByMatricule(matricule)==null && !(role.equals("ADMIN_USER")))  {
 		     		
-		     		    modelAndView.addObject("usr",usr);
-			        	modelAndView.setViewName("homeEmpty");
+		     		    model.addAttribute("usr",usr);
+			        	modelAndView="homeEmpty";
 		
 			     }
 				
@@ -239,7 +239,7 @@ public class AuthentificationController {
 		//************** RECHERCHER PAR NOM************************
 		
 		@PostMapping(path="/siteUserSearcher")
-		public ModelAndView searchByMatriculeInsiteUser( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+		public String searchByMatriculeInsiteUser( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 			
 				 Traitement trt = new Traitement();
 				 String email="";
@@ -254,17 +254,17 @@ public class AuthentificationController {
 				   
 				   Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
 				       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
-				       ModelAndView mv = new ModelAndView("/home::userSiteContainer");	
-			             mv.addObject("lst", trt.searchConverterPaye(searchContribList));
-			             mv.addObject("pages", new int[searchContribList.getTotalPages()]);	
-			             mv.addObject("pages2", new int[0]);
-			             mv.addObject("currentPage",page);
-			             mv.addObject("currentPage2",0);
-			             mv.addObject("currentSize",size);	
-			             mv.addObject("pageTitle","user_site_contribution");
-			             mv.addObject("totalContribution", String.format("%.3f",totalContribution));  
-			             mv.addObject("keyWord", mc);			
-			             return  mv;
+				       	
+			             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
+			             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
+			             model.addAttribute("pages2", new int[0]);
+			             model.addAttribute("currentPage",page);
+			             model.addAttribute("currentPage2",0);
+			             model.addAttribute("currentSize",size);	
+			             model.addAttribute("pageTitle","user_site_contribution");
+			             model.addAttribute("totalContribution", String.format("%.3f",totalContribution));  
+			             model.addAttribute("keyWord", mc);			
+			             return "home::userSiteContainer";
 			             
 				  
 			   }else {
@@ -272,19 +272,19 @@ public class AuthentificationController {
 				           
 						   Page <Payement> siteUserList = payeRepo.getPayementByMatric(matricule,PageRequest.of(page,size));
 					       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
-					       ModelAndView mv = new ModelAndView();						   
-				           mv.addObject("lst", trt.searchConverterPaye(siteUserList));
-				           mv.addObject("pages", new int[siteUserList.getTotalPages()]);
-				           mv.addObject("pages2", new int[0]);
-				           mv.addObject("pageTitle","Contribution");
-				           mv.addObject("currentPage",page);
-				           mv.addObject("currentPage2",0);
-				           mv.addObject("currentSize",size);
-				           mv.addObject("totalContribution",String.format("%.3f", totalContribution));  
-				           mv.addObject("keyWord", mc);
-						   mv.setViewName("/home::userSiteContainer");
+					       						   
+				           model.addAttribute("lst", trt.searchConverterPaye(siteUserList));
+				           model.addAttribute("pages", new int[siteUserList.getTotalPages()]);
+				           model.addAttribute("pages2", new int[0]);
+				           model.addAttribute("pageTitle","Contribution");
+				           model.addAttribute("currentPage",page);
+				           model.addAttribute("currentPage2",0);
+				           model.addAttribute("currentSize",size);
+				           model.addAttribute("totalContribution",String.format("%.3f", totalContribution));  
+				           model.addAttribute("keyWord", mc);
 						   
-						   return  mv;
+						   
+						   return "home::userSiteContainer";
 				   
 				
 			   }
@@ -293,7 +293,7 @@ public class AuthentificationController {
 		
 		
 		@PostMapping(path="/remboursementsByMatricule")
-		public ModelAndView remboursementsByMatricule( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+		public String remboursementsByMatricule( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 			
 				 Traitement trt = new Traitement();
 				 String email="";
@@ -307,32 +307,33 @@ public class AuthentificationController {
 				 if(mc!=null && !mc.isEmpty()) {	   	
 					 
 					         Page <Events> searchRembourseList =eventRepo.findByDateRemboursementsContains(matricule,mc,PageRequest.of(page,size));
-					         ModelAndView mv = new ModelAndView("/home::userSiteContainer");	
-				             mv.addObject("lstR", trt.searchRembourseConverter(searchRembourseList));
-				             mv.addObject("pages2", new int[searchRembourseList.getTotalPages()]);
-				             mv.addObject("pages", new int[0]);
-				             mv.addObject("currentPage",0);
-				             mv.addObject("currentPage2",page);
-				             mv.addObject("currentSize",size);
-				             mv.addObject("keyWord", mc);			
-				             return  mv;
+					         
+				             model.addAttribute("lstR", trt.searchRembourseConverter(searchRembourseList));
+				             model.addAttribute("pages2", new int[searchRembourseList.getTotalPages()]);
+				             model.addAttribute("pages", new int[0]);
+				             model.addAttribute("currentPage",0);
+				             model.addAttribute("currentPage2",page);
+				             model.addAttribute("currentSize",size);
+				             model.addAttribute("keyWord", mc);	
+				             
+				             return "home::userSiteContainer";
 				             
 					  
 				   }else {
 					          
 					           
 							   Page <Events> rembourseUserList = eventRepo.getEventsByMatricule(matricule,PageRequest.of(page,size));
-						       ModelAndView mv = new ModelAndView();						   
-					           mv.addObject("lstR", trt.searchRembourseConverter(rembourseUserList));
-					           mv.addObject("pages2", new int[rembourseUserList.getTotalPages()]);
-					           mv.addObject("pages", new int[0]);
-					           mv.addObject("currentPage",0);
-					           mv.addObject("currentPage2",page);
-					           mv.addObject("currentSize",size);					            
-					           mv.addObject("keyWord", mc);
-							   mv.setViewName("/home::userSiteContainer");
+						       						   
+					           model.addAttribute("lstR", trt.searchRembourseConverter(rembourseUserList));
+					           model.addAttribute("pages2", new int[rembourseUserList.getTotalPages()]);
+					           model.addAttribute("pages", new int[0]);
+					           model.addAttribute("currentPage",0);
+					           model.addAttribute("currentPage2",page);
+					           model.addAttribute("currentSize",size);					            
+					           model.addAttribute("keyWord", mc);
 							   
-							   return  mv;
+							   
+							   return "home::userSiteContainer";
 					   
 					
 				   }
