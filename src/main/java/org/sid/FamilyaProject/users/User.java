@@ -2,9 +2,7 @@ package org.sid.FamilyaProject.users;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,16 +16,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Length;
 import org.sid.FamilyaProject.entities.Member;
-
-
+import org.sid.FamilyaProject.uniqueAnnotations.UniqueNumeroFicheInterface;
+import org.sid.FamilyaProject.uniqueAnnotations.UniqueNumeroPieceInterface;
 
 import javax.persistence.JoinColumn;
 import lombok.NoArgsConstructor;
@@ -38,7 +34,7 @@ import lombok.ToString;
 @Table(name = "auth_user")
 public class User implements Serializable {
 	
-	@Id 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "auth_user_id")
 	private Long user_id;
 	
@@ -53,15 +49,16 @@ public class User implements Serializable {
 	@NotBlank(message="Le genre est obligatoire" )
 	private String genre;
 	
+	//@UniqueNumeroFicheInterface
 	@NotBlank(message="Le numero du fiche d'adhesion est obligatoire" )
-	@Column(nullable=false , unique = true)
+	@Column(nullable=false , unique = true)	
 	private String numeroFiche;
 	
 	@NotBlank(message="Le type de la piece est obligatoire" )
 	private String typePiece;
 	
 	@NotBlank(message="Le numero de la piece d'identite est obligatoire")
-	@Column(nullable=false,unique = true)
+	@Column(nullable=false,unique = true)	
 	private String numeroPiece;
 	
 	@NotNull(message="Le montant de votre salaire est obligatoire")
@@ -74,30 +71,28 @@ public class User implements Serializable {
 	
 	@Pattern(regexp="(^|[0-9]{10})",message="Votre numero doit contenir 10 chiffres")
 	@NotBlank(message="Le  numero de telephone est obligatoire" )
-
 	private String mobile;
 	
 	@NotBlank(message="L'adresse  est obligatoire" )
 	private String adresse;
 	
 	@Column(nullable=false )
-	@Length(min=6, message="Le mot de passe doit contenir au minimum 6 caracteres")
+	@Length(min=8, message="Le mot de passe doit contenir au minimum 8 caracteres")
 	@NotBlank(message="Vous devez entrer un mot de passe")
 	private String password;	
 	
 	private boolean enabled;	
 	
-	@Column(nullable=false , unique = true)
+	@Column(nullable=false , unique = true)		
 	private String matricule;
 	
 	
-	@ManyToMany(cascade = CascadeType.ALL ,fetch = FetchType.EAGER)	
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	
+	@ManyToMany(cascade = CascadeType.MERGE ,fetch = FetchType.EAGER)	
+	@OnDelete(action = OnDeleteAction.CASCADE)	
 	@JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "auth_user_id"), inverseJoinColumns = @JoinColumn(name = "auth_role_id"))
 	private Set<Role> roles;
 	
-	@OneToOne(mappedBy = "memberUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "memberUser", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private Member member;
 	
 	

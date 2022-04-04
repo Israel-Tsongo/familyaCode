@@ -83,5 +83,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	public List<User> findByNomContains(String string);
 	
+	@Query(value="SELECT auth_user.numero_fiche FROM auth_user WHERE auth_user.numero_fiche =?1", nativeQuery=true )
+	public List<String> getUserByFicheNumber(String ficheNumber);
+	
+	@Query(value="SELECT * FROM auth_user WHERE auth_user.numero_piece = ?1", nativeQuery=true )
+	public List<User> getUserByPieceNumber(String pieceNumber);
+	
 	
 }

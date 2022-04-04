@@ -33,8 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 					@Autowired
 					private RoleRepository roleRepository;
 					
-					 private ModelMapper modelMapper;
-					
+					private ModelMapper modelMapper;					
 										 
 					
 					
@@ -82,15 +81,15 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 						Long value=0L;
 					   String matricule="";
 					
-					   System.out.println("all Auth user  "+userRepository.findAllAuthUser());
+					  
 					   
 					  if(!(userRepository.findAllAuthUser().isEmpty())) {
 							List<Long>lst=userRepository.getLatestId();
 							value=lst.get(lst.size()-1);
 							
-							for(Long l : lst) { System.out.println("id  "+l); }
+							//for(Long l : lst) { System.out.println("id  "+l); }
 							
-							System.out.println("last id  "+value);
+							//System.out.println("last id  "+value);
 						
 						} 
 							

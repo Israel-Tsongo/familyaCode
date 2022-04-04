@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+
 
 @Configuration
 @EnableWebSecurity
@@ -34,8 +34,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		}
 		
 		
-		
-		
 		@Bean
 		public BCryptPasswordEncoder passwordEncoder() {
 			return new BCryptPasswordEncoder();
@@ -46,9 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 			authProvider.setUserDetailsService(userDetailsService(modelMapper()));
 			authProvider.setPasswordEncoder(passwordEncoder());
-			
-			
-
+		
 			return authProvider;
 		}
 
@@ -67,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		protected void configure(HttpSecurity http) throws Exception {
 						http.authorizeRequests()
 						// URLs matching for access rights						
-						.antMatchers("/register").hasAnyAuthority("SUPER_USER", "ADMIN_USER")
+						//.antMatchers("/register").hasAnyAuthority("SUPER_USER", "ADMIN_USER")
 						.antMatchers("/dashboard").hasAnyAuthority("SUPER_USER", "ADMIN_USER")
 						.antMatchers("/setPost").hasAnyAuthority("SUPER_USER")
 						
