@@ -72,5 +72,8 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 
 	public List<Member> findByNomContains(String string);
 	
+	@Query(value="SELECT * FROM member WHERE  id_member=1 AND matricule=322 AND categorie_membre=Fondateur AND fonction=President AND type_contrat=CDI", nativeQuery=true )
+	public Member getUserFondateur();
+	
 	
 }

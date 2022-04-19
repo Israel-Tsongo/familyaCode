@@ -6,6 +6,57 @@
 </head>
 
 <body id="page-top">
+
+	<style>
+
+		
+
+	fieldset {
+	      display: none
+	}
+
+	fieldset.show {
+	    display: block
+	}
+
+	select:focus, input:focus {
+	
+	    -moz-box-shadow: none !important;
+	    -webkit-box-shadow: none !important;
+	    box-shadow: none !important;
+	    border: 1px solid #2196F3 !important;
+	    outline-width: 0 !important;
+	    font-weight: 400
+	}
+
+	button:focus {
+	    -moz-box-shadow: none !important;
+	    -webkit-box-shadow: none !important;
+	    box-shadow: none !important;
+	    outline-width: 0
+	}
+
+	.tabs {
+	    margin: 2px 5px 0px 5px;
+	    padding-bottom: 10px;
+	    cursor: pointer
+	}
+
+	.tabs:hover,
+	.tabs.active {
+	    border-bottom: 1px solid #2196F3
+	}
+
+	.line {
+	    background-color: #CFD8DC;
+	    height: 1px;
+	    width: 100%
+	}
+
+		
+
+	</style>
+	
     <div id="wrapper">
     
          <nav th:replace="fragments :: left_nav">
@@ -27,7 +78,8 @@
 	                   var errorList=(function errors(){ var error=[[${errorList}]];return error; }());	   
 
 						  $(document).ready(function(){
-							  $("#pageSize").val([[${currentSize}]]);			                    
+							  $("#pageSize").val([[${currentSize}]]);
+						
 						  })
 	               
                 </script>
@@ -141,56 +193,90 @@
        
          </footer>
     </div>
-    </div><div class="btn-group-fab"  role="group" aria-label="FAB Menu" >
-	<div>
-		<button type="button"  class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
-		<button type="button"    id="addBtnInRembourse" th:onclick="javascript:setVariableAddInRembourse([[${pages}]]);" data-toggle="modal" data-target="#rembAddModal" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter"><i class="fa fa-plus"></i></button>
-		<button type="button"    id="updateBtnInRembourse" onclick="setVariableUpdateInRembourse(idValue)" data-toggle="modal" data-target="#rembAddModal" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Mettre a jour"><i class="fa fa-refresh"></i></button>
-		<button type="button"     id="deleteBtnInRembourse" onclick="setVariableDeleteInRembourse()"  class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Effacer"><i class="fa fa-remove"></i></button>
-	    
-	</div>
-</div> 
-
-<div class="modal fade"  id="rembAddModal" role="dialog" tabindex="-1">
-    <div id="modal-id" style="max-width:580px" class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title"> </h4></div>
-            <div class="modal-body">
-                
-               
-    <div class="card" id="card-id" style="height: auto;">
-        <div class="card-body" id="main-card-body">
-            <div id="div-after-card-body">
-                <div id="input-div" class="p-5" style="padding: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;">
-                    <div class="text-center" id="main-div">
-                        <h4 class="text-dark mb-4">Ajouter un Remboursement</h4>
-                    </div>
-                    
-                    <form id="main-form" class="user">
-                        
-                        <div class="form-group row all-forms" style="width: 525px;">
-                            <div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
-                                  <input type="text" class="form-control form-control-user-left" id="rembourse-matricule-field" placeholder="Matricule" name="rembourse-matricule" />
-                            </div>
-                            <div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
-                                 <input type="text" class="form-control form-control-user-right" id="rembourse-field" placeholder="Remboursement" name="remboursement" />
-                            </div>
-                        </div>
-                        
-                    </form>
-                    <div class="text-center" id="div-button">
-                        <div class="form-group d-flex flex-column align-items-center" id="form-btn">
-	                        <button   id="addButtonInRembourse" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Ajouter</button>
-	                        <button  id="updateButtonInRembourse" class="btn btn-primary btn-block text-white btn-user  " type="submit">Modifier</button>
-	                        <button class="btn btn-primary btn-block text-white btn-user btn-close" type="submit" data-dismiss="modal">Annuler</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-  </div>
+    
+    <div class="btn-group-fab"  role="group" aria-label="FAB Menu" >
+		<div>
+		
+			<button type="button"  class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
+			<button  type="button"   id="addBtnInRembourse" th:onclick="javascript:setVariableAddInRembourse([[${pages}]]);" data-toggle="modal" data-target="#rembAddModal" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter"><i class="fa fa-plus"></i></button>
+			<button type="button"    id="updateBtnInRembourse" onclick="setVariableUpdateInRembourse(idValue)" data-toggle="modal" data-target="#rembAddModal" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Mettre a jour"><i class="fa fa-refresh"></i></button>
+			<button type="button"    id="deleteBtnInRembourse" onclick="setVariableDeleteInRembourse()"  class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Effacer"><i class="fa fa-remove"></i></button>
+		    
+		</div>
+	</div> 
+
+	<div class="modal fade"  id="rembAddModal" role="dialog" tabindex="-1">
+	    <div id="modal-id" style="max-width:580px" class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	            
+	                   <div class="tabs" id="tab01" onclick="clickedTab('Anticipe')">
+                            <h6 class="text-muted">Anticiper</h6>
+                        </div>
+                        <div class="tabs active" id="tab02" onclick="clickedTab('Normale')">
+                            <h6 class="font-weight-bold">Normale</h6>
+                        </div>                        
+                        <div class="tabs" id="tab03" onclick="clickedTab('Retard')">
+                            <h6 class="text-muted">Retard</h6>
+                        </div>
+                        
+             	</div>
+             	
+            <div class="modal-body">                
+               
+			    <div class="card" id="card-id" style="height: 300px;">
+			        <div class="card-body" id="main-card-body">
+			        
+			             <fieldset id="tab011">			            
+					          
+				               
+			              </fieldset>
+			              
+			              <fieldset id="tab021" class="show">
+			            
+					            <div id="div-after-card-body">
+					                <div id="input-div" class="p-5" style="padding: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;">
+					                    <div class="text-center" id="main-div">
+					                        <h4 class="text-dark mb-4" id="rembourseTitle"> Ajouter un Remboursement </h4>
+					                    </div>
+					                    
+					                    <form id="main-form" class="user">
+					                        
+					                        <div class="form-group row all-forms" style="width: 525px;">
+					                            <div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
+					                                  <input type="text" class="form-control form-control-user-left" id="rembourse-matricule-field" placeholder="Matricule" name="rembourse-matricule" />
+					                            </div>
+					                            <div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
+					                                 <input type="text" class="form-control form-control-user-right" id="rembourse-field" placeholder="Remboursement" name="remboursement" />
+					                            </div>
+					                        </div>
+					                        
+					                    </form>
+					                    <div class="text-center" id="div-button">
+					                        <div class="form-group d-flex flex-column align-items-center" id="form-btn">
+						                        <button   id="addButtonInRembourse" class="btn btn-primary btn-block text-white btn-user btn-save" type="submit">Ajouter</button>
+						                        <button   id="updateButtonInRembourse" class="btn btn-primary btn-block text-white btn-user" type="submit">Modifier</button>
+						                        <button    class="btn btn-primary btn-block text-white btn-user btn-close" type="submit" data-dismiss="modal">Annuler</button>
+					                        </div>
+					                    </div>
+					                </div>
+				               </div>
+				               
+			              </fieldset>
+			              
+			              <fieldset id="tab031">
+			            
+				               
+			              </fieldset>			              
+			              
+			            
+			        </div>
+			    </div>
+   
+   
+   
+   </div>
             
             <div  class="modal-footer"></div>
         </div>
@@ -200,28 +286,32 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
-    <script src="assets/js/script.min.js"></script>
-    
+    <script src="assets/js/script.min.js"></script>    
     <script  th:inline="javascript" > 
     
     
-          var idValue=-10;
-          var mainList;
-                         
-  function errorFonction() {
+   var idValue=-10;
+   var mainList;     
+   var tab="Normale";
+   function errorFonction() {
 	  
-	   if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
+	   if(typeof errorList !='undefined' && errorList.length >0 && errorList != null ){
+		   
 			var messages="";
 			console.log("===>",errorList);
-			errorList.forEach((item,index)=>{messages+=item+"\n"; })
-			
+			errorList.forEach((item,index)=>{messages+=item+"\n"; })			
 			alert(messages);
 			
 	   	}	
    
   }
   
-  
+  function clickedTab(tab){
+	  
+	  tab=tab
+	  if(tab=="Anticipe") $("#rembourseTitle").text("Remboursement Anticipe")
+	  if(tab=="Retard") $("#rembourseTitle").text("Remboursement avec Retard")
+  }
   
   function actions(type){
 	  
@@ -297,7 +387,7 @@
        		                     }
        		        } );
        		 
-       	            });  
+       	       });  
    	
 	 
 }  
@@ -383,9 +473,9 @@
         		        	      errorFonction(); 
         		                
         		           }
-        		        } );
+        		   });
         		 
-        	            });  
+         });  
     	
 	 
  }    
@@ -459,11 +549,15 @@
         	       	
         	       	$(document).ready(function(){ 
         	       		
+	        	       $("#updateButtonInRembourse").hide(); 
+	        	       $("#addButtonInRembourse").show();        	       	
+	        	       	
         	           $("#rembourse-matricule-field").val("");
  	    	    	   $("#rembourse-field").val(""); 	    	    	 
-        	       	   console.log("Add Method");
+        	       	   console.log("Add Method===");
+        	       	   
         	       	   $("#addButtonInRembourse").unbind("click").click( function() { 
-        	       	   console.log(" Up Ajax Add Method");
+        	       	   
                     		 
                     		 $.ajax({
                     				 url:"http://localhost:8080/remboursePost",
@@ -472,6 +566,7 @@
                     					 
                     					  matricule  :   $("#rembourse-matricule-field").val(),
              	    	                  remboursement :  $("#rembourse-field").val(),
+             	    	                  tabName:tab,
              	    	                  page:((pag.length-1) <= 0) ? 0:(pag.length-1),
              	    	                  size:$("#pageSize").val(),
                     				      },
@@ -517,8 +612,12 @@
         	        document.querySelector("#addButtonInRembourse").style.display="none";
         	        document.querySelector("#updateButtonInRembourse").style.display="block"; ;
         	        console.log("Update Method");
+        	        
         	        $(document).ready(function(){
-        	        	 
+        	        	
+        	        	$("#updateButtonInRembourse").show(); 
+ 	        	        $("#addButtonInRembourse").hide();
+ 	        	       
         	        	//Update Button
          	            
                       	       var list =mainList;
@@ -592,3 +691,4 @@
 </body>
 
 </html>
+

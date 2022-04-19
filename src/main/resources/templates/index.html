@@ -272,24 +272,47 @@
                            																			 </div>
                        																		</div>
                        																		<div class="form-group row all-forms" style="width: 525px;">
+                       																		
                             																			<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
                             																			       <input type="text" class="form-control form-control-user-left" id="capital-field" placeholder="Capital" name="capital" />
-                            																			  </div>
+                            																			</div>
                            																				<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
-                           																				       <input type="text" class="form-control form-control-user-right" id="fonction-field" placeholder="Fonction" name="fonction" /></div>
-                     																					 </div>
+                           																				
+                           																				      <!--<input type="text" class="form-control form-control-user-right" id="fonction-field" placeholder="Fonction" name="fonction" />  -->
+                           																				      
+                           																				       <select name="fonction" class="form-control form-control-user-right" id="fonction-field" >
+                           																					      																		                                                
+																		                                                <option value="" disabled selected hidden >Fonction</option>
+																		                                                <option value="Membre">Membre</option>
+																		                                                <option value="Gerant">Gerant</option>
+																		                                                <option value="Financier">Financier</option>
+																			                                         	<option value="President">President</option>																		                                         	
+																			                                         	
+																			                                      
+																		                                   		 </select>
+                           																				       
+                           																				 </div>
+                     																		</div>
                         																	 <div class="form-group row all-forms">
                            																				<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-right: 0px;padding-left: 0px;">
-                           																				        <input type="text" class="form-control form-control-user-left" id="categorie-field" placeholder="Categorie" name="categorie" />
+                           																				
+                           																				        <!--<input type="text" class="form-control form-control-user-left" id="categorie-field" placeholder="Categorie" name="categorie" /> -->
+                           																				        
+                           																				        <select name="categorie" class="form-control form-control-user-left"  id="categorie-field" >
+                           																					      																		                                                
+																		                                                <option value="" disabled selected hidden >Categorie</option>
+																			                                         	<option value="Membre_effectif">Membre effectif</option>
+																			                                         	<option value="Fondateur">Fondateur</option>																			                                         	
+																		                                    
+																		                                   		 </select>
                            																				  </div>
                            																					<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">                           																					
-                           																					      <!--  <input type="text" class="form-control form-control-user-right" id="contrat-field" placeholder="Type de contrat" name="contrat" /> -->                         																					       
+                           																					                              																					       
                            																					      <select name="contrat" class="form-control form-control-user-right" id="contrat-field" >
-																		                                                
+                           																					      																		                                                
 																		                                                <option value="" disabled selected hidden >Type de contrat</option>
 																			                                         	<option value="CDD">CDD</option>
-																			                                         	<option value="CDI">CDI</option>
-																			                                         	
+																			                                         	<option value="CDI">CDI</option>																			                                         	
 																		                                    
 																		                                   		 </select>
                            																					     
@@ -593,16 +616,14 @@ function actions(type){
  	    	    	  $("#fonction-field").val("");
  	    	    	  $("#categorie-field").val("");
  	    	    	  $("#contrat-field").val(""); 
- 	    	    	  console.log("Here is"+ pages.length-1);
+ 	    	    	  
  	    	    	
  	    	    	 
         	       	  // Add Button
         	       	console.log("Add Method");
         	       	  
-        	       	 $("#addButton").unbind("click").click( function() { 
-                    		
-        	       		console.log(" Up Ajax Add Method");
-                    		 
+        	       	 $("#addButton").unbind("click").click( function() {
+                    	 
                     		 $.ajax({
                     				 url:"http://localhost:8080/indexPost",
                     				 type:"post",
@@ -683,8 +704,10 @@ function actions(type){
                       	    	    	$("#matricule").prop('disabled',true);
                       	    	    	$("#mandataire").val(element[3]);
                       	    	    	$("#capital-field").val(element[4]);
-                      	    	    	$("#fonction-field").val(element[5]);
-                      	    	    	$("#categorie-field").val(element[6]);
+                      	    	    	$("#fonction-field").val(element[5].trim()).change();
+                      	    	    	//$("#fonction-field").val("President").change();                     	    	    	                    	    	    	
+                      	    	    	$("#categorie-field").val(element[6]).change();
+                      	    	    	//$("#categorie-field").val("Fondateur").change();                      	    	    	
                       	    	    	$("#contrat-field").val(element[7]).change();
                       	    	    	dateAdhesion=element[8];
                       	    	    	

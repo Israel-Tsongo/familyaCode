@@ -34,7 +34,7 @@ import lombok.ToString;
 @Table(name = "auth_user")
 public class User implements Serializable {
 	
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "auth_user_id")
 	private Long user_id;
 	

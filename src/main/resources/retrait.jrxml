@@ -129,21 +129,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{montant}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="130" y="170" width="330" height="30" uuid="d9db4c04-c640-4461-839a-825a25a4d7bf"/>
-				<textElement verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Cotisation du mois de : ......................................]]></text>
-			</staticText>
 			<frame>
-				<reportElement x="110" y="30" width="351" height="190" uuid="cf2da1fc-3743-4925-b06b-9167878caac7"/>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				<reportElement x="100" y="40" width="355" height="131" uuid="124781c7-11f3-4925-908d-52e95673078b"/>
 			</frame>
 		</band>
 	</detail>

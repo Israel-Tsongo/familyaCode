@@ -1,5 +1,6 @@
 package org.sid.FamilyaProject.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import net.sf.jasperreports.engine.JRException;
 
 
 
@@ -63,8 +67,7 @@ public class AuthentificationController {
 		private EventsRepository eventRepo;
 		
 		
-	  // private static final Logger log = LoggerFactory.getLogger(AuthentificationController.class)
-	
+		
 	
         @InitBinder        
         public void initBinder(WebDataBinder dataBinder) {
@@ -192,7 +195,7 @@ public class AuthentificationController {
 			
 			
 				if(memberRepo.getUserByMatricule(matricule)!=null && !(role.equals("ADMIN_USER"))) {
-							System.out.println("-------matric-----");
+							
 				    	List<List<Object>> detailMembre=payeRepo.getDetails(matricule);
 				    	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
 				    	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
@@ -254,7 +257,7 @@ public class AuthentificationController {
 			   if(mc!=null && !mc.isEmpty()) {			   	
 					
 				   
-				   Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
+				       Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
 				       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
 				       	
 			             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
@@ -342,4 +345,43 @@ public class AuthentificationController {
 				 
 				 
 		}
+		
+		
+		@PostMapping(value="/contribAndRembourse/generatePDF/",produces="application/pdf")
+		public ResponseEntity<byte[]> generatePDF(Authentication authentication,Model model, @RequestParam(name="currentTable") String currentTable,@RequestParam(name="keyWord", defaultValue ="") String keyWord) throws Exception, JRException  {
+					
+					
+					String email="";
+					String matricule="";
+					User usr=null;			   
+					email= authentication.getName();
+					usr= userDetailsService.getUserByEmail(email);
+					matricule=usr.getMatricule();
+					String dateValue=keyWord==null?"":keyWord;
+			 	   Traitement trt = new Traitement();
+			 	   HashMap<String,Object> map = new HashMap<>();
+			 	   String jasperFileName="";
+			 	   String fileName="";
+			 	 
+			 	   if(currentTable.equals("Remboursements")) {
+			 		     
+						 List<Events>  remboursementList =eventRepo.findByDateRemboursementsContainsList(matricule,dateValue);
+
+					     fileName="remboursements";
+					     jasperFileName="remboursement.jrxml";
+					 	 map.put("nameFor", "Israel");				 	 
+					 	 return  trt.generatePDF(remboursementList, jasperFileName, map, fileName);
+			 	   }
+			 	
+			 	   System.out.println("-==Down==="+dateValue);
+			 	   List <Payement> searchContribList = payeRepo.findByenteredMatricContains(matricule,dateValue);
+				   jasperFileName="contribution.jrxml";
+			 	   fileName="contributions";
+			 	   map.put("nameFor", "Israel");			 	 
+				   return  trt.generatePDF(searchContribList, jasperFileName, map, fileName);
+		   
+		}
+		
+		
+		
 }

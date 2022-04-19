@@ -228,7 +228,7 @@ public class InteretParMembreController {
 	 	  String fileName="";
 		  
 	 	     fileName="retrait";
-	 	     jasperFileName="proof.jrxml";
+	 	     jasperFileName="retrait.jrxml";
 		 	 map.put("typeOperation", "RETRAIT");
 		 	 map.put("info", "le retrait");
 		 	 map.put("nom",nom);

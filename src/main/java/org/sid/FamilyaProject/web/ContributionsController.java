@@ -52,7 +52,7 @@ public class ContributionsController {
 	//************** ACCEUILLE************************
 	
 	@GetMapping(path="/contribution")
-	public String Contribution(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
+	public String Contribution(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc, @RequestParam(name="dateKeyWord", defaultValue = "") String dateKeyWord) {
 		
 		
 		Traitement trt = new Traitement();		
@@ -72,7 +72,8 @@ public class ContributionsController {
 		model.addAttribute("currentPage2",pageAllInfo);
 		model.addAttribute("currentSize",size);
 		model.addAttribute("totalContribution",String.format("%.3f",totalContribution));
-		model.addAttribute("keyWord", mc);		
+		model.addAttribute("keyWord", mc);	
+		model.addAttribute("dateKeyWord", dateKeyWord);
 		
 		return "contribution";
 	   
@@ -81,7 +82,7 @@ public class ContributionsController {
 	
 @GetMapping("/tableViewContrib")
 	
-	public String tableViewContrib(Model model ,@RequestParam(name="page",defaultValue = "0") int page,  @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size )  {	
+	public String tableViewContrib(Model model ,@RequestParam(name="page",defaultValue = "0") int page,  @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size, @RequestParam(name="dateKeyWord", defaultValue = "") String dateKeyWord )  {	
 		 
 		Traitement trt=new Traitement();
 		 		  
@@ -108,7 +109,7 @@ public class ContributionsController {
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping(path="/contribSearcher")
-	public String searchByMatriculeInContrib(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchByMatriculeInContrib(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc, @RequestParam(name="dateKeyWord", defaultValue = "") String dateKeyWord)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -131,17 +132,26 @@ public class ContributionsController {
 	           model.addAttribute("currentSize",size);
 	           model.addAttribute("totalContribution",String.format("%.3f", totalContribution));  
 	           model.addAttribute("keyWord", mc);
+	           model.addAttribute("dateKeyWord", dateKeyWord);
 			   
 			  
 	           return "contribution::mainContainerContrib";
 		   }else {
-			   Page <Payement> searchContribList =payeRepo.findByenteredMatricContains(mc,PageRequest.of(page,size));
-			   Page <List<List<Object>>>  searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMember(mc,PageRequest.of(page,size));
+			         Page <Payement> searchContribList = null;
+			         Page <List<List<Object>>>  searchByMatricContribList = null ;
+			         
+			         if(!mc.isEmpty() && dateKeyWord.isEmpty())			        	 
+					      searchContribList =payeRepo.findByenteredMatricContains(mc,PageRequest.of(page,size));
 
-			       double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-			       
-			       	
-			      
+			         
+			         else if(!dateKeyWord.isEmpty() && mc.isEmpty()  ) 
+			        	 searchContribList =payeRepo.findByDatePayementOnlyContains(dateKeyWord, PageRequest.of(page,size));
+			         
+			         else if(!dateKeyWord.isEmpty() && !mc.isEmpty()) {
+			        	  searchContribList =payeRepo.findByDatePayementContains(mc,dateKeyWord, PageRequest.of(page,size));
+			         }
+				     searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMember(mc,PageRequest.of(page,size));
+					 double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 			         model.addAttribute("lstSolde",trt.converter(searchByMatricContribList));
 		             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
 		             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
@@ -152,7 +162,8 @@ public class ContributionsController {
 		             model.addAttribute("pageTitle","Contribution");
 		             model.addAttribute("totalContribution", String.format("%.3f",totalContribution));  
 		             model.addAttribute("keyWord", mc);
-		
+		             model.addAttribute("dateKeyWord", dateKeyWord);
+		             
 		             return "/contribution::mainContainerContrib";
 		   
 		   }
@@ -206,7 +217,7 @@ public class ContributionsController {
 		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
 	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 		   
-		//mv = new ModelAndView("/contribution::mainContainerContrib");
+		
 		
 		model.addAttribute("lst", trt.converter(contribList));
 		model.addAttribute("lstSolde",trt.converter(capitalContribList));
@@ -314,10 +325,13 @@ public class ContributionsController {
 	
 	
 	@PostMapping(value="/contrib/generatePDF/",produces="application/pdf")
-	public ResponseEntity<byte[]> generatePDF(Model model ,@RequestParam(name="keyWord") String mc,@RequestParam(name="currentTable") String currentTable) throws Exception, JRException  {
+	public ResponseEntity<byte[]> generatePDF(Model model ,@RequestParam(name="keyWord") String mc,@RequestParam(name="currentTable") String currentTable,@RequestParam(name="dateKeyWord", defaultValue ="") String dateKeyWord) throws Exception, JRException  {
 		
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
+		 	   List <Payement> searchContribList=null;
+		 	   String dateValue=dateKeyWord.equals("all")?"":dateKeyWord;
+		 	   String matricule=mc.equals("all")?"":mc;
 		 	   String jasperFileName="";
 		 	   String fileName="";
 		 	 
@@ -330,8 +344,23 @@ public class ContributionsController {
 				 	 map.put("nameFor", "Israel");				 	 
 				 	 return  trt.generatePDF(searchByMatricContribList, jasperFileName, map, fileName);
 		 	   }
+		 	  
+		 	   
+		 	  
+		 	 if(!matricule.isEmpty() && dateValue.isEmpty())			        	 
+			      searchContribList =payeRepo.findByenteredMatricContains(mc);
+
+	         
+	         else if(!dateValue.isEmpty() && matricule.isEmpty()  ) 
+	        	 searchContribList =payeRepo.findByDatePayementOnlyContains(dateKeyWord);
+	         
+	         else if(!dateValue.isEmpty() && !matricule.isEmpty()) {
+	        	  searchContribList =payeRepo.findByDatePayementContains(mc,dateKeyWord);
+	         }
+	         else if(dateValue.isEmpty() && matricule.isEmpty()) {
+	        	  searchContribList =payeRepo.findByenteredMatricContains("");
+	         }
 		 	    
-			   List <Payement> searchContribList = payeRepo.findByenteredMatricContains(!mc.equals("all")? mc:"");
 			   jasperFileName="contribution.jrxml";
 		 	   fileName="contributions";
 		 	   map.put("nameFor", "Israel");			 	 

@@ -22,7 +22,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="63" splitType="Stretch">
+		<band height="77" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="80" y="0" width="400" height="40" uuid="1a652692-054a-40f3-ade5-68d8da36626d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -31,6 +31,13 @@
 					<font size="20"/>
 				</textElement>
 				<text><![CDATA[Familia Interet]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="47" width="240" height="30" uuid="f557b3d5-60e5-47a4-9618-e0b93b11267a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Liste des interets ]]></text>
 			</staticText>
 		</band>
 	</title>

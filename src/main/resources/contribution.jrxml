@@ -23,7 +23,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="63" splitType="Stretch">
+		<band height="81" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="80" y="0" width="400" height="40" uuid="1a652692-054a-40f3-ade5-68d8da36626d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -32,6 +32,13 @@
 					<font size="20"/>
 				</textElement>
 				<text><![CDATA[Familya Transactions]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="186" y="52" width="182" height="29" uuid="75959bf1-0f86-4b30-beb7-6588a97bbd82"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Liste des contributions]]></text>
 			</staticText>
 		</band>
 	</title>

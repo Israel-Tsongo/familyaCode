@@ -18,7 +18,7 @@
 			        <div class="container-fluid"><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
 			            <div class="collapse navbar-collapse" id="navcol-1">
 			                <ul class="nav navbar-nav" id="up-nav">
-			                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#" style="text-shadow: 1px 1px 1px rgba(200,200,200,0.5); font-weight:bold">Caisse Familya UCBC</a></li>
+			                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#" style="text-shadow: 1px 1px 1px rgba(200,200,200,0.5); font-weight:bold">Caisse Familia UCBC</a></li>
 			                    <li class="nav-item" role="presentation"  style="margin-left:60%"><a class="nav-link" th:href="@{/home}" style="font-weight:bold;padding-top:5px">Home</a></li>
 			                    <li class="nav-item " id="dropdown-button" style="margin-top:5px"><a th:href="@{/logout}" style="font-weight:bold;padding-top:5px">Logout </a> </li>			                       
 			                    
@@ -27,7 +27,7 @@
 			        </div>
    		  </nav>
    		   
-          <div class="row justify-content-center" style="height:600px;position:relative;margin-top:50px;">
+          <div class="row justify-content-center" style="height:600px;position:relative;margin-top:50px; margin-bottom:5rem">
                     
             		<div class="col d-flex justify-content-center align-items-center">
             		         <div  class="justify-content-center" >
@@ -151,7 +151,7 @@
             		
             		
             		<!--  -->
-            		<div class="btn-group-fab" style="position:absolute;right:49%;bottom:-15%" role="group" aria-label="FAB Menu" id="floatingBtn" >
+            		<div class="btn-group-fab" style="position:absolute;right:49%;top:105%" role="group" aria-label="FAB Menu" id="floatingBtn" >
 						<div>
 							 <button type="button"  id="menuInDeb" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu">
 							 	<i class="fa fa-bars"></i>
@@ -165,8 +165,8 @@
           		
             		<!--  -->
             		 <div class="modal fade" id="siteUseModal" role="dialog" tabindex="-1" >
-                        <div class="modal-dialog" role="document" style="max-width:80%">
-                            <div class="modal-content">
+                        <div class="modal-dialog" role="document" style="max-width:70%">
+                            <div class="modal-content"style="max-width:70rem">
                             
 	                            <div class="modal-header d-xl-flex justify-content-xl-center">
 	                                   
@@ -195,8 +195,8 @@
 			                </script>
 			                <!-- Start: Chart -->
 			                
-			                <div class="row">
-			                    <div class="col">
+			                <div class="row d-xl-flex justify-content-xl-center align-items-xl-center" style=width:100%>
+			                    <div class="col-lg-12">
 			                        <div class="card shadow mb-12" id="card-center">
 			                            <div class="card-header d-flex justify-content-between align-items-center">
 			                                <h4 class="text-primary font-weight-bold m-0 " style="text-shadow:1px 1px 1px black">Vos Contributions mensuelles</h4>
@@ -206,7 +206,7 @@
 			                                	</button>
 			                                    <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 			                                        <p class="text-center dropdown-header">dropdown header:</p>
-			                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px;" id="exportInPdf"   onclick="actions(exportInPdf)">Exporter sous PDF </a>
+			                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px;" id="exportInPdf" onclick="actions(exportInPdf)">Exporter sous PDF </a>
 			                                        	<a class="dropdown-item" style="cursor:pointer;font-size:17px" id="rembourseBtn"  onclick="rembourseList()">Remboursements </a>
 			                                           <!--  <div class="dropdown-divider"> </div>			                                        
 			                                        	<a class="dropdown-item" href="#">Something else here</a>-->
@@ -344,11 +344,14 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-            		
+                    </div>            		
           
-          
+           
           </div>
+          <footer  th:replace="fragments :: html_footer">
+       
+          </footer>
+            
             <script src="assets/js/jquery.min.js"></script>
 		    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 		    <script src="assets/js/script.min.js"></script>
@@ -356,16 +359,12 @@
  <script  th:inline="javascript" > 
  
  
-      	 var state="Contributions"
-         var mainList;
-         var toggle=true;
-         var idValue=-10;		            
-	     
- 
- 
-
-			            
-function rembourseList()   {			            	
+ var state="Contributions"
+ var mainList;
+ var toggle=true;
+ var idValue=-10;		            
+		            
+ function rembourseList(){		            	
 			    	        
                         	
            	if(toggle){
@@ -472,29 +471,41 @@ function chiftTable(url){
 			            
 			            
 			            
-	 function actions(type){
-			           	
-			           	 $(document).ready(function(){
-			           		 
-			          		 	  // var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()   		 		
-			       	    		  // var w=window.open("http://localhost:8080/contrib/generatePDF/"+currentTable+"/"+keyWord, "_blank");
-			          		 		
-			          		 		 //  setTimeout(function(){
-			          		 			   
-			          		 			 //var a = w.document.createElement('A');
-			          					 //var filePath = w.location.href;
-			          					 // a.href = filePath;
-			          					 // a.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-			          					 // w.document.body.appendChild(a);
-			          					  //a.click();
-			          					  //w.document.body.removeChild(a);
-			          		 			   
-			          		 		  // },600)
-			       				
-			           	 })
-			           	 
-			           	 
-		  }
+function actions(type){			           	
+
+	     var keyWord=$("#keyWord").val()==''?"":$("#keyWord").val()	     
+	    	 
+	     var request = new XMLHttpRequest();
+	     var url="http://localhost:8080/contribAndRembourse/generatePDF/";
+	     request.open("POST",url,true)
+	     request.responseType='blob';
+	     request.onload=function(e){
+	    	 
+	    	 if(this.status===200){
+	    		 	    		 
+	    		 var file=window.URL.createObjectURL(this.response)
+	    		 var w= window.open(file,"_blank")
+	    		 var a=w.document.createElement("a");
+	    		 a.href=file;	    		 
+	    		 a.download=this.response.name || state=='Contributions'?'Mes_contributions'+$('#keyWord').val():'Mes_Remboursements'+$("#keyWord").val()
+	    		 w.document.body.appendChild(a)
+	    		 a.click()
+	    		 w.onfocus=function(){
+	    			 w.document.body.removeChild(a)
+	    		 }
+	    		 
+	    	 }
+	     }
+	     
+	     
+	     
+	    var data= new FormData();   
+    	data.append('keyWord',keyWord)
+   	    data.append('currentTable',state)
+   	    request.send(data)
+	    	
+		           	 
+}
 			            
 			            
 	 function errorFonction() {

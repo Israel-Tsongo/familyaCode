@@ -61,8 +61,7 @@ public interface PayementRepository extends JpaRepository<Payement ,Long> {
 	
 	
 	@Query(value="SELECT `matricule`, CASE    WHEN  NOT EXISTS (SELECT * FROM `payement` WHERE member.id_member=payement.foreign_key_member_paying) THEN 0   ELSE SUM(contrib_mensuel)        END AS Somme_payement_par_membre ,   CASE    WHEN member.matricule=payement.entered_matric THEN (SUM(contrib_mensuel)+ member.capital_initial)    WHEN  NOT EXISTS (SELECT * FROM `payement` WHERE member.matricule=payement.entered_matric) THEN member.capital_initial     ELSE (contrib_mensuel+ member.capital_initial)     END AS Total_payement_par_membre FROM `member` INNER JOIN `payement` ON member.id_member= payement.foreign_key_member_paying OR NOT EXISTS (SELECT * FROM `payement` WHERE member.matricule=payement.entered_matric)  GROUP BY member.matricule",nativeQuery=true)	
-	public List<List<Object>> getSoldes();
-	
+	public List<List<Object>> getSoldes();	
 	
 	
 	
@@ -70,8 +69,12 @@ public interface PayementRepository extends JpaRepository<Payement ,Long> {
 	@Transactional
 	@Query(value="UPDATE payement p SET p.contrib_mensuel =:contribution, p.date_payement=:date, p.entered_matric=:matricule WHERE p.id_paye=:idContrib",nativeQuery=true)
 	void updateContribution(@Param("idContrib") Long idContrib,   @Param("matricule") String matricule, @Param("contribution")  double contribution, @Param("date") Date date );
-
-	public List<Payement> findByenteredMatricContains(String mc);
+    
+	
+	
+	@Query(value= "SELECT * FROM payement WHERE entered_matric=:matricule AND date_payement LIKE %:mc%", nativeQuery=true )
+	public List<Payement> findByenteredMatricContains(@Param("matricule") String mc, @Param("mc") String dateKeyWord);
+	
 	
 	@Query(value= "SELECT `id_member`,`nom`,`matricule`,`capital_initial`, CASE    WHEN  NOT EXISTS (SELECT * FROM `payement` WHERE member.id_member=payement.foreign_key_member_paying) THEN 0   ELSE SUM(contrib_mensuel)        END AS Somme_payement_par_membre ,   CASE    WHEN member.matricule=payement.entered_matric THEN (SUM(contrib_mensuel)+ member.capital_initial)    WHEN  NOT EXISTS (SELECT * FROM `payement` WHERE member.matricule=payement.entered_matric) THEN member.capital_initial     ELSE (contrib_mensuel+ member.capital_initial)     END AS Total_payement_par_membre FROM `member` INNER JOIN `payement` ON member.id_member= payement.foreign_key_member_paying OR NOT EXISTS (SELECT * FROM `payement` WHERE member.matricule=payement.entered_matric) WHERE matricule LIKE %:mc%  GROUP BY member.matricule", nativeQuery=true )
 	public List<List<Object>> getByMaticuleSubscriptionsAndCapitalWithOwnerMember(String mc);
@@ -82,6 +85,18 @@ public interface PayementRepository extends JpaRepository<Payement ,Long> {
 	
 	
 	@Query(value= "SELECT * FROM payement WHERE entered_matric=:matricule AND  date_payement LIKE %:mc%", nativeQuery=true )
-	public Page<Payement> findByDatePayementContains(@Param("matricule")String matricule , String mc, org.springframework.data.domain.Pageable pageable );
+	public Page<Payement> findByDatePayementContains(@Param("matricule") String matricule , String mc, org.springframework.data.domain.Pageable pageable );
+	
+	@Query(value= "SELECT * FROM payement WHERE  date_payement LIKE %:mc%", nativeQuery=true )
+	public Page<Payement> findByDatePayementOnlyContains(@Param("mc") String mc, org.springframework.data.domain.Pageable pageable );
+
+	public List<Payement> findByenteredMatricContains(String mc);
+	
+	@Query(value= "SELECT * FROM payement WHERE  date_payement LIKE %:mc%", nativeQuery=true )
+	public List<Payement> findByDatePayementOnlyContains(@Param("mc") String dateKeyWord);
+	
+	@Query(value= "SELECT * FROM payement WHERE entered_matric=:matricule AND  date_payement LIKE %:mc%", nativeQuery=true )
+	public List<Payement> findByDatePayementContains(@Param("matricule") String mc, @Param("mc") String dateKeyWord);
+	
 	
 }

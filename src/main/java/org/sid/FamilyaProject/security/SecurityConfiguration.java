@@ -133,6 +133,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 						///======= HOME FOR SITE USER=========/////
 						.antMatchers("/home").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
 						.antMatchers("/siteUserSearcher").hasAnyAuthority("SITE_USER")
+						.antMatchers("/contribAndRembourse/generatePDF/").hasAnyAuthority("SITE_USER")
 						.antMatchers("/remboursementsByMatricule").hasAnyAuthority("SITE_USER")
 						
 						

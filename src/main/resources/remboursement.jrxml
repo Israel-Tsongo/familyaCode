@@ -27,7 +27,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="63" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="80" y="0" width="400" height="40" uuid="1a652692-054a-40f3-ade5-68d8da36626d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -36,6 +36,13 @@
 					<font size="20"/>
 				</textElement>
 				<text><![CDATA[Familya Transactions]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="50" width="220" height="30" uuid="455eb23f-5501-4e78-a42b-8c78c0bf8667"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Liste des remboursements]]></text>
 			</staticText>
 		</band>
 	</title>

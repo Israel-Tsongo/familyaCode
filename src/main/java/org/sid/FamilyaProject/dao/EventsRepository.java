@@ -73,6 +73,9 @@ public interface EventsRepository extends JpaRepository<Events, Long>{
 	   
 	   @Query(value= "SELECT * FROM events WHERE entered_matricule=:matricule AND  date_event LIKE %:mc%", nativeQuery=true )
 	   public Page<Events> findByDateRemboursementsContains(@Param("matricule")String matricule , String mc, org.springframework.data.domain.Pageable pageable );
+	   
+	   @Query(value= "SELECT * FROM events WHERE entered_matricule=:matricule AND  date_event LIKE %:mc%", nativeQuery=true )
+	   public List<Events> findByDateRemboursementsContainsList(@Param("matricule")String matricule , String mc );
 		
 	   
 	   public Page <Events> findByEnteredMatriculeContains(String mc, org.springframework.data.domain.Pageable pageable);

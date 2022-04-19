@@ -27,7 +27,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="63" splitType="Stretch">
+		<band height="77" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="80" y="0" width="400" height="40" uuid="1a652692-054a-40f3-ade5-68d8da36626d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -35,7 +35,14 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="20"/>
 				</textElement>
-				<text><![CDATA[Familia Dettes]]></text>
+				<text><![CDATA[Familia Dettes archiveés]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="47" width="190" height="30" uuid="ddca60d7-6937-4003-be4f-5da0309dd2c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Liste des dettes archiveés]]></text>
 			</staticText>
 		</band>
 	</title>

@@ -130,7 +130,7 @@ public class DashbordController {
 						
 					   if(btnEnd) {										
 							  
-				   			   interetParMem.partageInteret(interetRepo, eventRepo, depenseRepo, memberRepo,archivRepo, errorList);
+				   			   interetParMem.partageInteret(payeRepo,interetRepo, eventRepo, depenseRepo, memberRepo,archivRepo, errorList);
 				   			   trt.archiveDataBase(payeRepo,memberRepo,errorList);							
 						}
 				      
