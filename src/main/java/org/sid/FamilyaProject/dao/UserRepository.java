@@ -44,10 +44,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	public List<User>findAllAuthUser();
 	
 
-	@Query(value="SELECT auth_user_id from auth_user ORDER BY auth_user_id ASC " , nativeQuery=true)
+	@Query(value="SELECT auth_user_id from auth_user ORDER BY auth_user_id ASC" , nativeQuery=true)
 	public List<Long>getLatestId();
 
-
+	@Query(value="SELECT matricule from auth_user ORDER BY auth_user_id Desc" , nativeQuery=true)
+	public List<String>getLatestMatricule();
 
 
 	public Optional<User> findUserByEmail(String email);

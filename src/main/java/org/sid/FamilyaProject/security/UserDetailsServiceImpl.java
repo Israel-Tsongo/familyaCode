@@ -77,26 +77,26 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 					}
 					
 					public String getMatricule() {
-						//UserRepository userRepositorys
+						
 						Long value=0L;
-					   String matricule="";
-					
-					  
+					    String matricule="";				
 					   
 					  if(!(userRepository.findAllAuthUser().isEmpty())) {
-							List<Long>lst=userRepository.getLatestId();
-							value=lst.get(lst.size()-1);
+						    
+						    List<String>lst=userRepository.getLatestMatricule();							
+						    System.out.println("last Matricule"+lst.get(0));
+							value=Long.parseLong(lst.get(0).substring(0,lst.get(0).lastIndexOf("22")));
 							
 							//for(Long l : lst) { System.out.println("id  "+l); }
-							
-							//System.out.println("last id  "+value);
+							System.out.println("last id  "+value);
+							System.out.println("last id  "+value);
 						
 						} 
 							
 						Long V=value+1;
 						System.out.println("Matros  "+V);
-						Date d=new Date();
-						matricule=V.toString()+d.toString().substring(26, 28);
+						//Date d=new Date();
+						matricule=V.toString()+"22";
 						System.out.println("Matros  "+matricule);
 				   
 						return matricule;

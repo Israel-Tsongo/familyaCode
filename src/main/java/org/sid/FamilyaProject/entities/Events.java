@@ -61,7 +61,7 @@ public class Events {
 	}
 	
 
-	public void computing (InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo, ArchiveRepository archivRepo,List<String> errorList ) {
+	public void computing (String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo, ArchiveRepository archivRepo,List<String> errorList ) {
 		Traitement trt = new Traitement ();
 		double montant_restant=0.00;
 		double dettePlusInteret=0.00;
@@ -115,6 +115,12 @@ public class Events {
 		 System.out.println("==============="+echeance +"++++++++++++");
 		 System.out.println("==============="+curent_echeance +"++++++++++++");
 		 System.out.println("==============="+(dettePlusInteret/N) +"++++++++++++");
+		 
+		                  if(tabName.equals("Anticiper")) {
+		                	  
+		                	  
+		                  }else {
+		                
 		                   if(N==0.0) {
 		                	   errorList.add("Vous ne possedez pas de dettes");
 		                	   System.out.println("Vous ne possedez pas de dettes");
@@ -187,11 +193,12 @@ public class Events {
 		                       }				 
 		                   }
 				  }		
+	}
 			
 	//////////////////////////////////////////////////////////////////////////////////		
 	
 	
-	public void interetConstant (InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,List<String> errorList ) {
+	public void interetConstant (String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,List<String> errorList ) {
 		
 		
 		Traitement trt = new Traitement ();
@@ -249,7 +256,17 @@ public class Events {
 							 System.out.println("==============="+curent_echeance +"++++++++++++");
 							 System.out.println("==============="+(dettePlusInteret/echeance) +"++++++++++++");
 		                  
+					   if(tabName.equals("Anticiper")) {
+						   
+						
+						   System.out.println("======+Anticiper remboursement+++++++++++");
+						   
+						   
+					   }else {
+							 
+							 
 						   if(echeance==curent_echeance && N==0.0) {
+							   
 		                	   errorList.add("Vous ne possedez pas de dettes");
 		                	   System.out.println(" Vous ne possedez pas de dettes");
 							   
@@ -323,6 +340,12 @@ public class Events {
 		                	
 		                       }				 
 		        }
+						   
+						   
+						   
+	}				   
+						   
+						   
 		 }		
 	
 	

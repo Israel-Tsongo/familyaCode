@@ -141,81 +141,78 @@ public class RemboursementController {
 				
 				      if(debiteurRepo.getDebiteurByMatricule(matricule) != null) {
 				    	  
-							 double currentPenalty=0.0;
-				   	   		 Debiteur debit=debiteurRepo.getDebiteurByMatricule(matricule);
-				   	   		  
-		    	 	         int currentNewDate=Integer.parseInt(currentDate.toString().substring(5,7));				
-				             //int currentNewDate=3;
-		    	 		     int newDate=Integer.parseInt(date.toString().substring(5,7));
-				             //int newDate=12;
-		    	 		     
-		    	 		     int tempDate=(newDate==12)?(0+1):(newDate+1);
-		    	 		     
-		    	 		     if(tabName.equals("Anticiper")) {
-		    	 		    	 
-		    	 		    	 
-		    	 		     }else {
-		    	 		   
-							 if(tabName.equals("Retard") && (currentNewDate >tempDate)) {    
-								 
-									 double difference=(currentNewDate-tempDate);
-									 double penalite=(0.1*prochainRembourcement)*difference;
-									 System.out.println("======difference======"+difference );
-									 debiteurRepo.updateCurrentPenalite(matricule,trt.rounder(penalite) ) ;	
-									 
-									  currentPenalty=debiteurRepo.getCurrentPenaliteByMatricule(matricule) ;
-						   	   		  debit =debiteurRepo.getDebiteurByMatricule(matricule);
+									 double currentPenalty=0.0;
+						   	   		 Debiteur debit=debiteurRepo.getDebiteurByMatricule(matricule);
 						   	   		  
-						   	   		 
-									 if(remboursement==(debit.getPremierRemboursement()+currentPenalty)) {
+				    	 	         int currentNewDate=Integer.parseInt(currentDate.toString().substring(5,7));				
+						             //int currentNewDate=3;
+				    	 		     int newDate=Integer.parseInt(date.toString().substring(5,7));
+						             //int newDate=12;
+				    	 		     
+				    	 		     int tempDate=(newDate==12)?(0+1):(newDate+1);				    	 		     
+				    	 		     
+				    	 		      System.out.println("tabName: "+tabName);
+									 if(tabName.equals("Retard") && (currentNewDate >tempDate)) {    
 										 
-										 remboursementTempo=remboursement;
-										 remboursement=(remboursement-currentPenalty);									 
-										 double formerPenalty= debiteurRepo.getFormerPenaliteByMatricule(matricule);
-	  	                            	 double sommePenalty=(formerPenalty+currentPenalty);	  	                            	
-	  	    	                         debiteurRepo.updateFormerPenalite(matricule, sommePenalty) ;								        	                            	   
-		                            	 debiteurRepo.updateCurrentPenalite(matricule,0.0);
-		                            	 
-									 }else {
-										 System.out.println("=====Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
-										 errorList.add("Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
-									 }
-									 
-							 }else {
-								  
-								 errorList.add("Il semblerait que la date prevue pour le remboursement n'est pas encore depassee");
-								 System.out.println("Il semblerait que la date prevue pour le remboursement n'est pas encore depassee");
-								 
-							 }
+													 double difference=(currentNewDate-tempDate);
+													 double penalite=(0.015*prochainRembourcement)*difference;
+													 System.out.println("======difference======"+difference );
+													 debiteurRepo.updateCurrentPenalite(matricule,trt.rounder(penalite));	
+													 
+													  currentPenalty=debiteurRepo.getCurrentPenaliteByMatricule(matricule) ;
+										   	   		  debit =debiteurRepo.getDebiteurByMatricule(matricule);
+								   	   		  
+								   	   		 
+											 if(remboursement==(debit.getPremierRemboursement()+currentPenalty)) {
+												 
+													 remboursementTempo=remboursement;
+													 remboursement=(remboursement-currentPenalty);									 
+													 double formerPenalty= debiteurRepo.getFormerPenaliteByMatricule(matricule);
+				  	                            	 double sommePenalty=(formerPenalty+currentPenalty);	  	                            	
+				  	    	                         debiteurRepo.updateFormerPenalite(matricule, sommePenalty) ;								        	                            	   
+					                            	 debiteurRepo.updateCurrentPenalite(matricule,0.0);
+				                            	 
+											 }else {
+													 System.out.println("=====Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
+													 errorList.add("Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
+											 }
+											 
+									 }else if(tabName.equals("Retard") && (currentNewDate < tempDate)) {
+										  
+													 errorList.add("Il semblerait que la date prevue pour le remboursement n'est pas encore depassee");
+													 System.out.println("Il semblerait que la date prevue pour le remboursement n'est pas encore depassee");
+													 
+									  }
 				           
 							
-							if(tabName.equals("Normale") || tabName.equals("Retard") && (currentNewDate >tempDate) && (remboursementTempo==(debit.getPremierRemboursement()+currentPenalty)) || debiteurRepo.getDebiteurByMatricule(matricule)==null) { //currentNewDate <= tempDate 
+							if(tabName.equals("Anticiper")  || tabName.equals("Normale") || tabName.equals("Retard") && (currentNewDate >tempDate) && (remboursementTempo==(debit.getPremierRemboursement()+currentPenalty)) || debiteurRepo.getDebiteurByMatricule(matricule)==null) { //  currentNewDate <= tempDate  
 								
-						       Events e=new Events(matricule,  remboursement, new Date());
-						       Member curentMember = memberRepo.getUserByMatricule(e.getEntered_matricule());
-						       String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
-					       
-							if( typeInteret.equals("Degressif")) {							 
-								 			
-								Set<Events> setterEvent =new HashSet<Events> ();									
-								setterEvent.add(e);
-								curentMember.setEvents(setterEvent);
-								e.setMembre(curentMember);
-						        e.computing(interetRepo,e.getRemboursement_courant(), memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
-									  
-							 }else{
-								 
-								 Set<Events> setterEvent =new HashSet<Events> ();								
-									setterEvent.add(e);
-									curentMember.setEvents(setterEvent);
-									e.setMembre(curentMember);
-							        e.interetConstant(interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
-											  
-							 }
+									      
+										     Events e=new Events(matricule,  remboursement, new Date());
+									         Member curentMember = memberRepo.getUserByMatricule(e.getEntered_matricule());
+									         String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
+								       
+											if( typeInteret.equals("Degressif")) {							 
+												 			
+													Set<Events> setterEvent =new HashSet<Events> ();									
+													setterEvent.add(e);
+													curentMember.setEvents(setterEvent);
+													e.setMembre(curentMember);
+											        e.computing(tabName,interetRepo,e.getRemboursement_courant(), memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
+													  
+											 }else{
+												 
+												    Set<Events> setterEvent =new HashSet<Events> ();								
+													setterEvent.add(e);
+													curentMember.setEvents(setterEvent);
+													e.setMembre(curentMember);
+											        e.interetConstant(tabName,interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
+															  
+											 }
 						
 						 }
 						 
-				      }	
+				      	
 							
 							
 			    }else {

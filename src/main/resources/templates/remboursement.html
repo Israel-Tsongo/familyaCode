@@ -211,7 +211,7 @@
 	        <div class="modal-content">
 	            <div class="modal-header">
 	            
-	                   <div class="tabs" id="tab01" onclick="clickedTab('Anticipe')">
+	                   <div class="tabs" id="tab01" onclick="clickedTab('Anticiper')">
                             <h6 class="text-muted">Anticiper</h6>
                         </div>
                         <div class="tabs active" id="tab02" onclick="clickedTab('Normale')">
@@ -292,7 +292,7 @@
     
    var idValue=-10;
    var mainList;     
-   var tab="Normale";
+   var tabName="Normale";
    function errorFonction() {
 	  
 	   if(typeof errorList !='undefined' && errorList.length >0 && errorList != null ){
@@ -308,9 +308,12 @@
   
   function clickedTab(tab){
 	  
-	  tab=tab
-	  if(tab=="Anticipe") $("#rembourseTitle").text("Remboursement Anticipe")
-	  if(tab=="Retard") $("#rembourseTitle").text("Remboursement avec Retard")
+	  tabName=tab
+	  console.log("---tab:-----",tabName)
+	  
+	  if(tabName=="Anticiper") $("#rembourseTitle").text("Remboursement Anticipé")
+	  if(tabName=="Retard") $("#rembourseTitle").text("Remboursement avec Retard")
+	  if(tabName=="Normale") $("#rembourseTitle").text("Remboursement Normale")
   }
   
   function actions(type){
@@ -499,7 +502,7 @@
        		 
        		        success: function(data){
        		       	
-       		        	       console.log("===="+data);
+       		        	      
        		                   $("#containerMainInRembourse").html(data);        		        	
 	                    	   idValue=-10;
 	                    	   $("#div-total").load(location.href+ " #div-total");
@@ -553,8 +556,9 @@
 	        	       $("#addButtonInRembourse").show();        	       	
 	        	       	
         	           $("#rembourse-matricule-field").val("");
- 	    	    	   $("#rembourse-field").val(""); 	    	    	 
-        	       	   console.log("Add Method===");
+ 	    	    	   $("#rembourse-field").val(""); 
+ 	    	    	   
+        	       	   console.log("=======TabName===",tabName);
         	       	   
         	       	   $("#addButtonInRembourse").unbind("click").click( function() { 
         	       	   
@@ -566,7 +570,7 @@
                     					 
                     					  matricule  :   $("#rembourse-matricule-field").val(),
              	    	                  remboursement :  $("#rembourse-field").val(),
-             	    	                  tabName:tab,
+             	    	                  tabName:tabName,
              	    	                  page:((pag.length-1) <= 0) ? 0:(pag.length-1),
              	    	                  size:$("#pageSize").val(),
                     				      },
