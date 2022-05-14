@@ -23,6 +23,8 @@ public interface DepenseRepository extends JpaRepository <Depense,Long> {
 	@Query(value="SELECT id, montant_depense, motif, date_du_depense FROM `depense`",nativeQuery=true)
     Page<List<List<Object>>> getAllDep(org.springframework.data.domain.Pageable pageable);
 	
+	@Query(value="SELECT id, montant_depense, motif, date_du_depense FROM `depense`",nativeQuery=true)
+	List<Depense> getAllDep();
 	
 	
 	@Modifying
@@ -31,5 +33,7 @@ public interface DepenseRepository extends JpaRepository <Depense,Long> {
 	void updateDepense(@Param("id_dep") Long id_dep,@Param("montant")  double montant, @Param("motif")  String motif, @Param("date") Date date );
 
 	List<Depense> findByMotifContains(String string);
+
+	
 	
 }

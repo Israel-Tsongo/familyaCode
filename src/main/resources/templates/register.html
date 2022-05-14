@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Register - Brand</title>
+    <script type="text/javascript" th:src="@{assets/js/getIp.js}"></script>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=5109094f4fe4d36cc6aaa13ded79fc55">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=9db842b3dc3336737559eb4abc0f1b3d">
@@ -112,31 +113,31 @@
 	       		console.log(" Up Ajax Add Method");
          		 
          		 $.ajax({
-         				 url:"http://localhost:8080/indexPost",
+         				 url:remoteIp+"/indexPost",
          				 type:"post",
          				 data:{
-         					 nom:         $("#nom-field").val(),
+         					 nom:        $("#nom-field").val(),
           	    	    	 matricule:  $("#matricule").val(),
-          	    	    	 capital:      $("#capital-field").val(),
-          	    	    	 fonction:    $("#fonction-field").val(),
+          	    	    	 capital:    $("#capital-field").val(),
+          	    	    	 fonction:   $("#fonction-field").val(),
           	    	    	 categorie:  $("#categorie-field").val(),
-          	    	    	 contrat:     $("#contrat-field").val(),
+          	    	    	 contrat:    $("#contrat-field").val(),
          					 
          				      },
          		 
          		        success: function(data){
          		        	
          		        	    $("#containerMain").html(data);       		        	
-  	                    	   $("#addModal").modal("hide");
-  	                    	   idValue=-10;
-  	                    	  $("#div-total").load(location.href+ " #div-total");
-  	                    	  console.log("Add Method output");
+  	                    	    $("#addModal").modal("hide");
+  	                    	    idValue=-10;
+  	                    	    $("#div-total").load(location.href+ " #div-total");
+  	                    	    console.log("Add Method output");
            	    	    	
          		                      },       
          		                      
          		          error: function(error){
          		        	  
-         		        	  alert("L'operation d'ajout a echouee");
+         		        	    alert("L'operation d'ajout a echouee");
          		        	  
          		                     }
          		        } );
@@ -144,8 +145,8 @@
          		 
                  		 $(".btn-close").click(function(){
            		    	   
-           		    	   idValue=-10;
-           		    	   $("#nom-field").val('');
+           		    	    idValue=-10;
+           		    	    $("#nom-field").val('');
            	    	    	$("#matricule").val('');
            	    	    	$("#capital-field").val('');
            	    	    	$("#fonction-field").val('');
@@ -164,16 +165,9 @@
 	       	
 	       	
 	       	
-}
+}     
      
-     
-     
-     
-     
-     </script>
-                           
-     
-     
+</script>     
      
      
 </body>

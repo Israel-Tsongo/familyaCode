@@ -21,7 +21,7 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 	public Member getUserByMatricule(String matric);
 	
 	@Query(value= "SELECT capital_initial FROM member WHERE matricule = ?1", nativeQuery=true )
-	public double getCapitalByMatricule(String matric);
+	public Double getCapitalByMatricule(String matric);
 	
 	@Query(value= "SELECT matricule FROM member WHERE id_member = ?1", nativeQuery=true )
 	public String getMatriculeById(Long idMember);
@@ -46,6 +46,11 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 	@Query(value= "SELECT matricule,`capital_initial` FROM `member`", nativeQuery=true )
 	List<List<Object>> getCapitalInitialParMembre();
 	
+	@Query(value="SELECT * FROM member WHERE fonction='Financier'", nativeQuery=true )
+	public List<Member> getFinancier();
+	
+	@Query(value="SELECT * FROM member WHERE fonction='Gerant'", nativeQuery=true )
+	public List<Member> getGerant();
 	
 	@Query(value= "SELECT SUM(`capital_initial`) AS Somme_total FROM `member`", nativeQuery=true )
 	Double getTotalCapitauxInitiaux();
@@ -66,14 +71,25 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 	@Query(value="UPDATE member m SET m.nom=:newName WHERE m.matricule=:matricule",nativeQuery=true)
 	public void updateName(@Param("matricule") String matricule, @Param("newName") String name);
 	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE member m SET m.fonction=:newFonction WHERE m.matricule=:matricule",nativeQuery=true)
+	public void updateFonction(@Param("matricule") String matricule, @Param("newFonction") String foncion);
+	
+	
 	
 	@Query(value="SELECT id_member FROM member WHERE member.user_foreign_key_in_member=:foreign_Id",nativeQuery=true)
 	public Integer getMemberIdByProfilId(@Param("foreign_Id") Long foreign_Id);
 
 	public List<Member> findByNomContains(String string);
 	
-	@Query(value="SELECT * FROM member WHERE  id_member=1 AND matricule=322 AND categorie_membre=Fondateur AND fonction=President AND type_contrat=CDI", nativeQuery=true )
+	@Query(value="SELECT * FROM member WHERE matricule='422' AND categorie_membre='Fondateur' AND fonction='President'", nativeQuery=true )
 	public Member getUserFondateur();
+	
+	@Query(value="SELECT * FROM member WHERE  fonction='Financier' OR  fonction='Gerant'", nativeQuery=true )
+	public List<Member> getGerantAndFinancier();
+	
+	
 	
 	
 }

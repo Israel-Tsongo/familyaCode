@@ -253,7 +253,7 @@
     	
     	         var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
     		     var request = new XMLHttpRequest();
-    	         url=type?"http://localhost:8080/interet/interetGeneratePDF/":"http://localhost:8080/proof/" ;
+    	         url=type?remoteIp+"/interet/interetGeneratePDF/":remoteIp+"/proof/" ;
     		     request.open("POST",url,true)
     		     request.responseType='blob';
     		     request.onload=function(e){
@@ -324,9 +324,7 @@
     
     function isCheckedInInteret(x,list)   {
     	idValue=x;    
-    	console.log("========"+x);
-    	//mainList=list;    
-    	console.log("====Main List====");
+    	
 	 
  }  
     
@@ -377,7 +375,7 @@
        		 $("#pageSize").on('change',function(){
        				 
        			$.ajax({
-      				 url:"http://localhost:8080/interetSearcher",
+      				 url:remoteIp+"/interetSearcher",
       				 type:"post",
       				 data:{
       					 
@@ -439,7 +437,7 @@
             // Pagination
     	     console.log("The page is ",page)
        		 $.ajax({
-       				 url:"http://localhost:8080/interetSearcher",
+       				 url:remoteIp+"/interetSearcher",
        				 type:"post",
        				 data:{
        					 page:page,
@@ -482,7 +480,7 @@
                // Pagination
        	        
           		 $.ajax({
-          				 url:"http://localhost:8080/interetSearcher",
+          				 url:remoteIp+"/interetSearcher",
           				 type:"post",
           				 data:{
           					 page:0,
@@ -529,7 +527,7 @@
              
         	 
         		 $.ajax({
-        				 url:"http://localhost:8080/interetSearcher",
+        				 url:remoteIp+"/interetSearcher",
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
@@ -616,7 +614,7 @@
     	              $(document).ready(function(){	    		   
     	            	           montant=$("#montant-retrait-field").val();
                     	    	   $.ajax({
-                      				 url:"http://localhost:8080/withDraw",
+                      				 url:remoteIp+"/withDraw",
                       				 type:"post",
                       				 data:{
                       					 idWithD: idValue,
@@ -629,7 +627,7 @@
                       		        success: function(data){
                       		       	               
                       		        	          $("#interetModal").modal("hide");
-                      		        	          console.log()
+                      		        	          
                       		        			  $("#containerMainInInteret").html(data);        		        			
                       		        	          $("#tableMember").hide();
            	                    	              $("#table-member").show();

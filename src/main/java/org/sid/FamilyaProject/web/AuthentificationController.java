@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.sid.FamilyaProject.dao.DebiteurRepository;
@@ -12,6 +14,7 @@ import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.entities.Events;
+import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
@@ -22,7 +25,14 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -32,7 +42,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +72,8 @@ public class AuthentificationController {
 		
 		@Autowired
 		private PayementRepository payeRepo;
+		
+		
 		
 		@Autowired
 		private EventsRepository eventRepo;
@@ -164,7 +176,7 @@ public class AuthentificationController {
 		
 		
 		@RequestMapping(value = "/home", method = RequestMethod.GET)
-		public String home(Model model, Authentication authentication) {
+		public String home(@ModelAttribute(name="typeOnlogin") String typeOnlogin,Model model, Authentication authentication) {
 			
 			String email="";
 			String matricule="";
@@ -179,14 +191,42 @@ public class AuthentificationController {
 				email= authentication.getName();
 				usr= userDetailsService.getUserByEmail(email);
 				matricule=usr.getMatricule();
-				currentRoles=usr.getRoles();				
+				currentRoles=usr.getRoles();
 				model.addAttribute("user",usr);
 				
+				
+				if(memberRepo.getUserByMatricule(matricule)!=null) {
+				
+						if(typeOnlogin.isEmpty() && memberRepo.getUserByMatricule(matricule).getFonction().equals("Gerant") ) {
+							
+							model.addAttribute("fonctionType","Se logger comme Gerant");
+							
+							modelAndView="loginAs"; 		        			     		
+				        	return modelAndView;
+							
+						 }
+						if(typeOnlogin.isEmpty() && memberRepo.getUserByMatricule(matricule).getFonction().equals("Financier")) {
+							
+							model.addAttribute("fonctionType","Se logger comme Financier");
+							
+							modelAndView="loginAs"; 		        			     		
+				        	return modelAndView;
+						}
+						
+						
+				}
+					
 				for (Role rol : currentRoles) {
 					
-					if  (rol.getRole_name().equals("ADMIN_USER") || rol.getRole_name().equals("SUPER_USER") ) {
+					if  (rol.getRole_name().equals("ADMIN_USER")) {
 						
 					    role="ADMIN_USER";					    
+						modelAndView="redirect:/dashboard"; 
+					}
+					
+					if( rol.getRole_name().equals("SUPER_USER")) {
+						
+						role="SUPER_USER";					    
 						modelAndView="redirect:/dashboard"; 
 					}
 				}
@@ -194,7 +234,7 @@ public class AuthentificationController {
 			}
 			
 			
-				if(memberRepo.getUserByMatricule(matricule)!=null && !(role.equals("ADMIN_USER"))) {
+				if(memberRepo.getUserByMatricule(matricule)!=null && !(role.equals("ADMIN_USER")) && !(role.equals("SUPER_USER"))) {
 							
 				    	List<List<Object>> detailMembre=payeRepo.getDetails(matricule);
 				    	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
@@ -202,7 +242,7 @@ public class AuthentificationController {
 				    	
 				    	if(!(payeRepo.getPayementByMatricule(matricule).isEmpty())) {
 				    		
-				    		model.addAttribute("nom",detailMembre.get(0).get(0));
+				    		 model.addAttribute("nom",detailMembre.get(0).get(0));
 							 model.addAttribute("matricule",detailMembre.get(0).get(1));
 							 model.addAttribute("capital",detailMembre.get(0).get(2));
 							 model.addAttribute("contributions",detailMembre.get(0).get(3));
@@ -229,11 +269,11 @@ public class AuthentificationController {
 						     model.addAttribute("currentSize",5);
 						     modelAndView="home"; // resources/template/home.html
 			
-		     	}else if(memberRepo.getUserByMatricule(matricule)==null && !(role.equals("ADMIN_USER")))  {
+		     	}else if(memberRepo.getUserByMatricule(matricule)==null && !(role.equals("ADMIN_USER")) && !(role.equals("SUPER_USER")))  {
 		     		
 		     		    model.addAttribute("usr",usr);
 			        	modelAndView="homeEmpty";
-		
+			        	return modelAndView;
 			     }
 				
 				
@@ -257,9 +297,8 @@ public class AuthentificationController {
 			   if(mc!=null && !mc.isEmpty()) {			   	
 					
 				   
-				       Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
-				       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
-				       	
+				         Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
+				         double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;				       	
 			             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
 			             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
 			             model.addAttribute("pages2", new int[0]);

@@ -195,7 +195,7 @@ public class Events {
 				  }		
 	}
 			
-	//////////////////////////////////////////////////////////////////////////////////		
+	/////////////////////////////// INTERET CONSTANT ///////////////////////////////////////////////////		
 	
 	
 	public void interetConstant (String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,List<String> errorList ) {
@@ -231,7 +231,7 @@ public class Events {
 				    			    
 				    N=(echeance-curent_echeance);
 				    double detteTemp = -1 <= trt.rounder(montant_restant-remboursement) && trt.rounder(montant_restant-remboursement) <= 1 ?  0.00 : trt.rounder(montant_restant-remboursement) ;
-				    e.setDette(detteTemp );
+				    e.setDette(montant_restant);
 					e.setMontant_restant(detteTemp);
 					
 				
@@ -245,8 +245,7 @@ public class Events {
 						 dettePlusInteret=(dette+interetGeneral);												 
 						 montant_restant = (dettePlusInteret-remboursement);
 						 e.setMontant_restant(trt.rounder(montant_restant));
-						 e.setDette(trt.rounder(dettePlusInteret));
-						
+						 e.setDette(trt.rounder(dettePlusInteret));						
 				}
 	
 	     	}		
@@ -258,9 +257,84 @@ public class Events {
 		                  
 					   if(tabName.equals("Anticiper")) {
 						   
-						
-						   System.out.println("======+Anticiper remboursement+++++++++++");
-						   
+			        		Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(e.enteredMatricule);
+			        		Member memb = memberRepo.getUserByMatricule(e.getEnteredMatricule());
+			        		
+						   if(!eventRepo.matricIsExist(e.getEntered_matricule())){	
+							   
+							      if(remboursement==trt.rounder((dette+((dette* echeance)/100)))) {
+							    	  
+							    	  
+							    	  setInteret_partiel(((dette* echeance)/100));
+							    	  setEcheance_courant(curent_echeance+1);
+							    	  //setMontant_restant(0.0);
+							    	  setProchainMontant(0.0);
+							    	  debiteurRepo.updateDetteCourante(debiteur.getId_debiteur(), getMontant_restant() ) ;
+							    	  eventRepo.save(e);
+							    	  
+						        	 double interetGenere=eventRepo.totalBenefitByMatricule(e.getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getEnteredMatricule()): 0;
+						        	 Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
+						        	 archivRepo.save(archiv);						        	 
+						        	 debiteurRepo.deleteById(debiteur.getId_debiteur()) ;		        	 						    	   			
+							    	 
+							    	 errorList.add("Vous n avez plus de dettes");
+						        	 errorList.add("Merci d'avoir tout rembourse");
+						        	 
+							    	 errorList.add("Merci d'avoir rembourcer toute la dette en un seul coup");
+							    	 errorList.add("sur ce vous avez eu une reduction de "+ (interetGeneral-((dette* echeance)/100)) +" $ dans votre montant a rembourser suite a cet acte");
+							    	  
+							      }else {
+							    	  
+							    	  errorList.add("Pour rembourser anticipativement il faut payer "+trt.rounder((dette+((dette* echeance)/100)))+" $");
+							    	  System.out.println("1) Pour rembourcer anticipativement il faut payer "+trt.rounder((dette+((dette* echeance)/100))));
+							    	  
+							      }
+							      
+						      
+						   }else {
+							   
+							   double detteAnticipative=(montant_restant-trt.rounder((interetPartiel*N)));
+							   double interetAnticipative=trt.rounder((detteAnticipative/10));
+							   
+							   
+							     System.out.println("montant_restant=="+montant_restant);
+							     System.out.println("interePartiel=="+interetPartiel);
+							     System.out.println("current_echeance=="+curent_echeance);
+							     System.out.println("N=="+N);
+							     System.out.println("detteAnticipative=="+detteAnticipative);
+							     System.out.println("interetAnticipative=="+interetAnticipative);
+							     
+							     
+							   if(remboursement==(detteAnticipative+interetAnticipative)) {
+								   
+								      debiteurRepo.updateDetteCourante(debiteur.getId_debiteur(), getMontant_restant()) ;
+								      
+							    	  setInteret_partiel(interetAnticipative);
+							    	  setEcheance_courant((curent_echeance+1));
+							    	  //setMontant_restant(0.0);
+							    	  setProchainMontant(0.0);
+							    	  eventRepo.save(e);
+							    	  double interetGenere=eventRepo.totalBenefitByMatricule(e.getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getEnteredMatricule()): 0;
+							          Archive archiv = new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
+							          archivRepo.save(archiv);						        	 
+							          debiteurRepo.deleteById(debiteur.getId_debiteur()) ;						          
+							          
+								      errorList.add("Vous n avez plus de dettes");
+							          errorList.add("Merci d'avoir tout rembourse");
+							          
+							    	  errorList.add("Merci d'avoir rembourcer toute la dette en un seul coup");
+							    	  errorList.add("sur ce vous avez eu une reduction"+ ((interetPartiel*N)-interetAnticipative)+ " $ dans votre dette a rembourser suite a cet acte");
+							    	  
+							    	  
+							      }else {
+							    	  
+							    	  errorList.add("Pour rembourser anticipativement il faut payer "+(detteAnticipative+interetAnticipative)+" $");							    	  
+							    	  System.out.println("2 Pour rembourcer anticipativement il faut payer "+(detteAnticipative+interetAnticipative));
+							     
+							      }
+							   
+							   
+						   }
 						   
 					   }else {
 							 
@@ -315,8 +389,8 @@ public class Events {
 										 											   
 										 										   }catch(Exception exc) {
 										 											   
-										 											  errorList.add("error lors de la suppression");
-										 											   System.out.println("Error "+exc.getMessage());
+										 											     errorList.add("error lors de la suppression");
+										 											     System.out.println("Error "+exc.getMessage());
 										 										   }
 										 						               }
 									 						           

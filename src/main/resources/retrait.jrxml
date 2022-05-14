@@ -99,13 +99,6 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Presidence]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="360" y="260" width="164" height="30" uuid="09b8a1d9-8022-4c12-8322-cc824949471d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
-				</textElement>
 				<text><![CDATA[Finance]]></text>
 			</staticText>
 			<textField>
@@ -131,6 +124,12 @@
 			</textField>
 			<frame>
 				<reportElement x="100" y="40" width="355" height="131" uuid="124781c7-11f3-4925-908d-52e95673078b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
 			</frame>
 		</band>
 	</detail>

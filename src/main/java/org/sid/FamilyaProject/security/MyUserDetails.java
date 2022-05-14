@@ -56,7 +56,19 @@ public class MyUserDetails implements UserDetails  {
 							// TODO Auto-generated method stub
 							return user.getEmail();
 						}
+						public String getMatricule() {
+							// TODO Auto-generated method stub
+							return user.getMatricule();
+						}
 						
+						public Long getRoleId() {
+							// TODO Auto-generated method stub
+							Long roleId=0L;
+							for(Role r:user.getRoles()) {
+							    roleId=r.getRole_id();
+							}
+							return roleId;
+						}
 						
 						public String getPhoneNumber() {
 							// TODO Auto-generated method stub

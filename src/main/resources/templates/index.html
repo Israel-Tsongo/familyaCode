@@ -20,16 +20,17 @@
 									            <div class="container-fluid" id="containerMain" th:fragment="mainContainer" >
 									                <div class="d-sm-flex justify-content-between align-items-center mb-4">
 									                    <h3 class="text-dark mb-0" id="membre-title">Tout les Membres</h3>
+									                    
+									                    
 									                </div>
 									                <script th:inline="javascript">                
                 
 											                   var pag=(function pages(){ var p=[[${pages}]]; return p ;}());											                
 											                   var errorList=(function errors(){ var error=[[${errorList}]];  return error; }());
-											                   
 															    $(document).ready(function(){
 																	  $("#pageSize").val([[${currentSize}]]);			                    
 																  })
-									                  
+									                          console.log("==currentRole=>",currentRole)
 									                </script>
 									                
 									                <!-- Table membre-->
@@ -152,15 +153,7 @@
 									            
 									                <!--Details  --> 
 									                
-									                
-									                
-									                
-									                
-									                
-									                
-									                
-									                
-									                
+									               
 									                
 									                
 									                <!-- Footer -->
@@ -238,15 +231,6 @@
 				                    </div>
 				      </div>
                
-                           
-                           
-                           
-                           
-                           
-                           
-                           
-                            <!--  -->
-                 
                         <div   class="modal fade"  id="addModal" role="dialog" tabindex="-1">
     							<div id="modal-id" style="max-width:580px;" class="modal-dialog" role="document">
        								     <div class="modal-content">
@@ -284,12 +268,14 @@
                            																					      																		                                                
 																		                                                <option value="" disabled selected hidden >Fonction</option>
 																		                                                <option value="Membre">Membre</option>
-																		                                                <option value="Gerant">Gerant</option>
-																		                                                <option value="Financier">Financier</option>
-																			                                         	<option value="President">President</option>																		                                         	
+																		                                                <option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Gerant">Gerant</option>
+																		                                                <option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Financier">Financier</option>
+																			                                         	<option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="President">President</option>																		                                         	
 																			                                         	
 																			                                      
 																		                                   		 </select>
+																		                                   		 
+																		                                   		 
                            																				       
                            																				 </div>
                      																		</div>
@@ -302,7 +288,7 @@
                            																					      																		                                                
 																		                                                <option value="" disabled selected hidden >Categorie</option>
 																			                                         	<option value="Membre_effectif">Membre effectif</option>
-																			                                         	<option value="Fondateur">Fondateur</option>																			                                         	
+																			                                         	<option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Fondateur">Fondateur</option>																			                                         	
 																		                                    
 																		                                   		 </select>
                            																				  </div>
@@ -363,7 +349,7 @@ function actions(type){
 	       
 	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
 	     var request = new XMLHttpRequest();	
-	     request.open("POST","http://localhost:8080/membre/generatePDF/",true)
+	     request.open("POST",remoteIp+"/membre/generatePDF/",true)
 	     request.responseType='blob';
 	     request.onload=function(e){
 	    	 
@@ -410,7 +396,7 @@ function actions(type){
     function isChecked(x,list)   {
     	idValue=x;   
     	mainList=list;
-    	console.log("========"+x);
+    	
 	 
  }  
     
@@ -421,7 +407,7 @@ function actions(type){
             // Pagination
     	 
        		 $.ajax({
-       				 url:"http://localhost:8080/indexSearcher",
+       				 url:remoteIp+"/indexSearcher",
        				 type:"post",
        				 data:{
        					 page:page,
@@ -456,7 +442,7 @@ function actions(type){
     	 $(document).ready(function(){
              
     		 $.ajax({
-				 url:"http://localhost:8080/detailMembre",
+				 url:remoteIp+"/detailMembre",
 				 type:"post",
 				 data:{
 					 idMember:idValue,
@@ -488,11 +474,11 @@ function actions(type){
  	$(document).ready(function(){
  	       
         
- 	     console.log("Call",$("#pageSize").val(),);
+ 	     
  	     
     		 $("#pageSize").on('change',function(){
     			$.ajax({
-   				 url:"http://localhost:8080/indexSearcher",
+   				 url:remoteIp+"/indexSearcher",
    				 type:"post",
    				 data:{
    					 
@@ -533,7 +519,7 @@ function actions(type){
              
         	 
         		 $.ajax({
-        				 url:"http://localhost:8080/indexSearcher",
+        				 url:remoteIp+"/indexSearcher",
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
@@ -569,7 +555,7 @@ function actions(type){
        	  
        		 
        		 $.ajax({
-       				 url:"http://localhost:8080/deteteMember",
+       				 url:remoteIp+"/deteteMember",
        				 type:"post",
        				 data:{
        					 
@@ -625,7 +611,7 @@ function actions(type){
         	       	 $("#addButton").unbind("click").click( function() {
                     	 
                     		 $.ajax({
-                    				 url:"http://localhost:8080/indexPost",
+                    				 url:remoteIp+"/indexPost",
                     				 type:"post",
                     				 data:{
                     					 nom:       $("#nom-field").val(),
@@ -688,6 +674,7 @@ function actions(type){
         	         document.querySelector("#addButton").style.display="none";
         	         document.querySelector("#updateButton").style.display="block"; ;
         	         console.log("Update Method");
+        	         
         	         $(document).ready(function(){
         	        	 
         	        	//Update Button
@@ -703,11 +690,9 @@ function actions(type){
                       	    	    	$("#matricule").val(element[2]);
                       	    	    	$("#matricule").prop('disabled',true);
                       	    	    	$("#mandataire").val(element[3]);
-                      	    	    	$("#capital-field").val(element[4]);
-                      	    	    	$("#fonction-field").val(element[5].trim()).change();
-                      	    	    	//$("#fonction-field").val("President").change();                     	    	    	                    	    	    	
-                      	    	    	$("#categorie-field").val(element[6]).change();
-                      	    	    	//$("#categorie-field").val("Fondateur").change();                      	    	    	
+                      	    	    	$("#capital-field").val(element[4]);                      	    	       
+                      	    	    	$("#categorie-field").val(element[5]).change();
+                      	    	    	$("#fonction-field").val(element[6]).change();                      	    	    	                      	    	    	                     	    	    	
                       	    	    	$("#contrat-field").val(element[7]).change();
                       	    	    	dateAdhesion=element[8];
                       	    	    	
@@ -717,7 +702,7 @@ function actions(type){
                       	    	   $("#updateButton").click( function(){   
                                   	   console.log("Salut tout le monde in Update");
                           	    	   $.ajax({
-                            				 url:"http://localhost:8080/update",
+                            				 url:remoteIp+"/update",
                             				 type:"post",
                             				 data:{
                             					 idMember:  idValue,
@@ -751,7 +736,7 @@ function actions(type){
                             		                      },        		          
                             		          error: function(error){
                             		        	         errorFonction(); 
-                            		        	  		 alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
+                            		        	  		 //alert("L'operation Modification a echouee /n Assurez-vous que vous avez le droit d'effectuer cette operation");
                             		        	  
                             		              }
                             		        } )  

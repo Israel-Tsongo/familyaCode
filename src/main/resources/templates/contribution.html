@@ -9,8 +9,7 @@
         <nav th:replace="fragments :: left_nav">
          </nav>
          
-        <div class="d-flex flex-column" id="content-wrapper">
-        
+        <div class="d-flex flex-column" id="content-wrapper">        
        
             <div id="content">            
                  <nav th:replace="fragments :: centered_nav">
@@ -75,7 +74,7 @@
                                     <div class="col-md-4">
                                         <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 450px; position:absolute;right:5%">
                                               <input  type="text" id="dateKeyWord"  name="dateKeyWord" th:value="${dateKeyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by date" style="margin-right:5px">
-                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by matricule" >
+                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by matricule" style="width:20px" >
                                               <button id=searcher onclick ="searcherInContrib()" class="btn btn-primary col " style="height:32px;width: 120px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Chercher</button>                                        
                                         
                                         </div>
@@ -116,6 +115,10 @@
                                                 <th >Capital Initial</th>
                                                 <th >Contributions</th>
                                                 <th >Solde total</th>
+                                                <th >SoldeAlaSortie</th>
+                                                <th >InteretAlaSortie</th>
+                                                
+                                                
                                                 
                                             </tr>
                                         </thead>
@@ -128,7 +131,9 @@
                                                 <td  th:text="${element.get(2)}" ></td>
                                                 <td  th:text="${element.get(3)+' $'}" ></td>
                                                 <td  th:text="${element.get(4)+' $'}" ></td>
-                                                <td  th:text="${element.get(5) + ' $'}" ></td>                                              
+                                                <td  th:text="${element.get(5) + ' $'}" ></td> 
+                                                <td  th:text="${#numbers.formatDecimal(element.get(5)*0.95, 0, 3,'POINT') + ' $'}" ></td> 
+                                                <td  th:text="${element.get(6) + ' $'}" ></td>                                             
                                               
                                             </tr>
                                             
@@ -261,7 +266,7 @@
     	     var dateKeyWord=$("#dateKeyWord").val()==''?"all":$("#dateKeyWord").val()
     	    		 
     	     var request = new XMLHttpRequest();
-    	     var url=type?"http://localhost:8080/contrib/generatePDF/":"http://localhost:8080/proofContrib/";
+    	     var url=type?remoteIp+"/contrib/generatePDF/":remoteIp+"/proofContrib/";
     	     request.open("POST",url,true)
     	     request.responseType='blob';
     	     request.onload=function(e){
@@ -295,8 +300,7 @@
     	    	data.append('matricule',$("#contrib-matricule-field").val())
         	    data.append('montant',$("#contrib-field").val())
         	    request.send(data)
-    	    }
-    	    
+    	    }   	    
     	
    	 
     	 
@@ -325,28 +329,20 @@
   	 
      })
                          
-	function setPages(pages)   {
-    	 
-    	allPages=pages;   
-    	
-    	console.log("========"+allPages);
+	function setPages(pages){    	 
+    	allPages=pages;     
 	 
- }  				    
+    }  				    
     
     
     
-    function isCheckedInContrib(x,lst)   {
-    	 
+    function isCheckedInContrib(x,lst){    	 
     	idValue=x;   
-    	mainList=lst;
-    	
-    	console.log("========"+x);
-    	console.log("========"+mainList);
+    	mainList=lst;    	
 	 
  }  
     
- function soldeMembres()   {
-    	
+ function soldeMembres(){  	
     	
     	
     	if(toggle){
@@ -362,6 +358,8 @@
     		$("#interet").load(location.href+ " #interet");	
     		$("#div-total").load(location.href+ " #div-total");
     		$("#floating-button-contrib").show();
+    		$("#dateKeyWord").show();
+    		
     	}
             if(!toggle){
     		
@@ -374,6 +372,7 @@
     		$(".pagin1").hide();
     		$(".pagin2").show();
     		$("#floating-button-contrib").hide();
+    		$("#dateKeyWord").hide();
     		
     		
     	}
@@ -391,7 +390,7 @@
             // Pagination
     	 
        		 $.ajax({
-       				 url:"http://localhost:8080/contribSearcher",
+       				 url:remoteIp+"/contribSearcher",
        				 type:"post",
        				 data:{
        					 
@@ -403,14 +402,14 @@
        					 size:$("#pageSize").val(),
        				      },
        		 
-       		        success: function(data){
-       		       	
+       		        success: function(data){      		       	
        		        	
        		        	
        		        	           $("#containerMainContrib").html(data);    		        	
        		        	           $("#table-member").show();
   		          		      	   $("#tableMember").hide();
   		        	         	   $("#div-total").show() ;
+  		        	         	   $("#dateKeyWord").show();
 	                    	       $("#div-total-contrib").load(location.href+ " #div-total-contrib");	                    	     
 	                    	       $(".pagin1").show();
 	 	                    	   $(".pagin2").hide();
@@ -437,7 +436,7 @@
                // Pagination
        	 
           		 $.ajax({
-          				 url:"http://localhost:8080/contribSearcher",
+          				 url:remoteIp+"/contribSearcher",
           				 type:"post",
           				 data:{
           					 page:0,
@@ -454,6 +453,7 @@
           		        	         $("#table-member").hide();
        		          		         $("#tableMember").show();
        		        	             $("#div-total").hide() ;
+       		        	             $("#dateKeyWord").hide();
    	                    	         $("#div-total-contrib").load(location.href+ " #div-total-contrib");	                    	     
    	                    	         $(".pagin2").show();
 	                    		     $(".pagin1").hide();
@@ -478,14 +478,14 @@
     	$(document).ready(function(){
     	       
             // Pagination
-    	     console.log("Call",$("#pageSize").val(),);
+    	     
     	     
        		 $("#pageSize").on('change',function(){
        			 
        			 
        			 
        			$.ajax({
-      				 url:"http://localhost:8080/contribSearcher",
+      				 url:remoteIp+"/contribSearcher",
       				 type:"post",
       				 data:{
       					 page:0,
@@ -497,16 +497,36 @@
       				      },
       		 
       		        success: function(data){
-      		       	
+      		       	         
       		        	
-	      		        	 $("#containerMainContrib").html(data);      		        	
-			        	     $("#table-member").show();
-			          		 $("#tableMember").hide();
-		        	         $("#div-total").show() ;
-		               	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
-		               	     $(".pagin1").show();
-		               		 $(".pagin2").hide();
-		               		 errorFonction()
+      		        	$("#containerMainContrib").html(data); 
+      		        	if(currentTable=="AllContributions"){   		        		
+      		        		      		        	        
+		        	        	 		        	        	 
+		        	        	 $("#table-member").show();
+				          		 $("#tableMember").hide();
+			        	         $("#div-total").show() ;
+			        	         $("#dateKeyWord").show();
+			               	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+			               	     $(".pagin1").show();
+			               		 $(".pagin2").hide();
+			               		 errorFonction()
+		        	        	 
+		        	           }else{
+		        	        	   
+		        	        	 $("#table-member").hide();	
+		        	        	 $("#tableMember").show();        	 
+		        	        	 $("#floatingBtn").hide();
+		        	        	 $("#dateKeyWord").hide();
+		        	        	 $(".pagin1").hide();
+		        	        	 $(".pagin2").show();
+		        	        	 $("#div-total").hide();
+		        	        	 errorFonction(); 
+		        	        	 
+		        	           }
+      		        	
+	      		        	       		        	
+			        	     
       		            },        		          
       		          error: function(error){
 			       		        	
@@ -537,7 +557,7 @@
              
         	 
         		 $.ajax({
-        				 url:"http://localhost:8080/contribSearcher",
+        				 url:remoteIp+"/contribSearcher",
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
@@ -548,16 +568,33 @@
         		 
         		        success: function(data){       		       	
         		        	
-        		        	
-        		        	      $("#containerMainContrib").html(data);      		        	
-        		        	      $("#table-member").show();
-       		          		      $("#tableMember").hide();
-       		        	          $("#div-total").show() ;
- 	                    	      $("#div-total-contrib").load(location.href+ " #div-total-contrib");
- 	                    	      $(".pagin1").show();
- 	                    		  $(".pagin2").hide();
- 	                    		  errorFonction()
-        		        	      console.log("Tout s'est bien passe");
+        		        	$("#containerMainContrib").html(data); 
+          		        	if(currentTable=="AllContributions"){   		        		
+          		        		      		        	        
+    		        	        	 		        	        	 
+    		        	        	 $("#table-member").show();
+    				          		 $("#tableMember").hide();
+    			        	         $("#div-total").show() ;
+    			        	         $("#dateKeyWord").show();
+    			               	     $("#div-total-contrib").load(location.href+ " #div-total-contrib");
+    			               	     $(".pagin1").show();
+    			               		 $(".pagin2").hide();
+    			               		 errorFonction()
+    		        	        	 
+    		        	           }else{
+    		        	        	   
+    		        	        	 $("#table-member").hide();	
+    		        	        	 $("#tableMember").show();        	 
+    		        	        	 $("#floatingBtn").hide();    		        	        	 
+    		        	        	 $("#dateKeyWord").hide();
+    		        	        	 $(".pagin1").hide();
+    		        	        	 $(".pagin2").show();
+    		        	        	 $("#div-total").hide();    		        	        	 
+    		        	        	 errorFonction(); 
+    		        	        	 
+    		        	           }
+        		        	      
+ 	                    	      
         		        	
         		            },        		          
         		          error: function(error){
@@ -580,7 +617,7 @@
             // Delete Button
             
        		 $.ajax({
-       				 url:"http://localhost:8080/deteteContrib",
+       				 url:remoteIp+"/deteteContrib",
        				 type:"post",
        				 data:{
        					 idContrib:idValue,
@@ -632,7 +669,7 @@
         	       		console.log(" Up Ajax Add Method");
                     		 
                     		 $.ajax({
-                    				 url:"http://localhost:8080/contribPost",
+                    				 url:remoteIp+"/contribPost",
                     				 type:"post",
                     				 data:{
                     					 matricule:  $("#contrib-matricule-field").val(),
@@ -646,8 +683,8 @@
                     		        	
                     		        	    $("#containerMainContrib").html(data);       		        	
              	                    	    $("#contribAddModal").modal("hide");
-             	                    	    $("#tableMember").hide();
-   	                    	                $("#table-member").show();
+             	                    	    $("#table-member").show();
+             	                    	    $("#tableMember").hide();   	                    	                
              	                    	    idValue=-10;
              	                    	    $("#div-total-contrib").load(location.href+ " #div-total-contrib");
              	                    	    console.log("Add success output");
@@ -717,7 +754,7 @@
                       	    	   $("#updateButtonInContrib").click( function(){   
                                   	   console.log("Salut tout le monde in Update");
                           	    	   $.ajax({
-                            				 url:"http://localhost:8080/updateContrib",
+                            				 url:remoteIp+"/updateContrib",
                             				 type:"post",
                             				 data:{
                             					 idContrib:  idValue,
@@ -730,8 +767,8 @@
                             		       	
                             		        	          $("#containerMainContrib").html(data);      		        	
                  	                    	              $("#contribAddModal").modal("hide");  
-                 	                    	              $("#tableMember").hide();
-                  	                    	              $("#table-member").show();
+                 	                    	              $("#table-member").show();
+                 	                    	              $("#tableMember").hide();                  	                    	              
                  	                    	              $("#div-total-contrib").load(location.href+ " #div-total-contrib");
                  	                    	              $("#main-form-contrib").load(location.href+ " #main-form-contrib");
                                        	    	          idValue=-10;

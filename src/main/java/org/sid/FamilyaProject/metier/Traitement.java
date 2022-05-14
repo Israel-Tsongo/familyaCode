@@ -5,17 +5,22 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.sid.FamilyaProject.dao.ArchiveRepository;
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.DepenseRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Archive;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Depense;
@@ -340,9 +345,11 @@ public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberR
 	
 	 String matricule="" ;
 	 double solde;
-	 ArchiveDataBase arch= new ArchiveDataBase();
-	 
+	 ArchiveDataBase arch= new ArchiveDataBase(); 
 	 List<List<Object>> soldeList = payeRepo.getSoldes();
+	 
+	 arch.createDb(errorList);
+	 arch.moveTablesInDb(errorList);
 	 
 	 for(List<Object> obj:soldeList) {
 		 
@@ -353,8 +360,7 @@ public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberR
 		 
 	 }
 	 
-	 arch.createDb(errorList);
-	 arch.moveTablesInDb(errorList);
+	 
 	 arch.clearDb(errorList);
 	
 	
@@ -528,5 +534,145 @@ public List<List<Object>> converter(List<List<Object>> listMemb ){
  
  
 }
+
+	public void getGerantAndFinancier(MemberRepository memberRepo,UserRepository userRepo) {
+		
+		if(memberRepo.getGerantAndFinancier()!=null) {
+			
+			List<Member>membre=memberRepo.getGerantAndFinancier();			
+			
+			for(Member m: membre) {			
+				
+				if(m.getFonction().equals("Financier")) {
+					
+					User usr=userRepo.getUserByMatricule(m.getMatricule());
+					User fananceUser=userRepo.getUserByMatricule("222");					
+					String password=usr.getPassword();
+					
+					if(!usr.getPassword().equals(fananceUser.getPassword()))
+					  userRepo.updateFinancePassword("finance@gmail.com",usr.getNom(),usr.getMobile(),password);
+					
+				}else if(m.getFonction().equals("Gerant")) {
+					
+					User usr=userRepo.getUserByMatricule(m.getMatricule());
+					User gerantUser=userRepo.getUserByMatricule("322");
+					
+					String password=usr.getPassword();
+					if(!usr.getPassword().equals(gerantUser.getPassword()))
+						
+					userRepo.updateGestionPassword("gestion@gmail.com",usr.getNom(),usr.getMobile(),password);
+					
+				}
+			}
+		}
+	}
+
+	public void verifyGerantAndFinancier(MemberRepository memberRepo,UserRepository userRepo, String matricule, String fonction,List<String> errorList) {
+	
+		List<Member>membre_gerant=memberRepo.getGerant();
+		List<Member>membre_financier=memberRepo.getFinancier();
+		
+		if(membre_gerant.size()==0) {
+			  userRepo.updateGestionPassword("gestion@gmail.com","Default_gestion_name","0971338817","Familya_@_Password_Gerant");
+		}else if(membre_financier.size()==0) {
+			  userRepo.updateFinancePassword("finance@gmail.com","Default_finance_name","0971338817","Familya_@_Password_Finance");			
+		}
+		
+		
+		
+		if(membre_financier.size()>1) {			
+			    
+			    memberRepo.updateFonction(matricule,"Membre");
+			    errorList.add("Vous ne pouvez pas effectuer cette action tant qu'un autre membre a la fonction de Financier");
+			    errorList.add("Veillez lui demettre de ses fonctions avant d'effectuer cette operation");
+
+		}				
+				
+		if(membre_gerant.size()>1) {
+			
+				memberRepo.updateFonction(matricule,"Membre");					
+				errorList.add("Vous ne pouvez pas effectuer cette action tant qu'un autre membre a la fonction de Gerant");
+			    errorList.add("Veillez lui demettre de ses fonctions avant d'effectuer cette operation");
+
+	    }
         
+		
+		
+  
+	
+	}
+	
+	public List<List<Object>>  converterCalculInteretAlaSortie(Page <List<List<Object>>> List,ArchiveRepository archivRepo) {
+		  
+		  Object[] obj=null;		
+		  List<List<Object>> viewList = new ArrayList<List<Object>>();		
+		  List<List<List<Object>>> listMemb = (List<List<List<Object>>>)List.getContent();		   
+		  Iterator itr = listMemb.iterator();
+		  
+		  Map<String, Integer> map=new HashMap<String,Integer>();
+		  List<String> matriculeList=archivRepo.listAllMatricule();
+		  Set <String> uniqueMatriculeList=new HashSet<String>(matriculeList);
+		  
+		  for(String matricule:uniqueMatriculeList) {		  
+			  
+					List<String> list =new ArrayList<String>();  
+					List<List<Archive>> archivList=archivRepo.getArchivesByMatricule(matricule);			
+			
+					for (List<Archive>archiv:archivList) {			
+						
+						 		list.add(archiv.get(0).getDate_emprunt().toString().substring(0,4));					
+						}
+					Set <String> uniqueList=new HashSet<String>(list);
+					map.put(matricule, uniqueList.size());		
+		   }	  
+		  
+		  
+		  while(itr.hasNext()) {
+				   List<Object>  newList = new ArrayList<Object>();
+				   obj =(Object[])itr.next();		   
+				   
+				        for( Object ob  :obj) {				        	
+				        		
+					               if(ob instanceof BigInteger) {			            	   
+					            	   newList.add(Long.parseLong(String.valueOf(ob)));			            	  
+					               }
+					               else if(ob instanceof Timestamp) {
+					            	   
+					            	   newList.add(String.valueOf(ob).substring(0, 10));					            	   
+					            	   
+					               } else if(ob instanceof Double) {					            	   
+					            	   newList.add(rounder((double)ob));
+					            	   
+					               }
+					               
+					               else {			            	   
+					            	   newList.add(String.valueOf(ob));						            	   
+					                   }				              
+				        }
+				        
+				     				        
+				    	 if(map.get(newList.get(2))!=null) {
+				    		 
+				    		 double solde=(double) newList.get(5);
+				    		 newList.add(rounder((solde*0.015)*map.get(newList.get(2))));
+				    	 }else {
+				    		 
+				    		 double solde=(double) newList.get(5);				    		 
+				    		 newList.add(rounder(solde*0.015));				    		 
+				    		 
+				    	 }				    
+				    
+				     viewList.add(newList);
+				    
+				   
+			   }
+			 
+			
+			
+			
+			return viewList;
+		  
+		
+		
+	}
 }

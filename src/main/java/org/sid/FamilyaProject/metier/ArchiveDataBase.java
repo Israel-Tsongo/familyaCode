@@ -115,7 +115,7 @@ public void clearDb(List<String> errorList) {
 	allTables.add("payement");
 	//allTables.add("events");
 	allTables.add("operation");	
-	allTables.add("archive");
+	//allTables.add("archive");
 	allTables.add("depense");
 	
 	try {

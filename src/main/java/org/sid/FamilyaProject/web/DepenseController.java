@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import org.sid.FamilyaProject.dao.ArchiveRepository;
 import org.sid.FamilyaProject.dao.DepenseRepository;
 import org.sid.FamilyaProject.entities.Depense;
 import org.sid.FamilyaProject.metier.Traitement;
@@ -31,6 +33,9 @@ public class DepenseController {
 	@Autowired
 	private DepenseRepository depRepo;
 	
+	@Autowired
+	private ArchiveRepository archivRepo;
+	
 	
 	
 	//************** ACCEUILLE************************
@@ -39,8 +44,14 @@ public class DepenseController {
 	public String depense(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
-		 
-		Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
+		double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;
+		Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));
+//		List<Depense> depList =depRepo.getAllDep();
+//		if(depList.isEmpty()&&interetGeneral>1&& depList.size()==0) {
+//			double montant = (0.35*interetGeneral);
+//			depRepo.save(new Depense(montant,"Frais de fonctionnement", new Date()));
+//			DepList =depRepo.getAllDep(PageRequest.of(page,size));
+//		};
 	   	 
 	   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
 	   

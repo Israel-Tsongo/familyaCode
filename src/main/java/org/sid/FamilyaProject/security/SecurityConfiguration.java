@@ -5,6 +5,7 @@ import org.sid.FamilyaProject.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		public ModelMapper modelMapper() {
 			
 			  return new ModelMapper();
+		}
+		
+		@Override
+		@Bean
+		public AuthenticationManager authenticationManagerBean() throws Exception {
+			
+			  return super.authenticationManagerBean();
 		}
 	   
 		@Bean
@@ -50,7 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+			auth.parentAuthenticationManager(authenticationManagerBean()).userDetailsService(userDetailsService(modelMapper()));
 			auth.authenticationProvider(authenticationProvider());
+			auth.eraseCredentials(false);
 			
 		}
 		
@@ -64,7 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 						http.authorizeRequests()
 						// URLs matching for access rights						
 						//.antMatchers("/register").hasAnyAuthority("SUPER_USER", "ADMIN_USER")
-						.antMatchers("/dashboard").hasAnyAuthority("SUPER_USER", "ADMIN_USER")
+						.antMatchers("/dashboard").hasAnyAuthority("SUPER_USER", "ADMIN_USER","SITE_USER")
 						.antMatchers("/setPost").hasAnyAuthority("SUPER_USER")
 						
 						///======= MEMBRE=========/////
@@ -132,6 +142,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 						.antMatchers("/profile/generatePDF/").hasAnyAuthority("SUPER_USER")
 						///======= HOME FOR SITE USER=========/////
 						.antMatchers("/home").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
+						.antMatchers("/loginAs").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
 						.antMatchers("/siteUserSearcher").hasAnyAuthority("SITE_USER")
 						.antMatchers("/contribAndRembourse/generatePDF/").hasAnyAuthority("SITE_USER")
 						.antMatchers("/remboursementsByMatricule").hasAnyAuthority("SITE_USER")

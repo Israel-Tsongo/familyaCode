@@ -24,7 +24,7 @@
 			                    <li class="nav-item " id="dropdown-button" style="margin-top:5px"><a th:href="@{/logout}" style="font-weight:bold;padding-top:5px">Logout</a> </li>			                       
 			                     <div class="d-none d-sm-block topbar-divider"></div>
                             
-	                           <!--<li class="nav-item dropdown no-arrow">
+	                            <!--  <li class="nav-item dropdown no-arrow">
 	                                <div class="nav-item dropdown no-arrow">
 	                                	<a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">
 	                                		<span class="d-none d-lg-inline mr-2 text-gray-600 small">Israel tsongo</span>
@@ -42,19 +42,59 @@
 			            </div>
 			        </div>
    		  </nav>
-          <div class="row justify-content-center" style="position:relative;margin-top:60px;margin-bottom:5rem" >
-            		<div class="col col-md-12 text-center">
-            		         <h2 style="color: bleu" th:text="${'Bienvenu : '+usr.nom +' Votre  Numero Matricule est '+usr.matricule}"></h2>
-            		
-            		         <div style="height:200px"></div>
-            				<h1 style="font-weight:bold"> Veiller payer votre capital Initial enfin de confirmer votre appartenance a Familya </h1>
-            		
-            		</div>
-          
-          
+   		  <div class="d-flex justify-content-center align-items-center" style="margin-top:5rem;height:70vh">
+	          <div class="row d-flex justify-content-center" style="width:auto;height:10rem" >
+	            		
+		            		<div class="col col-xl-12 text-center">
+		            		         <form th:action="@{/loginAsAuthority}" method="post">	            		         
+			            		        <button style="width:30rem "  class="btn btn-danger btn-block text-white" type="submit" th:text="${fonctionType}">Log As Gerant</button>
+				                     </form>
+				                     <form th:action="@{/loginAsMember}" method="post">
+				                        <button style="width:30rem;margin-top:1rem;margin-bottom:1rem" class="btn btn-warning btn-block text-white" type="submit">Se logger comme membre de familia</button>
+		            				</form>
+		            					<a th:href="@{/logout}" style="font-weight:bold;padding-top:5px"><button style="width:30rem"  class="btn btn-primary btn-block text-white" type="button" >Logout</button></a>
+		            				
+		            		</div>         			
+	          
+	          </div>
           </div>
            <footer th:replace="fragments :: html_footer">
        
            </footer>
+           
+           <script>
+           
+           
+           function logAs(type)   {
+           	 
+          	 $(document).ready(function(){
+          	       
+                   // Search by matricule
+                   
+              	 
+              		 $.ajax({
+              				 url:remoteIp+"/loginAs",
+              				 type:"get",
+              				 data:{
+              					 
+              					 //logAs:type
+              					 
+              				      },
+              		 
+              		        success: function(data){ 
+              		        	 
+              		            },        		          
+              		          error: function(error){
+              		        	  
+              		        	      
+              		            }
+              		            
+              		        } );
+              		 
+                }); 
+      	 
+       }    
+           
+           </script>
 </body>
 </html>

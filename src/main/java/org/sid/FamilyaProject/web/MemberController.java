@@ -1,7 +1,6 @@
 package org.sid.FamilyaProject.web;
 
-import java.io.File;
-import java.io.InputStream;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,22 +19,15 @@ import org.sid.FamilyaProject.metier.Traitement;
 
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
 import net.sf.jasperreports.engine.JRException;
 
 @Controller
@@ -55,6 +47,9 @@ public class MemberController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserRepository userRepo;
 	
 	
 	//************** ACCEUILLE************************
@@ -133,21 +128,22 @@ public class MemberController {
 	
 	@PostMapping("/indexPost")
 	public String postIndexData(Model model,  @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandataire,			
-			                                     @RequestParam() double capital,@RequestParam() String fonction,
-			                                     @RequestParam() String categorie,@RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
-			                                     ) {
+			                                  @RequestParam() double capital,@RequestParam() String fonction,
+			                                  @RequestParam() String categorie,@RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
+			                                  ) {
 		
 		List<String> errorList = new ArrayList<String>();
 		Traitement trt = new Traitement();
-		String mv="" ;
-		
+		String mv="" ;	
 		
 		 
 		try {
 			
 			if( memberRepo.getUserByMatricule(matricule)==null) {
-				     
-				     if(userRepository.getUserByMatricule(matricule) !=null ) {
+				
+				 if(!matricule.equals("122") && !matricule.equals("222") && !matricule.equals("322") ) {
+					 
+				     if(userRepository.getUserByMatricule(matricule) !=null  ) {
 				    	 
 				    	 BigDecimal salaire=userRepository.getUserByMatricule(matricule).getSalaire();
 				    	 BigDecimal retenu=userRepository.getUserByMatricule(matricule).getRetenu();
@@ -160,6 +156,7 @@ public class MemberController {
 					      member.setMemberUser(usr);
 					      usr.setMember(member);
 						  memberRepo.save(member );	
+						  trt.verifyGerantAndFinancier(memberRepo,userRepo,matricule,fonction,errorList);
 						  
 				    	 }else {
 				    		 
@@ -168,14 +165,23 @@ public class MemberController {
 							 System.out.println("Le capital initial du membre doit etre superieur ou egale a "+Double.toString(temp)+" %"+"En considerant votre retenu de "+Double.toString(retenu.doubleValue()));
 				    		 
 				    	 }
-			           
-				     }else {
-				    	 
-				    	 
-						 errorList.add("Aucun utilisateur ne correspond au matricule entre");
-						 System.out.println("Aucun utilisateur ne correspond au matricule entre");
-				     }
-			           
+				     
+				     
+					     }else {				    	 
+					    	 
+							 errorList.add("Aucun utilisateur ne correspond au matricule entre");
+							 System.out.println("Aucun utilisateur ne correspond au matricule entre");
+					     }
+			         
+				     
+				    }else {
+					 
+				    	 errorList.add("Ce numero matricule ne pas utilisable");
+						 System.out.println("Ce numero matricule ne pas utilisable");
+					 
+				    }
+				 
+				 
 			}else {
 				
 				errorList.add("Ce numero matricule appartient a un membre deja present dans la base de donne de membres");
@@ -191,6 +197,7 @@ public class MemberController {
 			System.out.println(exc.getMessage()   );
 			
 		}
+		trt.getGerantAndFinancier(memberRepo,userRepo);
 		Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
 		double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 		   
@@ -242,15 +249,19 @@ public class MemberController {
             @RequestParam() String capital,@RequestParam() String fonction,
             @RequestParam() String categorie,@RequestParam() String contrat, @RequestParam() String date, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
+		     List<String> errorList = new ArrayList<String>();
 		     Traitement trt=new Traitement();
 		     ModelAndView mv=null ;
 		     
 		     if(idMember>0) {
 			
-					 memberRepo.updateMember(idMember, matricule,mandataire,Double.parseDouble(capital) , fonction, categorie, contrat, new Date());						   
+					 memberRepo.updateMember(idMember, matricule,mandataire,Double.parseDouble(capital) , fonction, categorie, contrat, new Date());
+					 trt.verifyGerantAndFinancier(memberRepo,userRepo,matricule,fonction,errorList);
 					
-			  }else  { System.out.println("error in update Update");}
-		    
+			  }else  { 
+				  System.out.println("Error when updating");
+			  }
+		      trt.getGerantAndFinancier(memberRepo,userRepo);
 		      Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
 			 double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
 					 
@@ -260,6 +271,7 @@ public class MemberController {
 			 model.addAttribute("currentSize",size);
 		     model.addAttribute("currentPage",page);
 		     model.addAttribute("totalCapitaux", totalCapitauxInitiaux);
+		     model.addAttribute("errorList",errorList);
 		 
 			return "index::mainContainer";
 		

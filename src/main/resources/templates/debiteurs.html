@@ -336,7 +336,7 @@ function archiveList()   {
              // Pagination
      	 
         		 $.ajax({
-        				 url:"http://localhost:8080/"+url,
+        				 url:remoteIp+"/"+url,
         				 type:"post",
         				 data:{
         					 page:0,
@@ -410,7 +410,7 @@ function archiveList()   {
  	       
    	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
    	     var request = new XMLHttpRequest();	
-   	     request.open("POST","http://localhost:8080/debiteur/generatePDF/",true)
+   	     request.open("POST",remoteIp+"/debiteur/generatePDF/",true)
    	     request.responseType='blob';
    	     request.onload=function(e){
    	    	 
@@ -460,24 +460,22 @@ function archiveList()   {
                          
     
     function isChecked(x,list)   {
-    	idValue=x;   
-    	mainList=list;
-    	console.log("========"+x);
-	 
+    	idValue=x;  
+   
  }  
     
     function pagination1(page)   {
+    	
     
    	 $(document).ready(function(){
    	       
             // Pagination
     	 
        		 $.ajax({
-       				 url:"http://localhost:8080/debSearcher",
+       				 url:remoteIp+"/debSearcher",
        				 type:"post",
        				 data:{
-       					 page:page,
-       					 
+       					 page:page,       					 
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
        					 size:$("#pageSize").val(),
@@ -511,18 +509,19 @@ function archiveList()   {
 }  
     
     function pagination2(page)   {
-        
+    	
       	 $(document).ready(function(){
       	       
                // Pagination
-       	 
+       	      
+       	      
           		 $.ajax({
-          				 url:"http://localhost:8080/archive",
+          				 url:remoteIp+"/archive",
           				 type:"post",
           				 data:{
           					 page:0,
           					 pagesArchiv:page,
-          					 //keyWord:$("#keyWord").val(),
+          					 keyWord:$("#keyWord").val(),
           					 pagination:$("#keyWord").val()==""? true:false,
           					 size:$("#pageSize").val(),
           				      },
@@ -538,10 +537,8 @@ function archiveList()   {
 	   	       		         		$(".pagin1").hide();
 	   	       		         		$(".pagin2").show();
 	   	       		         	    $("#div-total").hide();
-	   	       		         	   
-	   	                    	   //$("#div-total").load(location.href+ " #div-total");
-	   	                    	     errorFonction(); 
-   	                    	         console.log("Tout s'est bien passe");
+	   	       		         	    errorFonction(); 
+   	                    	        console.log("Tout s'est bien passe in archiv");
           		        	
           		                      },        		          
           		          error: function(error){
@@ -573,26 +570,27 @@ function archiveList()   {
 	    	
 	       });
 		
-		//idValue=-10;
+		
 	}
      
-    //Page Size
     
     
     
     
-    // Page Size 
+    
     
     function pageSize()	{
+    	
+    	console.log("state",state);
     	$(document).ready(function(){
     	       
             // Pagination
-    	     console.log("Call",$("#pageSize").val(),);
-    	     
+    	     //console.log("Call",$("#pageSize").val());
+    	     console.log("state",state);
        		 $("#pageSize").on('change',function(){
        			 
        			$.ajax({
-      				 url: (state=="Dette")?"http://localhost:8080/debSearcher":"http://localhost:8080/archive",
+      				 url: (state=="Dette")?remoteIp+"/debSearcher":remoteIp+"/archive",
       				 type:"post",
       				 data:{
       					 
@@ -602,10 +600,11 @@ function archiveList()   {
       				      },
       		 
       		        success: function(data){
-      		       	
       		        	
-      		        	if(state=="Archive"){
-	        	        	   
+      		        	$("#containerMainInDeb").html(data); 
+      		        	if(state=="Archive"){     		        		
+      		        		      		        	        
+	       		               
 		        	        	 $("#tableMember").show();
 		        	        	 $("#table-member").hide();
 		        	        	 $("#floatingBtn").hide();
@@ -614,8 +613,8 @@ function archiveList()   {
 		        	        	 $(".pagin2").show();
 		        	        	 $("#div-total").hide();
 		        	        	 
-		        	           }else{
-		        	        	   
+		        	           }else{		        	        	   
+		        	        	   		         	 
 		        	        	 $("#table-member").show();
 		        	        	 $("#tableMember").hide();
 		        	        	 $("#floatingBtn").show();
@@ -624,10 +623,12 @@ function archiveList()   {
 		        	        	 $(".pagin2").hide();
 		        	        	 $("#div-total").show();
 		        	        	 errorFonction(); 
+		        	        	 
 		        	           }
       		        	
       		                      },        		          
       		          error: function(error){
+      		        	  
       		        	        errorFonction(); 
       		        	        alert("error in selecting")
       		        	  
@@ -654,11 +655,12 @@ function archiveList()   {
              
         	 
         		 $.ajax({
-        				 url:(state=="Dette")?"http://localhost:8080/debSearcher":"http://localhost:8080/archive",
+        				 url:(state=="Dette")?remoteIp+"/debSearcher":remoteIp+"/archive",
         				 type:"post",
         				 data:{
         					 
         					 keyWord:$("#keyWord").val(),
+        					 pagination:false,
         					 size:$("#pageSize").val(),
         					 
         				      },
@@ -714,7 +716,7 @@ function archiveList()   {
        	  
        		 
        		 $.ajax({
-       				 url:"http://localhost:8080/deteteDeb",
+       				 url:remoteIp+"/deteteDeb",
        				 type:"post",
        				 data:{
        					 idDeb:idValue,
@@ -724,7 +726,7 @@ function archiveList()   {
        		 
        		        success: function(data){
        		       	
-       		        			console.log("===="+data);
+       		        			
        		                    $("#containerMainInDeb").html(data);
        		                    $("#table-member").show();
 	       		        		$("#tableMember").hide();
@@ -780,7 +782,7 @@ function archiveList()   {
         	       		console.log(" Up Ajax Add Method");
                     		 
                     		 $.ajax({
-                    				 url:"http://localhost:8080/debPost",
+                    				 url:remoteIp+"/debPost",
                     				 type:"post",
                     				 data:{
                     					 matricule:   $("#matricule-field").val(),
@@ -867,9 +869,9 @@ function archiveList()   {
                       	    	
                       	       });
                       	    	   $("#updateButtonInDeb").click( function(){   
-                                  	   console.log("Salut tout le monde in Update");
+                                  	  
                           	    	   $.ajax({
-                            				 url:"http://localhost:8080/updateDeb",
+                            				 url:remoteIp+"/updateDeb",
                             				 type:"post",
                             				 data:{
                             					idDeb:  idValue,

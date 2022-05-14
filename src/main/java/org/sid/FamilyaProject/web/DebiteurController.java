@@ -79,7 +79,7 @@ public class DebiteurController {
 		model.addAttribute("totalDette",String.format("%.3f", totalEnDette));
 		model.addAttribute("keyWord", mc);
 		
-		return "debiteur";
+		return "/debiteurs";
 	   
 	}
 	
@@ -106,7 +106,7 @@ public class DebiteurController {
 	           model.addAttribute("currentSize",size);
 	           model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));  
 	           model.addAttribute("keyWord", mc);			   
-	           return "/debiteur::mainContainerInDeb";
+	           return "/debiteurs::mainContainerInDeb";
 	           
 		   }else {
 			   Page <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(mc,PageRequest.of(page,size));			
@@ -121,7 +121,7 @@ public class DebiteurController {
 		             model.addAttribute("totalCapitaux",String.format("%.3f", totalEnDette));  
 		             model.addAttribute("keyWord", mc);
 		
-		             return "/debiteur::mainContainerInDeb";
+		             return "/debiteurs::mainContainerInDeb";
 		   
 		   }
 	}
@@ -145,7 +145,7 @@ public class DebiteurController {
 				
 				if(debitRepo.getDebiteurByMatricule(matricule)==null) {
 				
-				    if(montant<= 6*userRepo.getSalaryByMatricule(matricule)) {
+				    if(montant<= 9*userRepo.getSalaryByMatricule(matricule)) {
 				    	
 				      
 				      List<Double> debiteurEntry= trt.debiteurCalculMontant(montant,echeance,typeInteret);				    
@@ -176,8 +176,8 @@ public class DebiteurController {
 					  
 				    }else {
 				    	
-				    	errorList.add("L'emprunt doit etre inferieur a 6 fois le salaire");
-				    	System.out.println("L'emprunt doit etre inferieur a 6 fois le salaire");				    	
+				    	errorList.add("L'emprunt doit etre inferieur a 9 fois le salaire");
+				    	System.out.println("L'emprunt doit etre inferieur a 9 fois le salaire");				    	
 				    	
 				    }
 				    
@@ -214,7 +214,7 @@ public class DebiteurController {
         model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));		
 		model.addAttribute("errorList",errorList);
 		
-		return "debiteur::mainContainerInDeb";
+		return "debiteurs::mainContainerInDeb";
 		
 	}
 	
@@ -247,7 +247,7 @@ public class DebiteurController {
 		   
 		   model.addAttribute("totalCapitaux",String.format("%.3f", totalEnDette));   
 		
-		return  "debiteur::mainContainerInDeb";
+		return  "debiteurs::mainContainerInDeb";
 	}
 	
 	
@@ -281,7 +281,7 @@ public class DebiteurController {
 		   model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));
 		     
 		 
-		 return "debiteur::mainContainerInDeb";
+		 return "debiteurs::mainContainerInDeb";
 		
 	   
 	
@@ -326,16 +326,15 @@ public class DebiteurController {
 	
 	
 	@PostMapping(path="/archive")
-	public String  archive(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pagesArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String  archive(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pagesArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size", defaultValue="5") int size, @RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
-		 Traitement trt = new Traitement();
-		  
+		 Traitement trt = new Traitement();		  
 		   
 		   if(pagin||mc.isEmpty()) {			   	
-				
-			   Page <List<List<Object>>> debArchivList =archiveRepo.getArchiveList(PageRequest.of(page,size));			
+			   
+			   Page <List<List<Object>>> debArchivList =archiveRepo.getArchiveList(PageRequest.of(pagesArchiv,size));
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
-			   		           
+			             
 	           model.addAttribute("lstArchive", trt.converter(debArchivList));
 	           model.addAttribute("pages2", new int[debArchivList.getTotalPages()]);
 	           model.addAttribute("currentPage2",pagesArchiv);
@@ -345,11 +344,12 @@ public class DebiteurController {
 	           model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));  
 	           model.addAttribute("keyWord", mc);
 			   
-	           return "debiteur::mainContainerInDeb";
+	           return "debiteurs::mainContainerInDeb";
+	           
 		   }else {
-			   Page <Archive> searchArchivList =archiveRepo.findByEnteredMatricContains(mc,PageRequest.of(page,size));			
+			   Page <Archive> searchArchivList =archiveRepo.findByEnteredMatricContains(mc,PageRequest.of(pagesArchiv,size));
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
-			       		           
+			   
 		             model.addAttribute("lstArchive", trt.searchArchivConverter(searchArchivList));
 		             model.addAttribute("pages2", new int[searchArchivList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
@@ -359,7 +359,7 @@ public class DebiteurController {
 		             model.addAttribute("totalCapitaux",String.format("%.3f", totalEnDette));  
 		             model.addAttribute("keyWord", mc);
 		
-		             return  "/debiteur::mainContainerInDeb";
+		             return  "/debiteurs::mainContainerInDeb";
 		   
 		   }
 	}

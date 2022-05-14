@@ -325,8 +325,8 @@
                            																					      <select name="role" class="form-control form-control-user-right" id="role-field" >
 																		                                    
 																			                                         	<option value="3" >SITE_USER</option>
-																			                                         	<option value="2">ADMIN_USER</option>
-																			                                         	
+																			                                         	<option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="2">ADMIN_USER</option>
+																			                                         	<option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="1">SUPER_USER</option>
 																		                                    
 																		                                   		 </select>                         																					       
                            																					       
@@ -380,7 +380,7 @@
 	  
 	  var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
 			     var request = new XMLHttpRequest();	
-			     request.open("POST","http://localhost:8080/profile/generatePDF/",true)
+			     request.open("POST",remoteIp+"/profile/generatePDF/",true)
 			     request.responseType='blob';
 			     request.onload=function(e){
 			    	 
@@ -416,8 +416,7 @@
     	idValue=userId;  
     	idRole=roleId;
     	mainList=list;
-    	console.log("========"+userId);
-	 
+    	
  }  
     
     function autreDetailsProfile()   {
@@ -426,7 +425,7 @@
   	      $(document).ready(function(){
            
   		 $.ajax({
-				 url:"http://localhost:8080/autreDetailsProfile",
+				 url:remoteIp+"/autreDetailsProfile",
 				 type:"post",
 				 data:{
 					 idUser:idValue,
@@ -462,7 +461,7 @@ function updateAutreDetailsProfile()   {
 
 	   
 	 $.ajax({
-	 url:"http://localhost:8080/updateOtherUserDetails",
+	 url:remoteIp+"/updateOtherUserDetails",
 	 type:"post",
 	 data:{
 		 
@@ -505,7 +504,7 @@ function updateAutreDetailsProfile()   {
             // Pagination
     	 
        		 $.ajax({
-       				 url:"http://localhost:8080/searchUser",
+       				 url:remoteIp+"/searchUser",
        				 type:"post",
        				 data:{
        					 page:page,
@@ -544,7 +543,7 @@ function updateAutreDetailsProfile()   {
     	     
        		 $("#pageSize").on('change',function(){
        			$.ajax({
-      				 url:"http://localhost:8080/searchUser",
+      				 url:remoteIp+"/searchUser",
       				 type:"post",
       				 data:{
       					 
@@ -586,7 +585,7 @@ function updateAutreDetailsProfile()   {
              
         	 
         		 $.ajax({
-        				 url:"http://localhost:8080/searchUser",
+        				 url:remoteIp+"/searchUser",
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
@@ -621,7 +620,7 @@ function updateAutreDetailsProfile()   {
             // Delete Button
              
        		 $.ajax({
-       				 url:"http://localhost:8080/deleteUser",
+       				 url:remoteIp+"/deleteUser",
        				 type:"post",
        				 data:{
        					 idUser:idValue,
@@ -655,7 +654,7 @@ function updateAutreDetailsProfile()   {
         	       	$(document).ready(function(){ 
         	       		
                     		 $.ajax({
-                    				 url:"http://localhost:8080/register",
+                    				 url:remoteIp+"/register",
                     				 type:"get",                    				 
                     		 
                     		        success: function(data){
@@ -704,15 +703,16 @@ function updateAutreDetailsProfile()   {
                       	    	    	$("#password-field").val();
                       	    	    	currentPassword=element[6];
                       	    	    	$("#role-field").val(element[1]).change();
-                      	    	    	element[1]==1 || element[1]==2 ? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
-                      	    	    	
+                      	    	    	 //element[1]==1? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
+                      	    	    	//element[1]==2? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
+
                       	    	    }
                       	    	
                       	       });
                       	    	   $("#updateButton").click( function(){   
                                   	   console.log("Salut tout le monde in Update Usr");
                           	    	   $.ajax({
-                            				 url:"http://localhost:8080/updateUserProf",
+                            				 url:remoteIp+"/updateUserProf",
                             				 type:"post",
                             				 data:{
                             					  idUser:  idValue,
@@ -740,7 +740,7 @@ function updateAutreDetailsProfile()   {
                                     	    	    	  $("#password-field").val('');
                                     	    	    	  $("#role-field").val(''); 
                                     	    	    	  errorFonction(); 
-                            		        	          console.log("Tout s'est bien passe dans upda");
+                            		        	          
                             		        	
                             		                      },        		          
                             		          error: function(error){

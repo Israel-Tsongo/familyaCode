@@ -189,8 +189,8 @@
     <script  th:inline="javascript" > 
     
     
-                         var idValue=-10;
-                         var mainList;
+  var idValue=-10;
+  var mainList;
                          
 
 function actions(type){
@@ -199,7 +199,7 @@ function actions(type){
 	       
 	     var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
 	     var request = new XMLHttpRequest();	
-	     request.open("POST","http://localhost:8080/depense/generatePDF/",true)
+	     request.open("POST",remoteIp+"/depense/generatePDF/",true)
 	     request.responseType='blob';
 	     request.onload=function(e){
 	    	 
@@ -232,7 +232,7 @@ function actions(type){
     function isCheckedInDep(x,list)   {
     	idValue=x;
     	mainList=list;
-    	console.log("========"+x);
+    	
 	 
  }  
     
@@ -243,7 +243,7 @@ function actions(type){
             // Pagination
     	 
        		 $.ajax({
-       				 url:"http://localhost:8080/depSearcher",
+       				 url:remoteIp+"/depSearcher",
        				 type:"post",
        				 data:{
        					 page:page,
@@ -277,13 +277,13 @@ function actions(type){
     	$(document).ready(function(){
     	       
             // Pagination
-    	     console.log("Call",$("#pageSize").val(),);
+    	     
     	     
        		 $("#pageSize").on('change',function(){
        			 
        			
        			$.ajax({
-      				 url:"http://localhost:8080/depSearcher",
+      				 url:remoteIp+"/depSearcher",
       				 type:"post",
       				 data:{
       					 
@@ -329,7 +329,7 @@ function actions(type){
              
         	 
         		 $.ajax({
-        				 url:"http://localhost:8080/depSearcher",
+        				 url:remoteIp+"/depSearcher",
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
@@ -363,7 +363,7 @@ function actions(type){
             // Delete Button
             
        		 $.ajax({
-       				 url:"http://localhost:8080/deteteDep",
+       				 url:remoteIp+"/deteteDep",
        				 type:"post",
        				 data:{
        					 idDep:idValue,
@@ -372,7 +372,7 @@ function actions(type){
        		 
        		        success: function(data){
        		       	
-       		        			 console.log("===="+data);
+       		        			 
        		                     $("#mainContainerInDep").html(data);        		        	
 	                    	     idValue=-10;
 	                    	     $("#div-total-dep").load(location.href+ " #div-total-dep");
@@ -413,7 +413,7 @@ function actions(type){
         	       		
                     		 
                     		 $.ajax({
-                    				 url:"http://localhost:8080/depPost",
+                    				 url:remoteIp+"/depPost",
                     				 type:"post",
                     				 data:{
                     					 
@@ -430,7 +430,7 @@ function actions(type){
              	                    	    $("#div-total-dep").load(location.href+ " #div-total-dep");
              	                    	    console.log("Add Method output");
              	                    	    errorFonction(); 
-                    		                      },       
+                    		                },       
                     		                      
                     		          error: function(error){
                     		        	    errorFonction(); 
@@ -483,14 +483,14 @@ function actions(type){
                       	    	
                       	       });
                       	    	        $("#updateButtonInDep").unbind("onclick").click( function(){   
-                                  	    console.log("Salut tout le monde in Update");
+                                  	    
                                   	   
                           	    	   $.ajax({
-                            				 url:"http://localhost:8080/updateDep",
+                            				 url:remoteIp+"/updateDep",
                             				 type:"post",
                             				 data:{
                             					 idDep:  idValue,
-                            					 depenseMontant:      $("#depense-montant-field").val(),
+                            					 depenseMontant: $("#depense-montant-field").val(),
                            	    	    	     motif:  $("#motif-field").val(),
                            	    	    	    
                             				      },

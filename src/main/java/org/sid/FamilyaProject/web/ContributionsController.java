@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+import org.sid.FamilyaProject.dao.ArchiveRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
@@ -47,6 +47,9 @@ public class ContributionsController {
 	private UserRepository userRepo;
 	
 	@Autowired
+	private ArchiveRepository archivRepo;
+	
+	@Autowired
 	private OperationRepository operaRepo;
 	
 	//************** ACCEUILLE************************
@@ -56,14 +59,13 @@ public class ContributionsController {
 		
 		
 		Traitement trt = new Traitement();		
-		 
+		
 		Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));		
-		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
-	   double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
+		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
+	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 	   
-	  
-	    model.addAttribute("lstSolde",trt.converter(capitalContribList));
-
+	    
+	    model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
 	    model.addAttribute("lst",trt.converter(contribList));
 		model.addAttribute("pages",new int[contribList.getTotalPages()]);
 		model.addAttribute("pages2",new int[capitalContribList.getTotalPages()]);
@@ -117,12 +119,12 @@ public class ContributionsController {
 		   if(pagin) {			   	
 				
 			  Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
-			  Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
+			  Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 			  
 			  double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 			   	
 			   
-			   model.addAttribute("lstSolde",trt.converter(capitalContribList));
+			   model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
 	           model.addAttribute("lst", trt.converter(contribList));
 	           model.addAttribute("pages", new int[contribList.getTotalPages()]);	
 	           model.addAttribute("pages2",new int[capitalContribList.getTotalPages()]);
@@ -150,9 +152,11 @@ public class ContributionsController {
 			         else if(!dateKeyWord.isEmpty() && !mc.isEmpty()) {
 			        	  searchContribList =payeRepo.findByDatePayementContains(mc,dateKeyWord, PageRequest.of(page,size));
 			         }
-				     searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMember(mc,PageRequest.of(page,size));
+			         
+				     searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMember(mc,PageRequest.of(pageAllInfo,size));
 					 double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-			         model.addAttribute("lstSolde",trt.converter(searchByMatricContribList));
+					 
+			         model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(searchByMatricContribList,archivRepo));
 		             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
 		             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
 		             model.addAttribute("pages2", new int[searchByMatricContribList.getTotalPages()]);	
@@ -178,8 +182,7 @@ public class ContributionsController {
 			                                     @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size		                                     
 			                                     ) {
 		List<String> errorList =new ArrayList<String>();
-		Traitement trt = new Traitement();
-		
+		Traitement trt = new Traitement();		
 		 
 		try {
 			
@@ -214,12 +217,10 @@ public class ContributionsController {
 		}
 		
 		Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
-		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
+		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-		   
 		
-		
-		model.addAttribute("lst", trt.converter(contribList));
+		model.addAttribute("lst", trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
 		model.addAttribute("lstSolde",trt.converter(capitalContribList));
 		model.addAttribute("pages2", new int[capitalContribList.getTotalPages()]);
 		model.addAttribute("pages", new int[contribList.getTotalPages()]);
@@ -240,21 +241,21 @@ public class ContributionsController {
 	
 	public String deleteMember(Model model ,@RequestParam() Long  idContrib,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size )  {	
 		
-		 List<String> errorList = new ArrayList<String>();
-		 Traitement trt=new Traitement();
+		  List<String> errorList = new ArrayList<String>();
+		  Traitement trt=new Traitement();
 		  String mv="" ;
 		 
 		  if (idContrib>0) {
 			  
 		   payeRepo.deleteById(idContrib);		   
 		   Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
-		   Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
+		   Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 
 	       double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 		   
 		            
 		             mv="contribution::mainContainerContrib";
-		             model.addAttribute("lstSolde", trt.converter(capitalContribList ));
+		             model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
 		             model.addAttribute("lst", trt.converter(contribList ));
 		             model.addAttribute("pages", new int[contribList .getTotalPages()]);
 		             model.addAttribute("pages2", new int[capitalContribList .getTotalPages()]);
@@ -266,10 +267,8 @@ public class ContributionsController {
 		             
 		  }else  {
 			  
-				errorList.add("Une erreur  est survenu lors de la suppression d'une contribution , selectionner le sujet puis supprimer");
-				
-				mv="contribution::mainContainerContrib";
-				
+				errorList.add("Une erreur  est survenu lors de la suppression d'une contribution , selectionner le sujet puis supprimer");				
+				mv="contribution::mainContainerContrib";				
 				
 			  }
 		  
@@ -290,15 +289,14 @@ public class ContributionsController {
 			
 					     payeRepo.updateContribution(idContrib, matricule, trt.rounder(contribution), new Date());						   
 					     Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
-						 Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(page,size));
+						 Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 
 					     
 					      double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 						 
 						  mv="contribution::mainContainerContrib";								   
 						  model.addAttribute("lst", trt.converter(contribList));
-						  model.addAttribute("lstSolde",trt.converter(capitalContribList));
-
+						  model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
 						  model.addAttribute("pages", new int[contribList.getTotalPages()]);
 						  model.addAttribute("pages2", new int[capitalContribList.getTotalPages()]);
 						  model.addAttribute("currentPage",page);
@@ -309,13 +307,9 @@ public class ContributionsController {
 			     
 			   
 			  }else  { 
-				  
-				  
-				  mv = "contribution::mainContainerContrib";
-				  
-				
-			  }
-		
+				 
+				  mv = "contribution::mainContainerContrib";			  
+			  }		
 		 
 			return mv;
 		
@@ -372,7 +366,7 @@ public class ContributionsController {
 	public ResponseEntity<byte[]> generateContribProof(@RequestParam(name="matricule") String matricule,@RequestParam(name="montant") double montant) throws JRException, Exception{
 		  
 		
-		 Traitement trt=new Traitement();
+		  Traitement trt=new Traitement();
 		  HashMap<String,Object> map = new HashMap<>();
 	 	  String jasperFileName="";
 	 	  String fileName="";

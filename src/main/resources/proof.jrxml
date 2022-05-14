@@ -99,13 +99,6 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Presidence]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="360" y="260" width="164" height="30" uuid="09b8a1d9-8022-4c12-8322-cc824949471d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
-				</textElement>
 				<text><![CDATA[Finance]]></text>
 			</staticText>
 			<textField>

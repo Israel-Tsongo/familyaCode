@@ -6,6 +6,7 @@ import org.sid.FamilyaProject.entities.Archive;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ArchiveRepository extends JpaRepository<Archive, Long>  {
 	
@@ -25,7 +26,11 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long>  {
 
 
 	public List<Archive> findByEnteredMatricContains(String string);
-		
 	
+	@Query(value="SELECT entered_matric FROM archive",nativeQuery=true)
+	public List<String> listAllMatricule();
+	
+	@Query(value="SELECT * FROM archive WHERE entered_matric=:matricule ",nativeQuery=true)
+	public List<List<Archive>> getArchivesByMatricule(@Param("matricule") String matricule) ;
 
 }

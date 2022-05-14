@@ -238,7 +238,7 @@
 					            <div id="div-after-card-body">
 					                <div id="input-div" class="p-5" style="padding: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;">
 					                    <div class="text-center" id="main-div">
-					                        <h4 class="text-dark mb-4" id="rembourseTitle"> Ajouter un Remboursement </h4>
+					                        <h4 class="text-dark mb-4" id="rembourseTitle"> Ajouter un remboursement </h4>
 					                    </div>
 					                    
 					                    <form id="main-form" class="user">
@@ -309,18 +309,18 @@
   function clickedTab(tab){
 	  
 	  tabName=tab
-	  console.log("---tab:-----",tabName)
+	
 	  
-	  if(tabName=="Anticiper") $("#rembourseTitle").text("Remboursement Anticipé")
-	  if(tabName=="Retard") $("#rembourseTitle").text("Remboursement avec Retard")
-	  if(tabName=="Normale") $("#rembourseTitle").text("Remboursement Normale")
+	  if(tabName=="Anticiper") $("#rembourseTitle").text("Anticiper le rembourcement")
+	  if(tabName=="Retard") $("#rembourseTitle").text("Rembourser avec Retard")
+	  if(tabName=="Normale") $("#rembourseTitle").text("Ajouter un remboursement")
   }
   
   function actions(type){
 	  
 	  			 var keyWord=$("#keyWord").val()==''?"all":$("#keyWord").val()	   
 			     var request = new XMLHttpRequest();	
-			     request.open("POST","http://localhost:8080/rembourse/generatePDF/",true)
+			     request.open("POST",remoteIp+"/rembourse/generatePDF/",true)
 			     request.responseType='blob';
 			     request.onload=function(e){
 			    	 
@@ -353,7 +353,7 @@
     function isCheckedInRembourse(x,list)   {
     	idValue=x;    
     	mainList=list;
-    	console.log("========"+x);
+    	
 	 
  }  
     
@@ -366,7 +366,7 @@
             
     	  console.log("pagination rembourse");
        		 $.ajax({
-       				 url:"http://localhost:8080/rembourseSearcher",
+       				 url:remoteIp+"/rembourseSearcher",
        				 type:"post",
        				 data:{
        					 page:page,
@@ -402,14 +402,14 @@
     	$(document).ready(function(){
     	       
             // Pagination
-    	     console.log("Call",$("#pageSize").val(),);
+    	     
     	     
        		 $("#pageSize").on('change',function(){
        			 
        			 
        			 
        			$.ajax({
-      				 url:"http://localhost:8080/rembourseSearcher",
+      				 url:remoteIp+"/rembourseSearcher",
       				 type:"post",
       				 data:{
       					 
@@ -425,11 +425,11 @@
 		        	     $("#containerMainInRembourse").html(data);
                 	     $("#div-total").load(location.href+ " #div-total");
       		        	 console.log("Tout s'est bien passe");
-      		        	errorFonction(); 
+      		        	 errorFonction(); 
       		             },        		          
       		          error: function(error){
 			       		        	
-      		        	errorFonction(); 
+      		        	  errorFonction(); 
       		        	  alert("La select error ")
       		        	  
       		             }
@@ -442,11 +442,7 @@
        		 
  });
     	
-    }  	
-    	   
-    
-    
-    
+ }  	
     
     function searcherInRembourse()   {
     	
@@ -456,7 +452,7 @@
              
         	 
         		 $.ajax({
-        				 url:"http://localhost:8080/rembourseSearcher",
+        				 url:remoteIp+"/rembourseSearcher",
         				 type:"post",
         				 data:{
         					 keyWord:$("#keyWord").val(),
@@ -488,16 +484,16 @@
 
         $(document).ready(function(){
        
-            // Delete Button
-            
+            // Delete Button           
        	  
        		 
        		 $.ajax({
-       				 url:"http://localhost:8080/deteteRembourse",
+       				 url:remoteIp+"/deteteRembourse",
        				 type:"post",
        				 data:{
        					 idRemb:idValue,
        					 size:$("#pageSize").val(),
+       					 keyWord:$("#keyWord").val(),
        				      },
        		 
        		        success: function(data){
@@ -545,7 +541,7 @@
          
           function  setVariableAddInRembourse(pages)   {
         	       	
-        	         idValue=-10;
+        	        idValue=-10;
         	       	document.querySelector("#updateButtonInRembourse").style.display="none";
         	       	document.querySelector("#addButtonInRembourse").style.display="block";
         	       	
@@ -558,13 +554,13 @@
         	           $("#rembourse-matricule-field").val("");
  	    	    	   $("#rembourse-field").val(""); 
  	    	    	   
-        	       	   console.log("=======TabName===",tabName);
+        	       	   
         	       	   
         	       	   $("#addButtonInRembourse").unbind("click").click( function() { 
         	       	   
                     		 
                     		 $.ajax({
-                    				 url:"http://localhost:8080/remboursePost",
+                    				 url:remoteIp+"/remboursePost",
                     				 type:"post",
                     				 data:{
                     					 
@@ -573,6 +569,7 @@
              	    	                  tabName:tabName,
              	    	                  page:((pag.length-1) <= 0) ? 0:(pag.length-1),
              	    	                  size:$("#pageSize").val(),
+             	    	                  keyWord:$("#keyWord").val(),
                     				      },
                     		 
                     		        success: function(data){
@@ -641,7 +638,7 @@
                       	    	   $("#updateButtonInRembourse").click( function(){   
                                   	   console.log("Salut tout le monde in Update");
                           	    	   $.ajax({
-                            				 url:"http://localhost:8080/updateRembourse",
+                            				 url:remoteIp+"/updateRembourse",
                             				 type:"post",
                             				 data:{
                             					 
@@ -649,6 +646,7 @@
                            					      matricule:   $("#rembourse-matricule-field").val(),
                          	    	              rembourse:  $("#rembourse-field").val(),
                          	    	              size:$("#pageSize").val(),
+                         	    	              keyWord:$("#keyWord").val(),
                             				      },
                             		 
                             		        success: function(data){

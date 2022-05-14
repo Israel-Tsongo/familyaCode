@@ -1,6 +1,7 @@
 package org.sid.FamilyaProject.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.entities.Depense;
 import org.sid.FamilyaProject.entities.InteretParMembre;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
@@ -58,21 +60,20 @@ public class DashbordController {
 	//************** ACCEUILLE************************
 	
 		@GetMapping("/dashboard")
-		public String dashbord(Model model) {			 
-					
-			
-			
+		public String dashbord(Model model) {		 
 			
 		   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0.00;
 		   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
 		   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
 		   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;			   
+		   
 		   double interetNet=(interetGeneral-totalDepense);			   
 		   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;			   
 		   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
 		   
-		  double soldeTotal= (totalCapitauxInitiaux +totalContribution);     
-			   
+		  double soldeTotal= (totalCapitauxInitiaux+totalContribution+sommePenalite);	  
+		 
+			
 		  
 		   model.addAttribute("totalEnCaisse",String.format("%.3f",soldeTotal));
 		   model.addAttribute("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
@@ -113,9 +114,9 @@ public class DashbordController {
 						
 						for(Role rol : currentRoles) {
 							
-							if  (rol.getRole_name().equals("ADMIN_USER")|| rol.getRole_name().equals("SUPER_USER")) {
+							if  (rol.getRole_name().equals("SUPER_USER")) {
 								
-							    role="ADMIN_USER";					    
+							    role="SUPER_USER";					    
 							}
 						}
 						
@@ -125,8 +126,12 @@ public class DashbordController {
 						 System.out.println(" Vous n ete pas admin");
 					 
 				   }
-			      
-				   if(role.equals("ADMIN_USER") && enc.matches(password, userPassword)) {
+				 
+			       System.out.println("==role:====>"+role);
+			       System.out.println("==Btn:====>"+btnEnd);
+			       System.out.println("==role:====>"+enc.matches(password, userPassword));
+			       
+				   if(role.equals("SUPER_USER") && enc.matches(password, userPassword)) {
 						
 					   if(btnEnd) {										
 							  

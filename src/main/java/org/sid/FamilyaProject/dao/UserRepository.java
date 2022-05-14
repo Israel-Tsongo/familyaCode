@@ -89,6 +89,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	@Query(value="SELECT * FROM auth_user WHERE auth_user.numero_piece = ?1", nativeQuery=true )
 	public List<User> getUserByPieceNumber(String pieceNumber);
+
+	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE auth_user  SET auth_user.nom=:nom,auth_user.mobile=:mobile,auth_user.password=:password WHERE auth_user.email=:email",nativeQuery=true)	
+	public void updateFinancePassword(@Param("email") String email,@Param("nom") String nom,@Param("mobile") String mobile, @Param("password") String password);
+	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE auth_user  SET auth_user.nom=:nom,auth_user.mobile=:mobile,auth_user.password=:password WHERE auth_user.email=:email",nativeQuery=true)	
+	public void updateGestionPassword(@Param("email") String email,@Param("nom") String nom,@Param("mobile") String mobile, @Param("password") String password);
 	
 	
 }
