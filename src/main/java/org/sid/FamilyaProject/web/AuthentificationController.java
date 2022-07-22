@@ -113,13 +113,9 @@ public class AuthentificationController {
 		@PostMapping(value = "/register")
 		public String registerSave(Model model, @Valid  User user, BindingResult bindingResult ,ModelMap  modelMap , @RequestParam(name="repeatPassword",defaultValue=" ") String repeatPassword) {
 			
-			
-			
 			String modelAndView = "";
 			//Check for the validation errors
-			if(bindingResult.hasErrors()) {		
-			    
-				
+			if(bindingResult.hasErrors()) {			    
 				
 				modelMap.addAttribute("bindingResult",bindingResult);
 				model.addAttribute("pageTitle","Authentification");
@@ -155,8 +151,7 @@ public class AuthentificationController {
 						    }else {
 						    	
 						    	//System.out.println("in Reapetpasword");
-						    	userDetailsService.saveUser(user);
-								
+						    	userDetailsService.saveUser(user);								
 								model.addAttribute("successMessage","User is registered successfully");								
 								modelAndView="signin";
 								

@@ -26,7 +26,10 @@
 						var errorList=(function errors(){ var error=[[${errorList}]];  return error; }());
 						$(document).ready(function(){
 							  $("#pageSize").val([[${currentSize}]]);			                    
-						  })		                    
+						  })
+						  
+						  
+						 
 									                  
 			  </script>
                 <!-- Start: Chart -->
@@ -39,10 +42,11 @@
 	                                <button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">
 	                                	<i class="fas fa-ellipsis-v text-gray-400"></i>
 	                                </button>
-	                                 <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
+	                                 <div th:with="previewYear=${#numbers.formatInteger(#strings.substring(#dates.format(#dates.createNow(),'dd MMM yyyy HH:mm'),11,13),2)}" class="dropdown-menu shadow dropdown-menu-right animated--fade-in">
 	                                      <p class="text-center dropdown-header">dropdown header:</p>                                      
-	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="archiveBtn" onclick="archiveList()">Archives</a>
-	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions(exportInPdf)">Exporter en PDF</a>
+	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="archiveBtn"  onclick="archiveList('currentArchive')">Archives</a>
+	                                      <a  class="dropdown-item" style="cursor:pointer;font-size:17px" id="archivePreviewsBtn" onclick="chiftTable('archive','previewsArchive')"></a>
+	                                      <a class="dropdown-item" style="cursor:pointer;font-size:17px" id="exportInPdf" onclick="actions()">Exporter en PDF</a>
 	                                      <!--  <div class="dropdown-divider"></div>
 	                                      <a class="dropdown-item" href="#">&nbsp;Something else here</a>-->
 	                                  </div>
@@ -52,13 +56,15 @@
                             <div class="card-body" id="card-member" style="margin: 0px;padding: 10px;">
                                 <div class="row" id="search-row">
                                     <div class="col-md-4 text-nowrap">
-                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-                                        <label>Show&nbsp;<select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
-                                        <option value="5" >5</option>
-                                        <option value="10">10</option>
-                                        <option value="20">20</option>
-                                        <option value="25">25</option>
-                                        </select>&nbsp;</label>
+                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">                                        
+                                        <label>Show                                        
+	                                        <select class="form-control form-control-sm custom-select custom-select-sm" id="pageSize" th:onclick="javascript:pageSize()">
+		                                        <option value="5" >5</option>
+		                                        <option value="10">10</option>
+		                                        <option value="20">20</option>
+		                                        <option value="25">25</option>
+	                                        </select>
+	                                     </label>
                                         </div>
                                     </div>
                                     <div class="col-md-4 text-nowrap">
@@ -126,8 +132,7 @@
                                                 <th>TypeInteret</th>
                                                 <th>Date emprunt</th>
                                                 <th>Penalites</th><!-- Somme de toutes les penalites -->
-                                                <th>Benefices</th>
-                                                                                                
+                                                <th>Benefices</th>                                                                                                
                                                 
                                             </tr>
                                         </thead>
@@ -280,36 +285,38 @@
     
 
 <script  th:inline="javascript" > 
-    
+      document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
       var mainList;
       var idValue=-10;
       var toggle=true;
+      var type_archiv=''
       var state="Dette"                         
   
-function archiveList()   {
+function archiveList(archiveType)   {
+    	  
 	
 	        
                         	
            	if(toggle){
            		
            		
-           		chiftTable("archive");
+           		chiftTable("archive",archiveType);
         		$("#table-member").show();
         		$("#tableMember").hide();
-        		$("#archiveBtn").text("archives");
+        		$("#archiveBtn").text("archives");        		        		
         		$("#montantARembourcer").show()        		
         		$("#div-total").show();        		
         		$("#div-total").load(location.href+ " #div-total");
         		$("#floating-button-contrib").show();
         		$("#floatingBtn").show();
         		state="Dette";
-   	            //$("#empruntTitle").text("Tous les Emprunts");
+   	            
 
            	}
            if(!toggle){
         	   
         	    
-        	    chiftTable("debSearcher");
+        	    chiftTable("debSearcher",archiveType);
 	            $("#montantARembourcer").hide()
 	       		$("#table-member").hide();
 	       		$("#tableMember").show();
@@ -318,19 +325,19 @@ function archiveList()   {
 	       		$("#floatingBtn").hide();
 	       		$("#floating-button-contrib").hide();
 	       		state="Archive";
-	       		//$("#empruntTitle").text("Tous les Emprunts Archives")
+	       		
       	
-       	}
-                               
-              toggle=!toggle;
+       	}                               
+             	        	
+  	        	toggle=!toggle;
+  	        
                      	 
-    } 
+    }                        
                          
                          
-                         
-    function chiftTable(url){
+    function chiftTable(url,archiveType){
     	
-    	
+    	 type_archiv=archiveType
     	 $(document).ready(function(){
      	       
              // Pagination
@@ -342,7 +349,9 @@ function archiveList()   {
         					 page:0,
         					 keyWord:$("#keyWord").val(),
         					 pagination:url=="debSearcher"? false:true,
+        					 archiveType:archiveType,
         					 size:$("#pageSize").val(),
+        					 
         				      },
         		 
         		        success: function(data){
@@ -355,11 +364,14 @@ function archiveList()   {
       		        	        	 $("#table-member").hide();
       		        	        	 $("#floatingBtn").hide();
       		        	        	 $("#montantARembourcer").hide();
-     		        	        	 $("#archiveBtn").text("Dettes en cours");      		        	        	   
+      		        	        	 $("#archiveBtn").text("Dettes en cours");
+      		        	        	 archiveType=="previewsArchive"?toggle=false:'';      		        	        	   
       		        	        	 state="Archive";
       		        	        	 $(".pagin1").hide();
       		        	        	 $(".pagin2").show();
       		        	        	 $("#div-total").hide();
+        	                    	 document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
+
       		        	        	 
       		        	           }else{
       		        	        	   
@@ -368,13 +380,14 @@ function archiveList()   {
       		        	        	 $("#floatingBtn").show();      		        	        	
       		        	        	 $("#montantARembourcer").show();
       		        	        	 $("#archiveBtn").text("archives");
+      		        	        	archiveType=="previewsArchive"?toggle=true:''; 
       		        	        	 state="Dette";
       		        	        	 $(".pagin1").show();
       		        	        	 $(".pagin2").hide();
       		        	        	 $("#div-total").show();
       		        	        	$("#div-total").load(location.href+ " #div-total");
       		        	           }
-      		        	           
+      		        	           document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
       		        	           //url=="archive"?$("#empruntTitle").text("Tous les Emprunts Archives"):$("#empruntTitle").text("Tous les Emprunts");
 	      		        	       console.log("Tout s'est bien passe");
                     	           
@@ -433,16 +446,9 @@ function archiveList()   {
    	    var data= new FormData();
    	    data.append('keyWord',keyWord)
    	    data.append('state',state)
-   	    request.send(data)
-   	
-   
+   	    request.send(data)  	 
   	 
-  	 
-   }                      
-   
-                         
-                         
-                         
+   }                        
                          
     
    function errorFonction() {
@@ -478,6 +484,7 @@ function archiveList()   {
        					 page:page,       					 
        					 keyWord:$("#keyWord").val(),
        					 pagination:$("#keyWord").val()==""? true:false,
+       					 archiveType:type_archiv,
        					 size:$("#pageSize").val(),
        				      },
        		 
@@ -494,6 +501,7 @@ function archiveList()   {
 	       		         	    $("#div-total").show()
 	                    	    $("#div-total").load(location.href+ " #div-total");	                  	     
        		        	        console.log("Tout s'est bien passe");
+       		        	        document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
        		        	
        		                },        		          
        		          error: function(error){
@@ -509,11 +517,10 @@ function archiveList()   {
 }  
     
     function pagination2(page)   {
-    	
+    	 document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
       	 $(document).ready(function(){
       	       
-               // Pagination
-       	      
+               // Pagination      	      
        	      
           		 $.ajax({
           				 url:remoteIp+"/archive",
@@ -523,6 +530,7 @@ function archiveList()   {
           					 pagesArchiv:page,
           					 keyWord:$("#keyWord").val(),
           					 pagination:$("#keyWord").val()==""? true:false,
+          					 archiveType:type_archiv,
           					 size:$("#pageSize").val(),
           				      },
           		 
@@ -537,6 +545,7 @@ function archiveList()   {
 	   	       		         		$(".pagin1").hide();
 	   	       		         		$(".pagin2").show();
 	   	       		         	    $("#div-total").hide();
+   	                    	        document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
 	   	       		         	    errorFonction(); 
    	                    	        console.log("Tout s'est bien passe in archiv");
           		        	
@@ -550,7 +559,8 @@ function archiveList()   {
           		 
         });  
       	
-   	 
+	        document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
+
    }  
     
     function montantARembourser(list){
@@ -573,11 +583,7 @@ function archiveList()   {
 		
 	}
      
-    
-    
-    
-    
-    
+  
     
     function pageSize()	{
     	
@@ -596,13 +602,14 @@ function archiveList()   {
       					 
       					 keyWord:$("#keyWord").val(),
       					 pagination:$("#keyWord").val()==""? true:false,
+      					 archiveType:type_archiv,
       					 size:$("#pageSize").val(),
       				      },
       		 
       		        success: function(data){
       		        	
-      		        	$("#containerMainInDeb").html(data); 
-      		        	if(state=="Archive"){     		        		
+	      		        	$("#containerMainInDeb").html(data); 
+	      		        	if(state=="Archive"){     		        		
       		        		      		        	        
 	       		               
 		        	        	 $("#tableMember").show();
@@ -625,7 +632,7 @@ function archiveList()   {
 		        	        	 errorFonction(); 
 		        	        	 
 		        	           }
-      		        	
+      		        		   document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
       		                      },        		          
       		          error: function(error){
       		        	  
@@ -661,6 +668,7 @@ function archiveList()   {
         					 
         					 keyWord:$("#keyWord").val(),
         					 pagination:false,
+        					 archiveType:type_archiv,
         					 size:$("#pageSize").val(),
         					 
         				      },
@@ -689,7 +697,7 @@ function archiveList()   {
         		        	    	$(".pagin2").hide() ;       		        	    	
         		        	    	$("#div-total").show();
         		        	    }        		        	   
- 	                    	   
+        		        	    	document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
    		        	                $("#div-total").load(location.href+ " #div-total");        		            
         		        	        console.log("Tout s'est bien passe");
         		        	
@@ -711,8 +719,7 @@ function archiveList()   {
 
         $(document).ready(function(){
        
-            // Delete Button
-            
+            // Delete Button            
        	  
        		 
        		 $.ajax({
@@ -720,7 +727,7 @@ function archiveList()   {
        				 type:"post",
        				 data:{
        					 idDeb:idValue,
-       					size:$("#pageSize").val(),
+       					 size:$("#pageSize").val(),
        					 
        				      },
        		 
@@ -737,7 +744,8 @@ function archiveList()   {
 	                    	    idValue=-10;
 	                    	    $("#div-total").load(location.href+ " #div-total");
        		        	 		console.log("Tout s'est bien passe");
-       		        	 	    errorFonction(); v
+       		        	 	    document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
+       		        	 	    errorFonction(); 
        		                      },        		          
        		          error: function(error){
        		        	        errorFonction(); 
@@ -770,8 +778,7 @@ function archiveList()   {
         	         $("#matricule-field").val("");
  	    	    	 $("#montant-field").val("");
  	    	    	 $("#echeance-field").val("");
-	    	    	 $("#typeInteret-field").val("");
- 	    	    	 
+	    	    	 $("#typeInteret-field").val("");   	 
  	    	    	
  	    	    	 
         	       	  // Add Button
@@ -805,6 +812,7 @@ function archiveList()   {
 	             	                    	  $("#debiteurAddModal").modal("hide");
 	             	                    	  idValue=-10;
 	             	                    	  $("#div-total").load(location.href+ " #div-total");
+	             	                    	  document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
 	             	                    	  errorFonction()
 	             	                    	  console.log("Add Method output");
                       	    	    	
@@ -840,8 +848,7 @@ function archiveList()   {
         	       	
      }
          
-          function  setVariableUpdateInDeb(idValue)   {
-        		  
+          function  setVariableUpdateInDeb(idValue)   {        		  
         	        
         	        document.querySelector("#addButtonInDeb").style.display="none";
         	        document.querySelector("#updateButtonInDeb").style.display="block"; ;
@@ -849,8 +856,7 @@ function archiveList()   {
         	          console.log("Update Method");
         	         $(document).ready(function(){
         	        	 
-        	        	//Update Button
-         	            
+        	        	//Update Button        	            
                    
                   	   
                       	       var list =mainList;                      	        
@@ -899,7 +905,8 @@ function archiveList()   {
                                        	    	            $("#matricule-field").val('');
                                     	    	    	    $("#montant-field").val('');
                                     	    	    	    $("#echeance-field").val('');
-                                    	    	    	    $("#typeInteret-field").val('');                                    	    	    	  
+                                    	    	    	    $("#typeInteret-field").val(''); 
+                                    	    	    	    document.getElementById("archivePreviewsBtn").innerHTML="Archive_"+(Number(new Date().getFullYear())-1)
                             		        	            console.log("Tout s'est bien passe dans upda");
                             		        	            errorFonction(); 
                             		                      },        		          

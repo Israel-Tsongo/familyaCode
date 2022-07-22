@@ -12,13 +12,15 @@ import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.OperationRepository;
+import org.sid.FamilyaProject.dao.PrevarchiveRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Archive;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
-
+import org.sid.FamilyaProject.entities.Prevarchive;
+import org.sid.FamilyaProject.metier.ArchiveDataBase;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +54,9 @@ public class DebiteurController {
 	
 	@Autowired
 	private ArchiveRepository archiveRepo;
+	
+	@Autowired
+	private PrevarchiveRepository prevarchiveRepo;
 	
 	@Autowired
 	private EventsRepository eventRepo;
@@ -88,12 +93,12 @@ public class DebiteurController {
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping(path="/debSearcher")
-	public String searchDebByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchDebByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="archiveType", defaultValue = "") String archiveType, @RequestParam(name="size",defaultValue = "5") int size,  @RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
 		   
-		   if(pagin ||mc.isEmpty()) {			   	
+		   if(pagin || mc.isEmpty()) {			   	
 				
 			   Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
 			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
@@ -297,8 +302,7 @@ public class DebiteurController {
 		 	   Traitement trt = new Traitement();
 		 	   HashMap<String,Object> map = new HashMap<>();
 		 	   String jasperFileName="";
-		 	   String fileName="";
-		 	   
+		 	   String fileName="";		 	   
 		 	   
 		 	   
 		 	  if(type.equals("Archive")) {
@@ -315,10 +319,8 @@ public class DebiteurController {
 			   List <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(!mc.equals("all")? mc:"");			
 			   fileName="debiteur";
 			   jasperFileName="debiteur.jrxml";
-			   map.put("nameFor", "Israel");			   
-			   
-			   
-
+			   map.put("nameFor", "Israel");		   
+			
 		       return  trt.generatePDF(searchdebList, jasperFileName, map, fileName);
 	   
 	}
@@ -326,17 +328,32 @@ public class DebiteurController {
 	
 	
 	@PostMapping(path="/archive")
-	public String  archive(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pagesArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size", defaultValue="5") int size, @RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String  archive(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pagesArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size", defaultValue="5") int size,@RequestParam(name="archiveType", defaultValue = "") String archiveType, @RequestParam(name="keyWord",defaultValue ="") String mc)  {
 		
-		 Traitement trt = new Traitement();		  
+		 Traitement trt = new Traitement();
+		 Page <List<List<Object>>> debArchivList=null;
+		 Page <Archive> searchArchivList=null;
+		 Page <Prevarchive> searchPrevArchivList =null;
+		 
+		 
 		   
-		   if(pagin||mc.isEmpty()) {			   	
+		   if(pagin||mc.isEmpty()) {
+			   System.out.println("=====>"+archiveType);
 			   
-			   Page <List<List<Object>>> debArchivList =archiveRepo.getArchiveList(PageRequest.of(pagesArchiv,size));
-			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
-			             
-	           model.addAttribute("lstArchive", trt.converter(debArchivList));
-	           model.addAttribute("pages2", new int[debArchivList.getTotalPages()]);
+			   if(archiveType.equals("currentArchive")) {
+			   
+				   	debArchivList =archiveRepo.getArchiveList(PageRequest.of(pagesArchiv,size));
+				   	model.addAttribute("lstArchive", trt.converter(debArchivList));
+				   	model.addAttribute("pages2", new int[debArchivList.getTotalPages()]);
+			  
+			   }else if(archiveType.equals("previewsArchive")) {
+				   
+				   debArchivList =prevarchiveRepo.previewsArchivList(PageRequest.of(pagesArchiv,size));
+				   model.addAttribute("lstArchive", trt.converter(debArchivList));
+				   model.addAttribute("pages2", new int[debArchivList.getTotalPages()]);
+			   }
+			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;   
+			   
 	           model.addAttribute("currentPage2",pagesArchiv);
 	           model.addAttribute("pages", new int[0]);
 	           model.addAttribute("currentPage",page);	           
@@ -347,11 +364,22 @@ public class DebiteurController {
 	           return "debiteurs::mainContainerInDeb";
 	           
 		   }else {
-			   Page <Archive> searchArchivList =archiveRepo.findByEnteredMatricContains(mc,PageRequest.of(pagesArchiv,size));
-			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
 			   
-		             model.addAttribute("lstArchive", trt.searchArchivConverter(searchArchivList));
-		             model.addAttribute("pages2", new int[searchArchivList.getTotalPages()]);	
+			   if(archiveType.equals("currentArchive")) {
+				   
+				   	 searchArchivList =archiveRepo.findByEnteredMatricContains(mc,PageRequest.of(pagesArchiv,size));
+				   	 model.addAttribute("lstArchive", trt.searchArchivConverter(searchArchivList));
+		             model.addAttribute("pages2", new int[searchArchivList.getTotalPages()]);
+		             
+			   }else if (archiveType.equals("previewsArchive")) {
+				   
+				     searchPrevArchivList =prevarchiveRepo.findByEnteredMatricContains(mc,PageRequest.of(pagesArchiv,size));
+				     model.addAttribute("lstArchive", trt.searchPrevArchivConverter(searchPrevArchivList));
+		             model.addAttribute("pages2", new int[searchPrevArchivList.getTotalPages()]);
+			   }  
+			   
+			         double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ; 			   
+//		          	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("pages", new int[0]);	
 		             model.addAttribute("currentPage2",pagesArchiv);

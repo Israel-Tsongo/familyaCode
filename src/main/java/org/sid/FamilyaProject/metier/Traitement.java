@@ -20,6 +20,7 @@ import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.dao.PrevarchiveRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Archive;
 import org.sid.FamilyaProject.entities.Debiteur;
@@ -29,6 +30,7 @@ import org.sid.FamilyaProject.entities.InteretParMembre;
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.entities.Payement;
+import org.sid.FamilyaProject.entities.Prevarchive;
 import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.core.io.ClassPathResource;
@@ -231,7 +233,38 @@ public List<List<Object>> searchConverterPaye(Page <Payement> searchPayeList ){
 			return viewList;
 		}
  
- 
+ public List<List<Object>> searchPrevArchivConverter(Page <Prevarchive> searchPrevArchiveList ){
+		
+		List<List<Object>> viewList = new ArrayList<List<Object>>() ;	
+		List<Object>  newList=null;		           
+			
+			
+							for( Prevarchive ob  :searchPrevArchiveList) {
+								
+								 newList= new ArrayList<Object>();
+								 
+								 newList.add(ob.getId_debArchiv());
+								 newList.add(ob.getNom());
+								 newList.add(ob.getEnteredMatric());
+								 newList.add(rounder((double)ob.getSommeEmprunt()));
+								 newList.add(ob.getTaux());
+								 newList.add(ob.getDettePlusInteret());							 
+								 newList.add(ob.getDuree_echeance());								 							 
+								 newList.add(ob.getTypeInteret());							 
+								 newList.add((ob.getDate_emprunt().toString()).substring(0, 10));
+								 newList.add(ob.getSommePenalty());
+								 newList.add(ob.getBeneficeGenere());
+								 
+								 viewList.add(newList);				              
+						}
+				   
+			           
+			 
+		
+			
+			
+			return viewList;
+		}
  
  
  
@@ -341,7 +374,7 @@ public List<List<Object>> searchOperaConverter(Page<Operation> searchOperaList) 
 		return viewList;
 }
 
-public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberRepo,List<String> errorList) {
+public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberRepo,PrevarchiveRepository prevarchiveRepo,ArchiveRepository archiveRepo,List<String> errorList) {
 	
 	 String matricule="" ;
 	 double solde;
@@ -350,6 +383,7 @@ public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberR
 	 
 	 arch.createDb(errorList);
 	 arch.moveTablesInDb(errorList);
+	 arch.managePreviewsArchive(prevarchiveRepo,archiveRepo);
 	 
 	 for(List<Object> obj:soldeList) {
 		 

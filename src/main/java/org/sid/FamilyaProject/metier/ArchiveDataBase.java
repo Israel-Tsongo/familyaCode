@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ArchiveDataBase {
-	
-	
-	
+import org.sid.FamilyaProject.dao.ArchiveRepository;
+import org.sid.FamilyaProject.dao.PrevarchiveRepository;
+import org.sid.FamilyaProject.entities.Archive;
+import org.sid.FamilyaProject.entities.Prevarchive;
+
+public class ArchiveDataBase {	
 	
 	
 	public ArchiveDataBase() {
@@ -51,7 +53,79 @@ public class ArchiveDataBase {
  		
 	}
 	
+public void managePreviewsArchive(PrevarchiveRepository prevarchiveRepo,ArchiveRepository archiveRepo) {
 	
+	Connection connect=null;
+	boolean prevTableExist=false;
+	PreparedStatement ps=null;
+	Statement stmt=null;
+	String previewArchive="prevarchive";	
+	
+	
+	try {
+		
+			Class.forName("com.mysql.cj.jdbc.Driver");		
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/familyadb","root","");			
+			ResultSet rs=connect.getMetaData().getTables(null, null, previewArchive, null);
+			
+			while (rs.next()) {
+				
+				String tName =rs.getString("TABLE_NAME");
+				if(tName!=null && tName.equals(previewArchive)) {					
+					prevTableExist=true;
+					break;					
+				}				
+			}
+			
+
+	}catch(Exception e){	
+			System.out.println(e.getMessage());	
+	}
+
+	try {
+			
+			
+		    if(connect!=null && !prevTableExist) {
+			
+					String sql ="CREATE TABLE familyadb."+previewArchive+" AS SELECT * FROM familyadb.archive";
+					ps = connect.prepareStatement(sql);
+					ps.executeUpdate();				    
+				    System.out.println("The table "+previewArchive+"  has been  Moved  successfully...");				
+				    ps.close();
+				    
+			}else if(connect!=null && prevTableExist) {
+				
+				   if(prevarchiveRepo.tableIsEmpty()==0) {
+					   
+					    stmt= connect.createStatement();	    
+						String sql ="INSERT INTO prevarchive SELECT * FROM archive";						
+					    stmt.executeUpdate(sql);
+					    System.out.println("=====>Table copied ...");		 
+					    stmt.close();
+					   
+				   }else if(prevarchiveRepo.tableIsEmpty()>0) {
+					   
+					   List<Archive> archList =archiveRepo.getArchiveList();
+					   
+					   for (Archive arch:archList) {
+						   
+						   prevarchiveRepo.save(new Prevarchive( arch.getNom(),arch.getEnteredMatric(),arch.getSommeEmprunt(),arch.getDuree_echeance(),arch.getTaux(),arch.getDettePlusInteret(),arch.getTypeInteret(),arch.getDate_emprunt(),arch.getBeneficeGenere(),arch.getSommePenalty()));
+					   }
+					    
+				   }else {
+					   
+					   System.out.println("Table cout row is negative");
+				   }
+				
+									
+			}
+		    
+	 }catch(Exception e){		
+		    System.out.println(e.getMessage());
+    }
+	
+	
+}	
 public void moveTablesInDb(List<String> errorList) {
 	
 	Connection connect=null;
@@ -115,11 +189,10 @@ public void clearDb(List<String> errorList) {
 	allTables.add("payement");
 	//allTables.add("events");
 	allTables.add("operation");	
-	//allTables.add("archive");
+	allTables.add("archive");
 	allTables.add("depense");
 	
-	try {
-		
+	try {		
 		
 		
 		 try {

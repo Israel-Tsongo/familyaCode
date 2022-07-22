@@ -12,6 +12,7 @@ import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.dao.PrevarchiveRepository;
 import org.sid.FamilyaProject.entities.Depense;
 import org.sid.FamilyaProject.entities.InteretParMembre;
 import org.sid.FamilyaProject.metier.Traitement;
@@ -49,6 +50,9 @@ public class DashbordController {
 	
 	@Autowired
 	private ArchiveRepository archivRepo;
+	
+	@Autowired
+	private PrevarchiveRepository prevarchiveRepo;
 	
 	
 	@Autowired
@@ -136,7 +140,7 @@ public class DashbordController {
 					   if(btnEnd) {										
 							  
 				   			   interetParMem.partageInteret(payeRepo,interetRepo, eventRepo, depenseRepo, memberRepo,archivRepo, errorList);
-				   			   trt.archiveDataBase(payeRepo,memberRepo,errorList);							
+				   			   trt.archiveDataBase(payeRepo,memberRepo,prevarchiveRepo,archivRepo,errorList);							
 						}
 				      
 				    }else {

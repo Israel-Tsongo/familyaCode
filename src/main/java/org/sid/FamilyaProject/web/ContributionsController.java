@@ -220,8 +220,8 @@ public class ContributionsController {
 		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
 		
-		model.addAttribute("lst", trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
-		model.addAttribute("lstSolde",trt.converter(capitalContribList));
+	    model.addAttribute("lst",trt.converter(contribList));
+	    model.addAttribute("lstSolde", trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));		
 		model.addAttribute("pages2", new int[capitalContribList.getTotalPages()]);
 		model.addAttribute("pages", new int[contribList.getTotalPages()]);
 		model.addAttribute("pageTitle","Contribution");

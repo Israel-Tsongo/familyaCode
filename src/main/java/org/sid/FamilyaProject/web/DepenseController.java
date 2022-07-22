@@ -46,12 +46,8 @@ public class DepenseController {
 		Traitement trt = new Traitement();		
 		double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;
 		Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));
-//		List<Depense> depList =depRepo.getAllDep();
-//		if(depList.isEmpty()&&interetGeneral>1&& depList.size()==0) {
-//			double montant = (0.35*interetGeneral);
-//			depRepo.save(new Depense(montant,"Frais de fonctionnement", new Date()));
-//			DepList =depRepo.getAllDep(PageRequest.of(page,size));
-//		};
+		
+
 	   	 
 	   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
 	   
@@ -62,8 +58,7 @@ public class DepenseController {
 		model.addAttribute("currentSize",size);
 		model.addAttribute("pageTitle","Depense");
 		model.addAttribute("totalDepense", String.format("%.3f", totalDepense));
-		model.addAttribute("keyWord", mc);
-		
+		model.addAttribute("keyWord", mc);		
 		return "depense";
 	   
 	}

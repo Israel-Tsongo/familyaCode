@@ -4,13 +4,15 @@ import java.util.List;
 
 import org.sid.FamilyaProject.entities.Archive;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ArchiveRepository extends JpaRepository<Archive, Long>  {
 	
-	
+	 @Query(value="SELECT * FROM archive", nativeQuery=true )
+	 public List<Archive> getArchiveList();
 	
 	 public Page <Archive> findByEnteredMatricContains(String mc, org.springframework.data.domain.Pageable pageable );
 	
@@ -33,4 +35,5 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long>  {
 	@Query(value="SELECT * FROM archive WHERE entered_matric=:matricule ",nativeQuery=true)
 	public List<List<Archive>> getArchivesByMatricule(@Param("matricule") String matricule) ;
 
+	
 }
