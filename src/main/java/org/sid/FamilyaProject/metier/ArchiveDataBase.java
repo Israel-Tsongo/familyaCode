@@ -6,10 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
+import org.exolab.castor.types.DateTime;
 import org.sid.FamilyaProject.dao.ArchiveRepository;
 import org.sid.FamilyaProject.dao.PrevarchiveRepository;
 import org.sid.FamilyaProject.entities.Archive;
@@ -23,10 +28,12 @@ public class ArchiveDataBase {
 		
 	}
 	
-	private String getNameOfDataBase(){
-		Date date=new Date();
-		System.out.println("#####"+date.toString().substring(24, 28));
-		String dbName="archiveDb"+date.toString().substring(24, 28);
+	public String getNameOfDataBase(){
+		
+		Date now=new Date();
+		String date=new SimpleDateFormat("yyyy_MM_dd",Locale.ENGLISH).format(now);				
+		String dbName="archiveDb"+date.toString();
+		
 		return dbName;
 	}
 

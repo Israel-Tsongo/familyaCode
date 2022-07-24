@@ -1,31 +1,19 @@
 package org.sid.FamilyaProject.web;
-import java.util.ArrayList;
-import java.util.Set;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
-import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -44,7 +32,7 @@ public class LoginAsController {
 	
 
 	
-	@PostMapping(path="/loginAsMember")
+	@PostMapping("/loginAsMember")
 	public String logAsMember(Model model,RedirectAttributes rd ) {
 		
 		rd.addFlashAttribute("typeOnlogin","Member");
@@ -57,7 +45,7 @@ public class LoginAsController {
 	
 	
 	
-	@PostMapping(path="/loginAsAuthority")
+	@PostMapping("/loginAsAuthority")
 	public String logAsAuthority(Authentication authentication,HttpServletRequest req) {
 		String email="";
 		String matricule="";

@@ -1,11 +1,11 @@
 package org.sid.FamilyaProject.metier;
 
-import java.io.FileInputStream;
+
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,10 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sid.FamilyaProject.dao.ArchiveRepository;
-import org.sid.FamilyaProject.dao.DebiteurRepository;
-import org.sid.FamilyaProject.dao.DepenseRepository;
-import org.sid.FamilyaProject.dao.EventsRepository;
-import org.sid.FamilyaProject.dao.InteretParMembreRepository;
+
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.dao.PrevarchiveRepository;

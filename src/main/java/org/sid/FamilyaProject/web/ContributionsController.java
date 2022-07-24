@@ -24,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,7 +54,7 @@ public class ContributionsController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(path="/contribution")
+	@GetMapping("/contribution")
 	public String Contribution(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc, @RequestParam(name="dateKeyWord", defaultValue = "") String dateKeyWord) {
 		
 		
@@ -110,7 +110,7 @@ public class ContributionsController {
 	
 	//************** RECHERCHER PAR NOM************************
 	
-	@PostMapping(path="/contribSearcher")
+	@PostMapping("/contribSearcher")
 	public String searchByMatriculeInContrib(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="pageAllInfo",defaultValue = "0") int pageAllInfo, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc, @RequestParam(name="dateKeyWord", defaultValue = "") String dateKeyWord)  {
 		
 		 Traitement trt = new Traitement();

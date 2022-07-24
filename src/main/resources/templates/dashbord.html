@@ -128,19 +128,25 @@
                 
                              </div>
                               <div class="row justify-content-center align-items-center">
-			                     <div class="col-md-4 col-xl-4 col-lg-4 mb-4">
+			                     <div class="col-md-4 col-xl-4 col-lg-4 mb-1">
 			                      
 			                                <div class="col mr-2">
 			                                    
 			                                    <div class="text-uppercase text-center text-primary font-weight-bold text-xs mb-1" style="margin-top:20px;">
 			                                    	<span  >
-			                                    	   <button  class="btn btn-primary" th:onclick="'javascript:finFiscalModal()'"  style="font-weight:bold;width:230px;border:3px solid; height:55px; border-radius:5px; box-shadow:3px 3px 10px blue" >Fin de l'annee fiscale</button>
+			                                    	   <button id="btnFinFiscalTrigger" class="btn btn-primary" th:onclick="'javascript:finFiscalModal()'"  style="font-weight:bold;width:230px;border:3px solid; height:55px; border-radius:5px; box-shadow:3px 3px 10px blue" >Fin de l'annee fiscale</button>
 			                                    	</span>
-			                                    </div>
+			                                    	
+			                                    </div>	                                    	
 			                                    
-			                                </div>			                             
+			                                </div>
+			                                <div  class="col mr-2 mt-2 d-flex justify-content-center align-items-center" >
+			                                	<div style="display:none" class="loader">  </div>
+			                                </div>	
+			                                
+			                                	                             
 			                       </div>
-			                       
+			                       			                       
 			                  
 			                 </div>
 			              
@@ -233,7 +239,10 @@
     function setFin(){
  
     	$("#finFiscalModal").modal("hide");
+    	document.querySelector("#btnFinFiscalTrigger").disabled=true
+    	document.querySelector(".loader").style.display="block";
     	$(document).ready(function(){ 
+    		  
        	 		
        	        	$.ajax({
         				 url:remoteIp+"/setPost",
@@ -254,18 +263,27 @@
         		                      
         		          error: function(error){
         		        	  $("#finFiscalModal").modal("hide");
-        		        	  console.log("error",errorList);
+        		        	  console.log("error",errorList); 	  
         		        	  errorFonction()
         		        	  alert("Echec");
         		        	  
-        		                     }
-        		        } );
-        		       
+        		           }
+        		        } );        		      
+       	        	
+       	        	
+       	        	const myTimeout=setTimeout(function(){       	     		
+       	     			document.querySelector("#btnFinFiscalTrigger").disabled=false
+       	     		    document.querySelector(".loader").style.display="none";
+       	     			
+       	     	   },1000)
+       	     	   
+       	     	   clearTimeout(myTimeout)
        		            
-        		});
+        		});    	
+    	
          	
        	
-         	} 
+        } 
     
     </script>
 

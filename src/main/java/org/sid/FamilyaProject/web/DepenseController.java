@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -40,7 +40,7 @@ public class DepenseController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(path="/depense")
+	@GetMapping("/depense")
 	public String depense(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
@@ -67,7 +67,7 @@ public class DepenseController {
 	
 	//************** RECHERCHER PAR NOM************************
 	
-	@PostMapping(path="/depSearcher")
+	@PostMapping("/depSearcher")
 	public String searchDepense(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
@@ -182,7 +182,7 @@ public class DepenseController {
 		     
 		     Traitement trt=new Traitement();
 		      
-		           if(idDep>0) {
+		      if(idDep>0) {
 			
 					     depRepo.updateDepense(idDep,depenseMontant,motif, new Date());	
 					     

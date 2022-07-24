@@ -1,7 +1,7 @@
 package org.sid.FamilyaProject.web;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Set;
 
@@ -13,15 +13,14 @@ import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.dao.PrevarchiveRepository;
-import org.sid.FamilyaProject.entities.Depense;
+
 import org.sid.FamilyaProject.entities.InteretParMembre;
+import org.sid.FamilyaProject.metier.ArchiveDataBase;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
 import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
 
 @Controller
 
@@ -77,8 +76,7 @@ public class DashbordController {
 		   
 		  double soldeTotal= (totalCapitauxInitiaux+totalContribution+sommePenalite);	  
 		 
-			
-		  
+					  
 		   model.addAttribute("totalEnCaisse",String.format("%.3f",soldeTotal));
 		   model.addAttribute("capitatInitial",String.format("%.3f", totalCapitauxInitiaux));
 		   model.addAttribute("totalContribution",String.format("%.3f", totalContribution));

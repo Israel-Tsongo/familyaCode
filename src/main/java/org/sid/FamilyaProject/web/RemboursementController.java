@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -59,7 +58,7 @@ public class RemboursementController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(path="/rembourse")
+	@GetMapping("/rembourse")
 	public String rembourse(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
@@ -81,7 +80,7 @@ public class RemboursementController {
 	
 	//************** RECHERCHER PAR NOM************************
 	
-	@PostMapping(path="/rembourseSearcher")
+	@PostMapping("/rembourseSearcher")
 	public ModelAndView searchByName(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();

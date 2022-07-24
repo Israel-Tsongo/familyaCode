@@ -1,6 +1,5 @@
 package org.sid.FamilyaProject.web;
 
-
 import java.util.HashMap;
 import java.util.List;
 import org.sid.FamilyaProject.dao.MemberRepository;
@@ -15,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,7 +35,7 @@ public class ProfileController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(value="/profile")
+	@GetMapping("/profile")
 	public String profiles(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
@@ -61,7 +60,7 @@ public class ProfileController {
 	
 	//************** RECHERCHER PAR NOM************************
 	
-	@PostMapping(path="/searchUser")
+	@PostMapping("/searchUser")
 	public String searchUserByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
@@ -76,11 +75,8 @@ public class ProfileController {
 	           model.addAttribute("pages", new int[userList.getTotalPages()]);	
 	           model.addAttribute("currentPage",page);
 	           model.addAttribute("currentSize",size);
-	           model.addAttribute("keyWord", mc);
-			   
-			   
-			   
-	           return  "userDetails::mainContainerProfile";
+	           model.addAttribute("keyWord", mc);   
+			   return  "userDetails::mainContainerProfile";
 		   }else {
 			       Page <User> searchUserList =userRepo.findByNomContains(mc,PageRequest.of(page,size));
 			       	           
@@ -88,8 +84,7 @@ public class ProfileController {
 		             model.addAttribute("pages", new int[searchUserList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("currentSize",size);	
-		             model.addAttribute("keyWord", mc);
-		             
+		             model.addAttribute("keyWord", mc);	             
 		
 		             return  "userDetails::mainContainerProfile";
 		   

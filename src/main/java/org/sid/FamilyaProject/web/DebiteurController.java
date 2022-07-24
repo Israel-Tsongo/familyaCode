@@ -63,7 +63,7 @@ public class DebiteurController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(path="/debiteur")
+	@GetMapping("/debiteur")
 	public String debiteur(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pageArchiv",defaultValue = "0") int pagesArchiv, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
@@ -84,7 +84,7 @@ public class DebiteurController {
 		model.addAttribute("totalDette",String.format("%.3f", totalEnDette));
 		model.addAttribute("keyWord", mc);
 		
-		return "/debiteurs";
+		return "debiteurs";
 	   
 	}
 	
@@ -92,7 +92,7 @@ public class DebiteurController {
 	
 	//************** RECHERCHER PAR NOM************************
 	
-	@PostMapping(path="/debSearcher")
+	@PostMapping("/debSearcher")
 	public String searchDebByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="archiveType", defaultValue = "") String archiveType, @RequestParam(name="size",defaultValue = "5") int size,  @RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
@@ -111,7 +111,7 @@ public class DebiteurController {
 	           model.addAttribute("currentSize",size);
 	           model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));  
 	           model.addAttribute("keyWord", mc);			   
-	           return "/debiteurs::mainContainerInDeb";
+	           return "debiteurs::mainContainerInDeb";
 	           
 		   }else {
 			   Page <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(mc,PageRequest.of(page,size));			
@@ -126,7 +126,7 @@ public class DebiteurController {
 		             model.addAttribute("totalCapitaux",String.format("%.3f", totalEnDette));  
 		             model.addAttribute("keyWord", mc);
 		
-		             return "/debiteurs::mainContainerInDeb";
+		             return "debiteurs::mainContainerInDeb";
 		   
 		   }
 	}
@@ -235,10 +235,11 @@ public class DebiteurController {
 		 
 		  if (idDeb>0) {
 			  
-		   debitRepo.deleteById(idDeb);		   
-		            
+		   debitRepo.deleteById(idDeb);           
 		             
-		  }else  { System.out.println("error on delete");}
+		  }else  {
+			  System.out.println("error on delete");
+		  }
 		  Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
 		   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0 ;		   
 		            
@@ -248,8 +249,7 @@ public class DebiteurController {
 		   model.addAttribute("currentPage",page);
 		   model.addAttribute("pages2", new int[0]);
            model.addAttribute("currentPage2",0);
-		   model.addAttribute("currentSize",size);
-		   
+		   model.addAttribute("currentSize",size);		   
 		   model.addAttribute("totalCapitaux",String.format("%.3f", totalEnDette));   
 		
 		return  "debiteurs::mainContainerInDeb";
@@ -283,17 +283,13 @@ public class DebiteurController {
 		   model.addAttribute("currentPage",page);
 		   model.addAttribute("pages2", new int[0]);
            model.addAttribute("currentPage2",0);
-		   model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));
-		     
+		   model.addAttribute("totalCapitaux", String.format("%.3f", totalEnDette));		     
 		 
 		 return "debiteurs::mainContainerInDeb";
 		
 	   
 	
-	}
-	
-	
-	
+	}	
 	
 	
 	@PostMapping(value="debiteur/generatePDF/",produces="application/pdf")
@@ -338,7 +334,7 @@ public class DebiteurController {
 		 
 		   
 		   if(pagin||mc.isEmpty()) {
-			   System.out.println("=====>"+archiveType);
+			   
 			   
 			   if(archiveType.equals("currentArchive")) {
 			   
@@ -379,7 +375,7 @@ public class DebiteurController {
 			   }  
 			   
 			         double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ; 			   
-//		          	
+		          	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("pages", new int[0]);	
 		             model.addAttribute("currentPage2",pagesArchiv);
@@ -387,7 +383,7 @@ public class DebiteurController {
 		             model.addAttribute("totalCapitaux",String.format("%.3f", totalEnDette));  
 		             model.addAttribute("keyWord", mc);
 		
-		             return  "/debiteurs::mainContainerInDeb";
+		             return  "debiteurs::mainContainerInDeb";
 		   
 		   }
 	}

@@ -3,18 +3,13 @@ package org.sid.FamilyaProject.web;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.entities.Events;
-import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
@@ -25,26 +20,17 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -97,7 +83,7 @@ public class AuthentificationController {
 		}
 		
 		
-		@GetMapping(value="/register")
+		@GetMapping("/register")
 		public ModelAndView register(Model model) {
 			ModelAndView modelAndView = new ModelAndView();
 			
@@ -110,7 +96,7 @@ public class AuthentificationController {
 			return modelAndView;
 		}
 		
-		@PostMapping(value = "/register")
+		@PostMapping("/register")
 		public String registerSave(Model model, @Valid  User user, BindingResult bindingResult ,ModelMap  modelMap , @RequestParam(name="repeatPassword",defaultValue=" ") String repeatPassword) {
 			
 			String modelAndView = "";
@@ -278,7 +264,7 @@ public class AuthentificationController {
 	      
 		//************** RECHERCHER PAR NOM************************
 		
-		@PostMapping(path="/siteUserSearcher")
+		@PostMapping("/siteUserSearcher")
 		public String searchByMatriculeInsiteUser( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 			
 				 Traitement trt = new Traitement();
@@ -320,8 +306,7 @@ public class AuthentificationController {
 				           model.addAttribute("currentPage2",0);
 				           model.addAttribute("currentSize",size);
 				           model.addAttribute("totalContribution",String.format("%.3f", totalContribution));  
-				           model.addAttribute("keyWord", mc);
-						   
+				           model.addAttribute("keyWord", mc);					   
 						   
 						   return "home::userSiteContainer";
 				   
@@ -331,7 +316,7 @@ public class AuthentificationController {
 
 		
 		
-		@PostMapping(path="/remboursementsByMatricule")
+		@PostMapping("/remboursementsByMatricule")
 		public String remboursementsByMatricule( Authentication authentication, Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 			
 				 Traitement trt = new Traitement();
@@ -369,8 +354,7 @@ public class AuthentificationController {
 					           model.addAttribute("currentPage",0);
 					           model.addAttribute("currentPage2",page);
 					           model.addAttribute("currentSize",size);					            
-					           model.addAttribute("keyWord", mc);
-							   
+					           model.addAttribute("keyWord", mc);							   
 							   
 							   return "home::userSiteContainer";
 					   
@@ -407,7 +391,7 @@ public class AuthentificationController {
 					 	 return  trt.generatePDF(remboursementList, jasperFileName, map, fileName);
 			 	   }
 			 	
-			 	   System.out.println("-==Down==="+dateValue);
+			 	   
 			 	   List <Payement> searchContribList = payeRepo.findByenteredMatricContains(matricule,dateValue);
 				   jasperFileName="contribution.jrxml";
 			 	   fileName="contributions";

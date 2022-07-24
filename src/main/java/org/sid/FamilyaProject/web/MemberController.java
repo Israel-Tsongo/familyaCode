@@ -54,7 +54,7 @@ public class MemberController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(path="/index")
+	@GetMapping("/index")
 	public String index(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
@@ -82,7 +82,7 @@ public class MemberController {
 	
 	//************** RECHERCHER PAR NOM************************
 	
-	@PostMapping(path="/indexSearcher")
+	@PostMapping("/indexSearcher")
 	public String  searchByMatricule(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
@@ -99,11 +99,9 @@ public class MemberController {
 	           model.addAttribute("currentPage",page);
 	           model.addAttribute("currentSize",size);
 	           model.addAttribute("totalCapitaux", totalCapitauxInitiaux1);	           
-	           model.addAttribute("keyWord", mc);
-			   
-			   
-			   
+	           model.addAttribute("keyWord", mc);			   
 	           return "index::mainContainer";
+	           
 		   }else {
 			       Page <Member> searchMemberList =memberRepo.findByNomContains(mc,PageRequest.of(page,size));
 				   double totalCapitauxInitiaux2=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
@@ -114,8 +112,7 @@ public class MemberController {
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("currentSize",size);
 		             model.addAttribute("totalCapitaux", totalCapitauxInitiaux2);  
-		             model.addAttribute("keyWord", mc);
-		             
+		             model.addAttribute("keyWord", mc);            
 		
 		             return "index::mainContainer";
 		   

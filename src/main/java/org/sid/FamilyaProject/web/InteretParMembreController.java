@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,7 +44,7 @@ public class InteretParMembreController {
 	
 	//************** ACCEUILLE************************
 	
-	@GetMapping(path="/interet")
+	@GetMapping("/interet")
 	public String interet(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pageOpera",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
@@ -72,7 +72,7 @@ public class InteretParMembreController {
 	
 	//************** RECHERCHER PAR NOM ************************
 	
-	@PostMapping(path="/interetSearcher")
+	@PostMapping("/interetSearcher")
 	public String searchInteretByName(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page,@RequestParam(name="pageOpera",defaultValue = "0") int pageOpera, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
