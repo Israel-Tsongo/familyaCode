@@ -1,5 +1,7 @@
 package org.sid.FamilyaProject.security;
 
+import javax.annotation.Resource;
+
 import org.modelmapper.ModelMapper;
 import org.sid.FamilyaProject.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-		@Autowired
-		private UserRepository userRepository;
+		
 		
 		@Bean
 		public ModelMapper modelMapper() {
@@ -34,13 +35,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		public AuthenticationManager authenticationManagerBean() throws Exception {
 			
 			  return super.authenticationManagerBean();
-		}
-	   
-		@Bean
-		public UserDetailsService userDetailsService(ModelMapper modelMapper) {
-			return new UserDetailsServiceImpl(modelMapper);
-		}
-		
+		}   
+
+
+		@Resource
+		private UserDetailsService userDetailsService;
 		
 		@Bean
 		public BCryptPasswordEncoder passwordEncoder() {
@@ -50,7 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		@Bean
 		public DaoAuthenticationProvider authenticationProvider() {
 			DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-			authProvider.setUserDetailsService(userDetailsService(modelMapper()));
+			authProvider.setUserDetailsService(userDetailsService);
 			authProvider.setPasswordEncoder(passwordEncoder());
 		
 			return authProvider;
@@ -58,9 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-			auth.parentAuthenticationManager(authenticationManagerBean()).userDetailsService(userDetailsService(modelMapper()));
 			auth.authenticationProvider(authenticationProvider());
-			auth.eraseCredentials(false);
 			
 		}
 		
@@ -142,10 +139,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 						.antMatchers("/profile/generatePDF/").hasAnyAuthority("SUPER_USER")
 						///======= HOME FOR SITE USER=========/////
 						.antMatchers("/home").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
-						.antMatchers("/loginAs").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
-						.antMatchers("/siteUserSearcher").hasAnyAuthority("SITE_USER")
-						.antMatchers("/contribAndRembourse/generatePDF/").hasAnyAuthority("SITE_USER")
-						.antMatchers("/remboursementsByMatricule").hasAnyAuthority("SITE_USER")
+						.antMatchers("/loginAs").hasAnyAuthority("ADMIN_USER","SUPER_USER")
+						.antMatchers("/siteUserSearcher").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
+						.antMatchers("/contribAndRembourse/generatePDF/").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
+						.antMatchers("/remboursementsByMatricule").hasAnyAuthority("SUPER_USER","ADMIN_USER","SITE_USER")
 						
 						
 						.anyRequest().permitAll()

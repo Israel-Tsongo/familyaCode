@@ -1,7 +1,6 @@
 package org.sid.FamilyaProject.security;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -47,31 +46,26 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 					
 					@Override
 					public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+						
 						User user =userRepository.getUserByEmail(email);
 						if(user==null) {
 							throw new UsernameNotFoundException("Could not find User Please");
 						}
-						System.out.println("-------User-------"+user.getMatricule());
+							
+						
+						System.out.println("-------User-------"+user.getNom());
 						return new MyUserDetails(user);
 					}
 					
 					
-					
-					
-					
-					public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-						User user =userRepository.getUserByEmail(email);
-						if(user==null) {
-							throw new UsernameNotFoundException("Could not find User Please");
-						}
-						return new MyUserDetails(user);
-					}
-					
+
 					
 					public void saveUser(User user) {
 						user.setPassword(encoder.encode(user.getPassword()));
 						user.setEnabled(true);
-						user.setMatricule(getMatricule());
+						//user.setMatricule(getMatricule());
+						user.setFonction("Membre");
+						user.setCategorieMembre("Membre_effectif");
 						Role userRole = roleRepository.findByRoleName("SITE_USER");
 						user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 						modelMapper.map(user,user);
@@ -108,6 +102,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 					}
 					
 					public Optional <User> findUserByEmail(String email){
+						
 						return userRepository.findUserByEmail(email);
 						
 						

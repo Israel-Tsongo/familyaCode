@@ -26,26 +26,87 @@
 			            </div>
 			        </div>
    		  </nav>
-          <div class="row justify-content-center" style="position:relative;margin-top:60px">
-            		<div class="col col-md-5 text-center">
+          <div class="row justify-content-center" style="position:relative;margin-top:60px" >
+            		<div class="col col-md-5 text-center"  >
             				<form th:action="@{/register}" method="post" th:object="${user}">
             				
             							<h1 class="display-4" style="text-shadow: 2px 2px 2px black">Sign Up</h1>
             							<div class="form-row py-1" style="display:flex;justify-content:space-between">
-            									<div style="display:inline-block;width:48%">
+            									<div style="display:inline-block;width:35%">
 	            									<div style="text-align:left"><label  style="font-weight:bold">Nom Complet *</label></div>
 	            									<input type="text" class="form-control" name="nom" th:field="*{nom}"  th:errorClass="is-invalid"   >    							
 	            							       <div th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}" class="invalid-feedback"></div>
             							       </div>
-            							       <div style="display:inline-block;width:48%;" >
+            							       
+            							       <div style="display:inline-block;width:25%">
+	            									<div style="text-align:left"><label  style="font-weight:bold">Code *</label></div>
+	            									<input type="text" class="form-control" name="nom" th:field="*{code}"  th:errorClass="is-invalid">    							
+	            							       <div th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="invalid-feedback"></div>
+            							       </div>
+            							       <div style="display:inline-block;width:35%;" >
 	            									<div style="text-align:left"><label  style="font-weight:bold">Email *</label></div>
 	            									<input type="email" class="form-control" name="email" th:field="*{email}"  th:errorClass="is-invalid"   >    							
 	            							       <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback"></div>
-            							       </div>  
+            							       </div> 
+            							       
             							</div>
             							<div class="form-row py-1" style="display:flex;justify-content:space-between">
-            									
-            									<div style="display:inline-block;width:48%">
+            							
+            									<div style="display:inline-block;width:35%">
+	            									<div style="text-align:left"><label  style="font-weight:bold">Matricule *</label></div>
+	            									<input type="text" class="form-control" name="nom" th:field="*{matricule}"  th:errorClass="is-invalid">    							
+	            							       <div th:if="${#fields.hasErrors('matricule')}" th:errors="*{matricule}" class="invalid-feedback"></div>
+            							       </div>
+            							
+            									<div style="display:inline-block;width:25%">
+	            									<div style="text-align:left"><label  style="font-weight:bold">Salaire *</label></div>
+	            									<input type="text" class="form-control" name="salaire" th:field="*{salaire}"  th:errorClass="is-invalid">    							
+	            							        <div th:if="${#fields.hasErrors('salaire')}" th:errors="*{salaire}" class="invalid-feedback"></div>
+            							       </div>
+            							       <div style="display:inline-block;width:35%;" >
+	            									<div style="text-align:left"><label  style="font-weight:bold">Retenue( En %) *</label></div>
+	            									<input type="text" class="form-control" name="retenu" th:field="*{retenu}"  th:errorClass="is-invalid">     							
+	            							        <div th:if="${#fields.hasErrors('retenu')}" th:errors="*{retenu}" class="invalid-feedback"></div>
+            							       </div>         									
+            							      									       							
+            							
+            							</div>
+            							
+            							<div class="form-row py-1" style="display:flex;justify-content:space-between">
+            							
+            									<div style="display:inline-block;width:30%;" >
+	            									<div style="text-align:left"><label  style="font-weight:bold">Type de pièce *</label></div>
+	            									<select class="form-control" name="typePiece" th:field="*{typePiece}" th:errorClass="is-invalid">            								      
+		            								      <option value="" disabled selected hidden >Type</option>
+		            								      <option value="Carte_delecteur">Carte d'élécteur </option>
+		            								      <option value="Passeport">Passeport</option>            								    
+            								    	</select>    							
+	            							       <div th:if="${#fields.hasErrors('typePiece')}" th:errors="*{typePiece}" class="invalid-feedback"></div>
+            							       </div>
+            							       
+            									<div style="display:inline-block;width:30%">
+	            									<div style="text-align:left"><label  style="font-weight:bold">N° pièce d'identité *</label></div>
+	            									<input type="text" class="form-control" name="numeroPiece" th:field="*{numeroPiece}"  th:errorClass="is-invalid"   >    							
+	            							       <div th:if="${#fields.hasErrors('numeroPiece')}" th:errors="*{numeroPiece}" class="invalid-feedback"></div>
+            							       </div> 
+            							       <div style="display:inline-block;width:30%;" >
+	            									<div style="text-align:left"><label  style="font-weight:bold">N° Fiche d'adhesion *</label></div>
+	            									<input type="text" class="form-control" name="numeroFiche" th:field="*{numeroFiche}"  th:errorClass="is-invalid"   >    							
+	            							       <div th:if="${#fields.hasErrors('numeroFiche')}" th:errors="*{numeroFiche}" class="invalid-feedback"></div>
+            							       </div>            							         
+            									  							
+            							
+            							</div>
+            							<div class="form-row py-1" style="display:flex;justify-content:space-between">
+            							
+            									      									  							
+            							
+            							</div>            							
+            							
+            							
+            							
+            							<div class="form-row py-1" style="display:flex;justify-content:space-between">
+            									<div style="display:inline-block;width:35%">
 	            									<div style="text-align:left"><label  style="font-weight:bold">Genre *</label></div>
 	            									<select class="form-control" name="genre" th:field="*{genre}" th:errorClass="is-invalid">            								      
 		            								      <option value="" disabled selected hidden >Genre</option>
@@ -54,59 +115,13 @@
             								    	</select>
             								   		<div th:if="${#fields.hasErrors('genre')}" th:errors="*{nom}" class="invalid-feedback"></div>
             							       </div>
-            							       
-            							       <div style="display:inline-block;width:48%;" >
-	            									<div style="text-align:left"><label  style="font-weight:bold">Numero du Fiche d'adhesion *</label></div>
-	            									<input type="text" class="form-control" name="numeroFiche" th:field="*{numeroFiche}"  th:errorClass="is-invalid"   >    							
-	            							       <div th:if="${#fields.hasErrors('numeroFiche')}" th:errors="*{numeroFiche}" class="invalid-feedback"></div>
-            							       </div>        									       							
-            							
-            							</div>
-            							
-            							<div class="form-row py-1" style="display:flex;justify-content:space-between">
-            							
-            									<div style="display:inline-block;width:48%;" >
-	            									<div style="text-align:left"><label  style="font-weight:bold">Type de piece *</label></div>
-	            									<select class="form-control" name="typePiece" th:field="*{typePiece}" th:errorClass="is-invalid">            								      
-		            								      <option value="" disabled selected hidden >Type</option>
-		            								      <option value="Carte_delecteur">Carte d'electeur </option>
-		            								      <option value="Passeport">Passeport</option>            								    
-            								    	</select>    							
-	            							       <div th:if="${#fields.hasErrors('typePiece')}" th:errors="*{typePiece}" class="invalid-feedback"></div>
-            							       </div>
-            							       
-            									<div style="display:inline-block;width:48%">
-	            									<div style="text-align:left"><label  style="font-weight:bold">Numero de la piece d'identite *</label></div>
-	            									<input type="text" class="form-control" name="numeroPiece" th:field="*{numeroPiece}"  th:errorClass="is-invalid"   >    							
-	            							       <div th:if="${#fields.hasErrors('numeroPiece')}" th:errors="*{numeroPiece}" class="invalid-feedback"></div>
-            							       </div>            							         
-            									  							
-            							
-            							</div>
-            							<div class="form-row py-1" style="display:flex;justify-content:space-between">
-            									<div style="display:inline-block;width:48%">
-	            									<div style="text-align:left"><label  style="font-weight:bold">Montant du salaire *</label></div>
-	            									<input type="text" class="form-control" name="salaire" th:field="*{salaire}"  th:errorClass="is-invalid">    							
-	            							        <div th:if="${#fields.hasErrors('salaire')}" th:errors="*{salaire}" class="invalid-feedback"></div>
-            							       </div>
-            							       <div style="display:inline-block;width:48%;" >
-	            									<div style="text-align:left"><label  style="font-weight:bold">Pourcentage de retenu *</label></div>
-	            									<input type="text" class="form-control" name="retenu" th:field="*{retenu}"  th:errorClass="is-invalid">     							
-	            							        <div th:if="${#fields.hasErrors('retenu')}" th:errors="*{retenu}" class="invalid-feedback"></div>
-            							       </div>      									  							
-            							
-            							</div>            							
-            							
-            							
-            							
-            							<div class="form-row py-1" style="display:flex;justify-content:space-between">
             									
-            									<div style="display:inline-block;width:48%">
-	            									<div style="text-align:left"><label  style="font-weight:bold">Numero de telephone *</label></div>
+            									<div style="display:inline-block;width:25%">
+	            									<div style="text-align:left"><label  style="font-weight:bold">Telephone *</label></div>
 	            									<input type="text" class="form-control" name="mobile" th:field="*{mobile}"  th:errorClass="is-invalid"   > 
             										<div th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}" class="invalid-feedback"></div>   
             							       </div>
-            							       <div style="display:inline-block;width:48%;" >
+            							       <div style="display:inline-block;width:35%;" >
 	            									<div style="text-align:left"><label  style="font-weight:bold">Adresse *</label></div>
 	            									<input type="text" class="form-control" name="Adresse" th:field="*{Adresse}"  th:errorClass="is-invalid">     							
 	            							        <div th:if="${#fields.hasErrors('Adresse')}" th:errors="*{Adresse}" class="invalid-feedback"></div>
@@ -132,7 +147,7 @@
             						
             							 
             							<div class="form-row py-1">
-            									<button type="submit" class="btn btn-primary btn-block"> Creer un compte Familya </button>          							
+            									<button type="submit" class="btn btn-primary btn-block"> Creer un compte Familia </button>          							
             							
             							</div>
             				

@@ -20,7 +20,7 @@ import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.entities.Prevarchive;
-import org.sid.FamilyaProject.metier.ArchiveDataBase;
+
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,10 +29,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -70,8 +69,8 @@ public class DebiteurController {
 		 
 		Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
 		Page <List<List<Object>>> debArchivList =archiveRepo.getArchiveList(PageRequest.of(page,size));			
-
-       double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;
+		Double totalDette=debitRepo.totalEnDette();
+        double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 
 	   
 	    model.addAttribute("lst",trt.converter(debList));
@@ -101,7 +100,9 @@ public class DebiteurController {
 		   if(pagin || mc.isEmpty()) {			   	
 				
 			   Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
-			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
+			   
+			   Double totalDette=debitRepo.totalEnDette();
+		       double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 			   		           
 	           model.addAttribute("lst", trt.converter(debList));
 	           model.addAttribute("pages", new int[debList.getTotalPages()]);
@@ -114,8 +115,10 @@ public class DebiteurController {
 	           return "debiteurs::mainContainerInDeb";
 	           
 		   }else {
-			   Page <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(mc,PageRequest.of(page,size));			
-			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;			   
+			   Page <Debiteur> searchdebList =debitRepo.findEnteredMatricContains(mc,PageRequest.of(page,size));			
+			   
+			   Double totalDette=debitRepo.totalEnDette();
+		       double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 			       		           
 		             model.addAttribute("lst", trt.searchDebConverter(searchdebList));
 		             model.addAttribute("pages",new int[searchdebList.getTotalPages()]);		             
@@ -146,7 +149,7 @@ public class DebiteurController {
 		 
 		try {
 			
-			if( memberRepo.getUserByMatricule(matricule)!=null ) {
+			if( memberRepo.getMemberByMatricule(matricule)!=null ) {
 				
 				if(debitRepo.getDebiteurByMatricule(matricule)==null) {
 				
@@ -154,8 +157,8 @@ public class DebiteurController {
 				    	
 				      
 				      List<Double> debiteurEntry= trt.debiteurCalculMontant(montant,echeance,typeInteret);				    
-					  Debiteur deb =new Debiteur(matricule,montant, echeance ,1.5, trt.rounder(debiteurEntry.get(0)), new Date(),trt.rounder(debiteurEntry.get(1)),trt.rounder(debiteurEntry.get(0)), typeInteret);
-		              Member membDeb = memberRepo.getUserByMatricule(deb.getEnteredMatric());
+					  Debiteur deb =new Debiteur(montant, echeance ,1.5, trt.rounder(debiteurEntry.get(0)), new Date(),trt.rounder(debiteurEntry.get(1)),trt.rounder(debiteurEntry.get(0)), typeInteret);
+		              Member membDeb = memberRepo.getMemberByMatricule(matricule);
 		              
 		              Set<Debiteur>setDeb= new HashSet<Debiteur>();	
 		              setDeb.add(deb);
@@ -207,7 +210,8 @@ public class DebiteurController {
 		}
 		
 		Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
-	    double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0 ;					   
+		Double totalDette=debitRepo.totalEnDette();
+        double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 		
 	    					   
 		model.addAttribute("lst", trt.converter(debList));
@@ -241,7 +245,9 @@ public class DebiteurController {
 			  System.out.println("error on delete");
 		  }
 		  Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
-		   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0 ;		   
+		 
+		   Double totalDette=debitRepo.totalEnDette();
+	       double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 		            
 		  	   
 		   model.addAttribute("lst", trt.converter(debList));
@@ -269,13 +275,14 @@ public class DebiteurController {
 		    	           
 			      List<Double> debiteurEntry= trt.debiteurCalculMontant(montant,echeance,typeInteret);
 
-				 debitRepo.updateDebiteur(idDeb,matricule,montant , echeance ,typeInteret, new Date(),trt.rounder(debiteurEntry.get(0)),trt.rounder(debiteurEntry.get(0)),trt.rounder(debiteurEntry.get(1)));						   
+				 debitRepo.updateDebiteur(idDeb,montant , echeance ,typeInteret, new Date(),trt.rounder(debiteurEntry.get(0)),trt.rounder(debiteurEntry.get(0)),trt.rounder(debiteurEntry.get(1)));						   
 					    
 			   
 			  }else  { System.out.println("error on update");}
 		    
            Page <List<List<Object>>> debList =debitRepo.getDetteWithMembers(PageRequest.of(page,size));			
-		   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0 ;						 
+           Double totalDette=debitRepo.totalEnDette();
+           double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 		   							   
 		   model.addAttribute("lst", trt.converter(debList));
 		   model.addAttribute("pages", new int[debList.getTotalPages()]);
@@ -312,7 +319,7 @@ public class DebiteurController {
 		 	   }
 		 	   
 		 	   
-			   List <Debiteur> searchdebList =debitRepo.findByEnteredMatricContains(!mc.equals("all")? mc:"");			
+			   List <Debiteur> searchdebList =debitRepo.findEnteredMatricContains(!mc.equals("all")? mc:"");			
 			   fileName="debiteur";
 			   jasperFileName="debiteur.jrxml";
 			   map.put("nameFor", "Israel");		   
@@ -348,7 +355,9 @@ public class DebiteurController {
 				   model.addAttribute("lstArchive", trt.converter(debArchivList));
 				   model.addAttribute("pages2", new int[debArchivList.getTotalPages()]);
 			   }
-			   double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ;   
+			   
+			   Double totalDette=debitRepo.totalEnDette();
+		       double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 			   
 	           model.addAttribute("currentPage2",pagesArchiv);
 	           model.addAttribute("pages", new int[0]);
@@ -374,7 +383,8 @@ public class DebiteurController {
 		             model.addAttribute("pages2", new int[searchPrevArchivList.getTotalPages()]);
 			   }  
 			   
-			         double totalEnDette=debitRepo.totalEnDette() !=null?debitRepo.totalEnDette() : 0.00 ; 			   
+					 Double totalDette=debitRepo.totalEnDette();
+				     double totalEnDette= totalDette !=null?totalDette : 0.00 ;
 		          	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("pages", new int[0]);	

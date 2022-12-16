@@ -102,7 +102,7 @@ public class RemboursementController {
 	           return  mv;
 		   }else {
 			       
-			       Page <Events> searchEventList =eventRepo.findByEnteredMatriculeContains(mc,PageRequest.of(page,size));
+			       Page <Events> searchEventList =eventRepo.findEnteredMatriculeContains(mc,PageRequest.of(page,size));
 			       
 			       ModelAndView mv = new ModelAndView("/remboursement::mainContainerInRembourse");		           
 		             model.addAttribute("lst", trt.searchRembourseConverter(searchEventList));
@@ -136,9 +136,9 @@ public class RemboursementController {
 
 		try {
 			
-			if(memberRepo.getUserByMatricule(matricule)!=null) {
-				
-				      if(debiteurRepo.getDebiteurByMatricule(matricule) != null) {
+			if(memberRepo.getMemberByMatricule(matricule)!=null) {
+				      Debiteur debiteur=debiteurRepo.getDebiteurByMatricule(matricule);
+				      if(debiteur != null) {
 				    	  
 									 double currentPenalty=0.0;
 						   	   		 Debiteur debit=debiteurRepo.getDebiteurByMatricule(matricule);
@@ -150,13 +150,13 @@ public class RemboursementController {
 				    	 		     
 				    	 		     int tempDate=(newDate==12)?(0+1):(newDate+1);				    	 		     
 				    	 		     
-				    	 		      System.out.println("tabName: "+tabName);
+				    	 		      //System.out.println("tabName: "+tabName);
 									 if(tabName.equals("Retard") && (currentNewDate >tempDate)) {    
 										 
 													 double difference=(currentNewDate-tempDate);
 													 double penalite=(0.015*prochainRembourcement)*difference;
-													 System.out.println("======difference======"+difference );
-													 debiteurRepo.updateCurrentPenalite(matricule,trt.rounder(penalite));	
+													// System.out.println("======difference======"+difference );
+													 debiteurRepo.updateCurrentPenalite(debiteur.getId_debiteur(),trt.rounder(penalite));	
 													 
 													  currentPenalty=debiteurRepo.getCurrentPenaliteByMatricule(matricule) ;
 										   	   		  debit =debiteurRepo.getDebiteurByMatricule(matricule);
@@ -167,9 +167,10 @@ public class RemboursementController {
 													 remboursementTempo=remboursement;
 													 remboursement=(remboursement-currentPenalty);									 
 													 double formerPenalty= debiteurRepo.getFormerPenaliteByMatricule(matricule);
-				  	                            	 double sommePenalty=(formerPenalty+currentPenalty);	  	                            	
-				  	    	                         debiteurRepo.updateFormerPenalite(matricule, sommePenalty) ;								        	                            	   
-					                            	 debiteurRepo.updateCurrentPenalite(matricule,0.0);
+				  	                            	 double sommePenalty=(formerPenalty+currentPenalty);
+				  	                            	
+				  	    	                         debiteurRepo.updateFormerPenalite(debiteur.getId_debiteur(), sommePenalty) ;								        	                            	   
+					                            	 debiteurRepo.updateCurrentPenalite(debiteur.getId_debiteur(),0.0);
 				                            	 
 											 }else {
 													 System.out.println("=====Vous devez rembourser en considerant les penalites suite au retard acumule soit "+(debit.getPremierRemboursement()+currentPenalty)+" $");
@@ -187,9 +188,9 @@ public class RemboursementController {
 							if(tabName.equals("Anticiper")  || tabName.equals("Normale") || tabName.equals("Retard") && (currentNewDate >tempDate) && (remboursementTempo==(debit.getPremierRemboursement()+currentPenalty)) || debiteurRepo.getDebiteurByMatricule(matricule)==null) { //  currentNewDate <= tempDate  
 								
 									      
-										     Events e=new Events(matricule,  remboursement, new Date());
-									         Member curentMember = memberRepo.getUserByMatricule(e.getEntered_matricule());
-									         String typeInteret = debiteurRepo.typeInteretByMatricule(e.getEntered_matricule())!=null? debiteurRepo.typeInteretByMatricule(e.getEntered_matricule()):" ";
+										     Events e=new Events( remboursement, new Date());
+									         Member curentMember = memberRepo.getMemberByMatricule(matricule);
+									         String typeInteret = debiteurRepo.typeInteretByMatricule(matricule)!=null? debiteurRepo.typeInteretByMatricule(matricule):" ";
 								       
 											if( typeInteret.equals("Degressif")) {							 
 												 			
@@ -197,7 +198,7 @@ public class RemboursementController {
 													setterEvent.add(e);
 													curentMember.setEvents(setterEvent);
 													e.setMembre(curentMember);
-											        e.computing(tabName,interetRepo,e.getRemboursement_courant(), memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
+											        e.computing(matricule,tabName,interetRepo,e.getRemboursement_courant(), memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
 													  
 											 }else{
 												 
@@ -205,7 +206,7 @@ public class RemboursementController {
 													setterEvent.add(e);
 													curentMember.setEvents(setterEvent);
 													e.setMembre(curentMember);
-											        e.interetConstant(tabName,interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
+											        e.interetConstant(matricule,tabName,interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
 															  
 											 }
 						
@@ -230,6 +231,7 @@ public class RemboursementController {
 		}catch(Exception exc) {			
 			mv = "remboursement::mainContainerInRembourse";
 			errorList.add("Une erreur s'est produite lors de l'enregistrement d un nouveau remboursement");
+			errorList.add("Rassurez-vous d'avoir saisi un matricule qui existe et qui possede une dette envers Familia ");
 
 			System.out.println("Une erreur s'est produite lors de l'enregistrement d un nouveau remboursement");			
 			System.out.println(exc.getMessage()   );
@@ -285,7 +287,7 @@ public class RemboursementController {
 		      
 		       if(idRemb>0) {
 			
-				   eventRepo.updateRembourse(idRemb, matricule,remboursement, new Date());					   
+				   eventRepo.updateRembourse(idRemb, remboursement, new Date());					   
 				
 			   
 			  }else  { System.out.println("Rien a Update");}
@@ -313,7 +315,7 @@ public class RemboursementController {
 		 	   HashMap<String,Object> map = new HashMap<>();
 		 	   String jasperFileName="remboursement.jrxml";
 		 	   String fileName="remboursements";
-		       List<Events> searchEventList =eventRepo.findByEnteredMatriculeContains(!mc.equals("all")? mc:"");
+		       List<Events> searchEventList =eventRepo.findEnteredMatriculeContains(!mc.equals("all")? mc:"");
 		 	   map.put("nameFor", "Israel");		   
 			   return  trt.generatePDF(searchEventList, jasperFileName, map, fileName);
 	   

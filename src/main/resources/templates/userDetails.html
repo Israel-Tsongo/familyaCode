@@ -2,6 +2,7 @@
 <html  xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <!--  Entete -->
+<meta charset="utf-8">
 <head th:replace="fragments :: html_head"></head>
 
 
@@ -87,7 +88,9 @@
 									                                            <tr id="tab-header">
 									                                                <th style="width: 0px;padding: 0px;padding-top: 0px;font-size: 0px;height: 10px;"></th>
 									                                                <th>Nom</th>
-									                                                <th>Matricule</th>
+									                                                <th>Code</th>
+									                                                <th>Matricule</th>									                                                
+									                                                <th>Fonction</th>
 									                                                <th>Adresse mail</th>
 									                                                <th>Numero </th>
 									                                                <th>Mot de passe</th>
@@ -103,11 +106,13 @@
 									                                                    <input th:value="${element.get(0)}"  th:onclick="javascript:isCheckedInProfile([[${element.get(0)}]],[[${element.get(1)}]],[[${lst}]]);" class="iduser" type="radio" name="chk" style="margin-top: 0px;">                                                                                                  
 									                                             </td>
 									                                                <td class="all-col" th:text="${element.get(2)}" ></td>
-									                                                <td class="all-col" th:text="${element.get(3)}"></td>
+									                                                <td class="all-col" th:text="${element.get(3)}" ></td>
 									                                                <td class="all-col" th:text="${element.get(4)}"></td>
 									                                                <td class="all-col" th:text="${element.get(5)}"></td>
-									                                                <td class="all-col" th:text="${#strings.substring(element.get(6), 0,#strings.length(element.get(6))/4) }"></td>
-									                                                <td class="all-col" th:text="${element.get(7) }"></td>
+									                                                <td class="all-col" th:text="${element.get(6)}"></td>
+									                                                <td class="all-col" th:text="${element.get(7)}"></td>
+									                                                <td class="all-col" th:text="${#strings.substring(element.get(8), 0,#strings.length(element.get(8))/4) }"></td>
+									                                                <td class="all-col" th:text="${element.get(9) }"></td>
 									                                                 
 									                                            </tr>                                          
 									                                        </tbody>
@@ -166,14 +171,14 @@
                        
                        
                        
-                        <div role="dialog" tabindex="-1" class="modal fade justify-content-center" id="autreDetailDuProfilModal"   style="max-width:800px;max-height:700px;position:absolute;left:20%;top:10%;transform:translate(-50,-50)" >
+                        <div role="dialog" tabindex="-1" class="modal fade justify-content-center" id="autreDetailDuProfilModal"   style="max-width:800px;max-height:750px;position:absolute;left:20%;top:10%;transform:translate(-50,-50)" >
 				   <div class="modal-dialog" role="document">
 				        <div class="modal-content" id ="detailsModalContent" th:fragment="detailsModalContent" style="width:650px; " > 
 				            <div class="modal-header d-flex justify-content-center">
 				                <h4 class="modal-title text-center" style="font-family:cursive">Autres Details du Profile</h4>
 				            </div>
-				            <div class="modal-body" style="width: 650px;height: 500px;">
-				                <div class="card" style="width: 600px; height:480px; border-radius: 72px;">
+				            <div class="modal-body" style="width: 650px;height: 520px;">
+				                <div class="card" style="width: 600px; height:510px; border-radius: 72px;">
 				                    <div class="card-body" style="height: 480px;width: inherit;border-radius: 70px;border: 0.9px solid rgb(125,165,205) ;">
 				                        <div class="box">          
 				                          
@@ -182,7 +187,7 @@
                             
                                 <div class="row justify-content-center">                                    
                                     <div class="col-xl-12">                                        
-                                         <div class="row" >
+                                         <!-- <div class="row" >
                                           <div class="col">
 	                                            <div class="d-flex justify-content-center align-items-center" style="text-align: center;height: 50px;">
 					                                <div class="d-flex justify-content-center" style="width: 40px;height: 40px;">
@@ -203,7 +208,8 @@
 		                                        	</div>
 	                                        	</div>
                                            </div>
-                                         </div>
+                                         </div>-->
+                                         
                                         <div class="row" >
                                             <div class="col">
                                                 
@@ -220,7 +226,7 @@
                                                         </div>
                                                         <div class="col">
                                                             <div class="form-group text-left" >
-                                                                <label for="typePiece"><strong>Type de piece</strong><br></label>
+                                                                <label for="typePiece"><strong>Type de pièce</strong><br></label>
                                                                 <select class="form-control" name="typePiece" id="typePiece" >            								      
 					            								      <option value="" disabled selected hidden >Type de piece</option>
 					            								      <option th:selected="${typePiece =='Carte_delecteur'}" value="Carte_delecteur">Carte d'electeur </option>
@@ -230,7 +236,7 @@
                                                         </div>
                                                         <div class="col">
                                                             <div class="form-group text-left" >
-                                                                <label for="NumeroPiece"><strong>N0 piece</strong><br></label>
+                                                                <label for="NumeroPiece"><strong>N° pièce d'identité</strong><br></label>
                                                                 <input name="numeroPiece" id="numeroPiece" class="form-control" type="text" th:value="${numeroPiece}" style="border-radius: 10px;">
                                                             </div>
                                                         </div>
@@ -254,6 +260,50 @@
                                                                 <input name="adresse" id="adresse" class="form-control" type="text" th:value="${adresse}"  style="border-radius: 10px;">
                                                             </div>
                                                         </div>
+                                                    </div>                                                    
+                                                    <div class="form-row">
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="salaire"><strong>Fonction</strong><br></label>                                                               
+                                                            
+                                                                <select name="fonction" class="form-control" id="fonction-field" style="border-radius: 10px;">	           																					      																		                                                
+					                                                <option value="" disabled selected hidden >Fonction</option>
+					                                                <option th:selected="${fonction =='Membre'}" value="Membre">Membre</option>
+					                                                <option th:selected="${fonction =='Gerant'}" th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Gerant">Gerant</option>
+					                                                <option th:selected="${fonction =='Financier'}" th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Financier">Financier</option>
+						                                         	<option th:selected="${fonction =='President'}" th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="President">President</option>																	                                         	
+				                                       			</select>
+				                                       			
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="matricule"><strong>Matricule</strong><br></label>
+                                                                <input name="matricule" id="matricule" class="form-control" type="text" th:value="${matricule}" style="border-radius: 10px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="adresse"><strong>Categorie</strong><br></label>
+                                                                 <select name="fonction" class="form-control" id="categorie-field" style="border-radius: 10px;">         																					      																		                                                
+					                                               																	                                         	
+				                                       				<option value="" disabled selected hidden >Categorie</option>
+					                                                <option th:selected="${categorie =='Membre_effectif'}" value="Membre_effectif">Membre effectif</option>
+					                                                <option th:selected="${categorie =='Fondateur'}"  th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Fondateur">Fondateur</option>
+				                                       			
+				                                       			</select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        
+                                                        <div class="col">
+                                                            <div class="form-group text-left">
+                                                                <label for="numero_fiche_adhesion"><strong>N° Fiche d'adhesion </strong><br></label>
+                                                                <input name="numero_fiche_adhesion" id="numero_fiche_adhesion" class="form-control" type="text" th:value="${numero_fiche_adhesion}" style="border-radius: 10px;">
+                                                            </div>
+                                                        </div>
+                                                        
                                                     </div>
                                                     <div class="text-center d-flex align-items-center" id="div-button" style="height:70px;width:100%;margin-top:15px">
 													     <div class="form-group d-flex flex-column align-items-center" style="height:70px;" id="form-btn">
@@ -263,6 +313,7 @@
 													      </div>
 													      
 												   </div> 
+												  
                                               
                                             </div>
                                         </div>
@@ -305,14 +356,18 @@
                             																		<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;">
                             																		       <input type="text" class="form-control form-control-user-left"  id="nom-field" placeholder="Nom" name="nom" />
                             																		</div>
-                           																			 <div class="col-auto col-sm-6 all-col-right" style="padding-right: 0px;padding-left: 0px;">
-                           																					 <input type="text" class="form-control form-control-user-right" id="matricule" placeholder="Matricule" name="matricule" />
-                           																			 </div>
+                            																		<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;">
+                            																		       <input type="text" class="form-control form-control-user-left"  id="code" placeholder="code" name="code" />
+                            																		</div>
+                            																		
+                           																			 
                        																		</div>
                        																		<div class="form-group row all-forms" style="width: 525px;">
+                       																					
                             																			<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
                             																			       <input type="email" class="form-control form-control-user-left" id="email-field" placeholder="Email" name="email" />
-                            																			  </div>
+                            																			</div>
+                            																			  
                            																				<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
                            																				       <input type="text" class="form-control form-control-user-right" id="mobile-field" placeholder="Numero de telephone" name="mobile" /></div>
                      																					 </div>
@@ -408,7 +463,18 @@
  	 
   }           
            
-           
+  
+  function errorFonction() {
+         if(typeof errorList !='undefined' && errorList.length>0 && errorList != null ){
+            var messages="";
+            console.log("===>",errorList);
+            errorList.forEach((item,index)=>{messages+=item+"\n"; })
+                          		
+            alert(messages);
+                          		
+ 	}	
+                             
+   }        
            
     
     function isCheckedInProfile(userId,roleId,list)   {
@@ -472,12 +538,16 @@ function updateAutreDetailsProfile()   {
 	      salaire: $("#salaire").val(),
 	      retenu:  $("#retenu").val(), 	    	      
 	      adresse: $("#adresse").val(),
+	      fonction:  $("#fonction-field").val(),
+    	  categorie: $("#categorie-field").val(),
+    	  matricule:$("#matricule").val(),
+    	  numeroFiche:$("#numero_fiche_adhesion").val(),
 	      size:$("#pageSize").val(),
 	      },
 
     success: function(data){
    	
-    	         
+    	        $("#mainContainerProfile").html(data);
      	     	$("#autreDetailDuProfilModal").modal("hide"); 
      	     	
      	     	errorFonction(); 
@@ -696,12 +766,11 @@ function updateAutreDetailsProfile()   {
                       	    	    	console.log( "From dataBase "+element[0]);
                       	    	    	console.log( "From View "+idValue);
                       	    	    	$("#nom-field").val(element[2]);
-                      	    	    	$("#matricule").val(element[3]);
-                      	    	    	$("#matricule").prop('disabled',true);                      	    	    	
-                      	    	    	$("#email-field").val(element[4]);
-                      	    	    	$("#mobile-field").val(element[5]);
+                      	    	    	$("#code").val(element[3]);                      	    	    	                     	    	    	
+                      	    	    	$("#email-field").val(element[6]);
+                      	    	    	$("#mobile-field").val(element[7]);
                       	    	    	$("#password-field").val();
-                      	    	    	currentPassword=element[6];
+                      	    	    	currentPassword=element[8];
                       	    	    	$("#role-field").val(element[1]).change();
                       	    	    	 //element[1]==1? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
                       	    	    	//element[1]==2? $("#role-field").prop("disabled",true):$("#role-field").prop("disabled",false);
@@ -718,7 +787,7 @@ function updateAutreDetailsProfile()   {
                             					  idUser:  idValue,
                             					  idRole: idRole,
                             					  nom:       $("#nom-field").val(),
-                           	    	    	      matricule: $("#matricule").val(),
+                            					  code:      $("#code").val(),                           	    	    	     
                            	    	    	      email:     $("#email-field").val(),                           	    	    	      
                            	    	    	      mobile:    $("#mobile-field").val(),
                            	    	    	      password:  $("#password-field").val(),
@@ -734,9 +803,9 @@ function updateAutreDetailsProfile()   {
                  	                    	              $("#main-form").load(location.href+ " #main-form");
                                        	    	          idValue=-10;
                                        	    	          $("#nom-field").val('');
-                                    	    	    	  $("#matricule").val('');
+                                       	    	          $("#code").val('');                                    	    	    	  
                                     	    	    	  $("#email-field").val('');
-                                    	    	    	  $("#mobile-field").val('');
+                                    	    	    	  $("#mobile-field").val('');                                    	    	    	 
                                     	    	    	  $("#password-field").val('');
                                     	    	    	  $("#role-field").val(''); 
                                     	    	    	  errorFonction(); 
@@ -753,9 +822,9 @@ function updateAutreDetailsProfile()   {
                             		                    $(".btn-close").click(function(){
 		                            		    	    idValue=-10;
 		                            		    	    $("#nom-field").val('');
-		                            	    	    	$("#matricule").val('');
+		                            		    	    $("#code").val('');		                            	    	    	
 		                            	    	    	$("#email-field").val('');
-		                            	    	    	$("#mobile-field").val('');
+		                            	    	    	$("#mobile-field").val('');		                            	    	    	
 		                            	    	    	$("#password-field").val('');
 		                            	    	    	$("#role-field").val('');
                             		    	   

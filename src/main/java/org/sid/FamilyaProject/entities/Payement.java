@@ -28,16 +28,15 @@ public class Payement  implements  Serializable  {
 	private Long Id_paye;
 	private Date datePayement;
 	private double contribMensuel;
-	private String enteredMatric;
+
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="foreignKeyMemberPaying", nullable=false)
 	private Member  memberPaying;
 	
 	
-			public Payement( String enteredMatric, double contribMensuel,Date date) {
-					
-				    this.enteredMatric = enteredMatric;
+			public Payement( double contribMensuel,Date date) {					
+				    
 					this.contribMensuel = contribMensuel;
 					this.datePayement=date;
 					
@@ -67,19 +66,6 @@ public class Payement  implements  Serializable  {
 	public void setContribMensuel(double contribMensuel) {
 		this.contribMensuel = contribMensuel;
 	}
-
-
-
-	public String getEnteredMatric() {
-		return enteredMatric;
-	}
-
-
-
-	public void setEnteredMatric(String enteredMatric) {
-		this.enteredMatric = enteredMatric;
-	}
-
 
 
 	public Member getMemberPaying() {

@@ -3,13 +3,17 @@ package org.sid.FamilyaProject.web;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Events;
+import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
@@ -47,14 +51,8 @@ public class AuthentificationController {
 	    @Autowired
 		private UserDetailsServiceImpl userDetailsService ; 
 	   
-	    @Autowired
-		private MemberRepository memberRepo;
-	    
-	    @Autowired
-		private DebiteurRepository debiteurRepo;
-		
-		@Autowired
-		private InteretParMembreRepository interetRepo;
+	      
+	   
 		
 		@Autowired
 		private PayementRepository payeRepo;
@@ -64,7 +62,8 @@ public class AuthentificationController {
 		@Autowired
 		private EventsRepository eventRepo;
 		
-		
+		@Autowired
+		private UserRepository userRepo;
 		
 	
         @InitBinder        
@@ -157,109 +156,58 @@ public class AuthentificationController {
 		
 		
 		@RequestMapping(value = "/home", method = RequestMethod.GET)
-		public String home(@ModelAttribute(name="typeOnlogin") String typeOnlogin,Model model, Authentication authentication) {
+		public String home(Model model, Authentication authentication) {
 			
-			String email="";
+			String email=" ";
 			String matricule="";
 			Set<Role> currentRoles=null;
 			String role="";
 			User usr=null;
 			String modelAndView = "";
 			
+			System.out.println("1<====ROLES====>");
 			
 			if(authentication !=null) {
 				
 				email= authentication.getName();
-				usr= userDetailsService.getUserByEmail(email);
+				usr= userRepo.getUserByEmail(email);
 				matricule=usr.getMatricule();
 				currentRoles=usr.getRoles();
-				model.addAttribute("user",usr);
-				
-				
-				if(memberRepo.getUserByMatricule(matricule)!=null) {
-				
-						if(typeOnlogin.isEmpty() && memberRepo.getUserByMatricule(matricule).getFonction().equals("Gerant") ) {
-							
-							model.addAttribute("fonctionType","Se logger comme Gerant");
-							
-							modelAndView="loginAs"; 		        			     		
-				        	return modelAndView;
-							
-						 }
-						if(typeOnlogin.isEmpty() && memberRepo.getUserByMatricule(matricule).getFonction().equals("Financier")) {
-							
-							model.addAttribute("fonctionType","Se logger comme Financier");
-							
-							modelAndView="loginAs"; 		        			     		
-				        	return modelAndView;
-						}
-						
-						
-				}
-					
-				for (Role rol : currentRoles) {
-					
-					if  (rol.getRole_name().equals("ADMIN_USER")) {
-						
-					    role="ADMIN_USER";					    
-						modelAndView="redirect:/dashboard"; 
-					}
-					
-					if( rol.getRole_name().equals("SUPER_USER")) {
-						
-						role="SUPER_USER";					    
-						modelAndView="redirect:/dashboard"; 
-					}
-				}
-				
-			}
+				List <String> rolesList=currentRoles.stream().map(s -> s.getRole_name()).collect(Collectors.toList());
+											
 			
-			
-				if(memberRepo.getUserByMatricule(matricule)!=null && !(role.equals("ADMIN_USER")) && !(role.equals("SUPER_USER"))) {
-							
-				    	List<List<Object>> detailMembre=payeRepo.getDetails(matricule);
-				    	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
-				    	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
-				    	
-				    	if(!(payeRepo.getPayementByMatricule(matricule).isEmpty())) {
-				    		
-				    		 model.addAttribute("nom",detailMembre.get(0).get(0));
-							 model.addAttribute("matricule",detailMembre.get(0).get(1));
-							 model.addAttribute("capital",detailMembre.get(0).get(2));
-							 model.addAttribute("contributions",detailMembre.get(0).get(3));
-							 model.addAttribute("solde",detailMembre.get(0).get(4));			    		
-				    		
-				    	}else {
-				    		
-				    		List<List<Object>> lst=memberRepo.getCapitalMatriculeNom(matricule);
-				    		model.addAttribute("nom",lst.get(0).get(0));
-							 model.addAttribute("matricule",lst.get(0).get(1));
-							 model.addAttribute("capital",lst.get(0).get(2));
-							 model.addAttribute("pageTitle","Authentification");
-							 model.addAttribute("contributions",0.0);
-							 model.addAttribute("solde",lst.get(0).get(2));
-							 
-				    	}
-						 						
-				    	     model.addAttribute("detteCourante",detteCourante);			    		
-						     model.addAttribute("interet",interet);						     
-						     model.addAttribute("pages", new int[0]);
-						     model.addAttribute("pages2", new int[0]);
-						     model.addAttribute("currentPage",0);
-						     model.addAttribute("currentPage2",0);
-						     model.addAttribute("currentSize",5);
-						     modelAndView="home"; // resources/template/home.html
-			
-		     	}else if(memberRepo.getUserByMatricule(matricule)==null && !(role.equals("ADMIN_USER")) && !(role.equals("SUPER_USER")))  {
-		     		
-		     		    model.addAttribute("usr",usr);
-			        	modelAndView="homeEmpty";
-			        	return modelAndView;
-			     }
-				
-				
-				
-			return modelAndView;
+				if(rolesList.contains("SUPER_USER") && userRepo.getUserByMatricule(matricule).getFonction().equals("President") ) {
+					
+					model.addAttribute("fonctionType","Se logger comme President");
+					
+					modelAndView="loginAs"; 
+					
+		        	return modelAndView;					
+						 			
+				}else if(rolesList.contains("ADMIN_USER") && userRepo.getUserByMatricule(matricule).getFonction().equals("Gerant") ) {
+					
+					model.addAttribute("fonctionType","Se logger comme Gerant");
+					
+					modelAndView="loginAs";					
+					
+		        	return modelAndView;					
+						 
+				} else if(rolesList.contains("ADMIN_USER") && userRepo.getUserByMatricule(matricule).getFonction().equals("Financier")) {
+					
+					model.addAttribute("fonctionType","Se logger comme Financier");
+					
+					modelAndView="loginAs"; 
+					
+		        	return modelAndView;
+		        	
+				}else if(rolesList.contains("SITE_USER") && userRepo.getUserByMatricule(matricule).getFonction().equals("Membre")) {
+					
+					modelAndView="redirect:/loginAsMember";
+				}					
+						
+			}			
+								
+			     return modelAndView;
 		}
 	      
 		//************** RECHERCHER PAR NOM************************
@@ -278,7 +226,7 @@ public class AuthentificationController {
 			   if(mc!=null && !mc.isEmpty()) {			   	
 					
 				   
-				         Page <Payement> searchContribList =payeRepo.findByDatePayementContains(matricule,mc,PageRequest.of(page,size));
+				         Page <Payement> searchContribList =payeRepo.findByDatePayementAndMatriculeContains(matricule,mc,PageRequest.of(page,size));
 				         double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;				       	
 			             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
 			             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
@@ -294,7 +242,7 @@ public class AuthentificationController {
 				  
 			   }else {
 			               
-				           
+				   		   
 						   Page <Payement> siteUserList = payeRepo.getPayementByMatric(matricule,PageRequest.of(page,size));
 					       double totalContribution=payeRepo.getSommeContribByMaticule(matricule) !=null?payeRepo.getSommeContribByMaticule(matricule) : 0.00 ;
 					       						   
@@ -324,7 +272,7 @@ public class AuthentificationController {
 				 String matricule="";
 				 User usr=null;			   
 				 email= authentication.getName();
-				 usr= userDetailsService.getUserByEmail(email);
+				 usr= userRepo.getUserByEmail(email);
 				 matricule=usr.getMatricule();
 				 
 				 
@@ -373,7 +321,7 @@ public class AuthentificationController {
 					String matricule="";
 					User usr=null;			   
 					email= authentication.getName();
-					usr= userDetailsService.getUserByEmail(email);
+					usr= userRepo.getUserByEmail(email);
 					matricule=usr.getMatricule();
 					String dateValue=keyWord==null?"":keyWord;
 			 	   Traitement trt = new Traitement();
@@ -392,7 +340,7 @@ public class AuthentificationController {
 			 	   }
 			 	
 			 	   
-			 	   List <Payement> searchContribList = payeRepo.findByenteredMatricContains(matricule,dateValue);
+			 	   List <Payement> searchContribList = payeRepo.findByDatePayementAndMatriculeContains(matricule,dateValue);
 				   jasperFileName="contribution.jrxml";
 			 	   fileName="contributions";
 			 	   map.put("nameFor", "Israel");			 	 

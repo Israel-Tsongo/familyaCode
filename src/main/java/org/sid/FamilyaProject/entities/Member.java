@@ -29,14 +29,9 @@ public class Member implements Serializable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	 
 	private Long Id_member; 
 	
-	//@Basic()
-	private String  nom; 
-	private String matricule; 
-	private String fonction; 
 	private Date date_adhesion; 
 	private String mandataire;
-	private String typeContrat; 
-	private String categorieMembre;	
+	private String typeContrat; 	
 	private double capital_Initial;
 	
 	
@@ -60,48 +55,16 @@ public class Member implements Serializable {
     private User memberUser ;
 	
 	
-	public Member(String nom, String matricule, String fonction, Date date_adhesion, 
-			String typeContrat, String categorieMembre, double capital_Initial, String mandataire) {
+	public Member(Date date_adhesion, String typeContrat,  double capital_Initial, String mandataire) {
+
 		
-		this.nom = nom;
-		this.matricule = matricule;
-		this.fonction = fonction;
 		this.date_adhesion = date_adhesion;		
-		this.typeContrat = typeContrat;
-		this.categorieMembre = categorieMembre;
+		this.typeContrat = typeContrat;		
 		this.capital_Initial = capital_Initial;
 		this.mandataire=mandataire;
 	}
 
 	
-	
-	
-	
-	
-	
-	public String getNom() {
-		return this.nom;
-	}
-	
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	
-	public String getMatricule() {
-		return matricule;
-	}
-	
-	public void setMatricule(String matricule) {
-		this.matricule = matricule;
-	}
-	
-	public String getFonction() {
-		return fonction;
-	}
-	
-	public void setFonction(String fonction) {
-		this.fonction = fonction;
-	}
 	
 	public Date getDate_adhesion() {
 		return date_adhesion;
@@ -121,13 +84,7 @@ public class Member implements Serializable {
 		this.typeContrat = typeContrat;
 	}
 	
-	public String getCategorieMembre() {
-		return categorieMembre;
-	}
-	
-	public void setCategorieMembre(String categorieMembre) {
-		this.categorieMembre = categorieMembre;
-	}
+
 	public double getCapital_Initial() {
 		return capital_Initial;
 	}

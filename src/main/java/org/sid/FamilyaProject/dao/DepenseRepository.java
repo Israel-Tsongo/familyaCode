@@ -9,9 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-
 import org.sid.FamilyaProject.entities.Depense;
-import org.sid.FamilyaProject.entities.Member;
+
 public interface DepenseRepository extends JpaRepository <Depense,Long> {
 	
 	

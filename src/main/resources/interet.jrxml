@@ -16,7 +16,7 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="id_interet" class="java.lang.Long"/>
-	<field name="matriculeEntered" class="java.lang.String"/>
+	<field name="membreDansInteret" class="org.sid.FamilyaProject.entities.Member"/>
 	<field name="interetDuMembre" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -81,7 +81,7 @@
 				<textField>
 					<reportElement x="180" y="0" width="110" height="20" uuid="23665fc0-ac80-49f2-ba5b-9b4c9d0e1c89"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$F{matriculeEntered}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{membreDansInteret}.getMemberUser().getMatricule()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="410" y="0" width="90" height="20" uuid="21046f4a-3987-4533-a36e-86b1635fafb5"/>

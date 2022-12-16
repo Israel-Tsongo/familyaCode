@@ -13,7 +13,7 @@ import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.dao.PrevarchiveRepository;
-
+import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.InteretParMembre;
 import org.sid.FamilyaProject.metier.ArchiveDataBase;
 import org.sid.FamilyaProject.metier.Traitement;
@@ -40,6 +40,10 @@ public class DashbordController {
 	
 	@Autowired
 	private MemberRepository memberRepo;
+	
+	@Autowired
+	private UserRepository userRepo;
+	
 	@Autowired
 	private DebiteurRepository debiteurRepo;
 	@Autowired
@@ -63,18 +67,22 @@ public class DashbordController {
 	//************** ACCEUILLE************************
 	
 		@GetMapping("/dashboard")
-		public String dashbord(Model model) {		 
+		public String dashbord(Model model) {
 			
-		   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0.00;
-		   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
-		   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
-		   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;			   
-		   
-		   double interetNet=(interetGeneral-totalDepense);			   
-		   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;			   
-		   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
-		   
-		  double soldeTotal= (totalCapitauxInitiaux+totalContribution+sommePenalite);	  
+		   Double getTotalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux();
+		   double totalCapitauxInitiaux= getTotalCapitauxInitiaux !=null ? (double)getTotalCapitauxInitiaux : 0.00;
+		   Double totalEnDette=debiteurRepo.totalEnDette() ;
+		   double totalDette=totalEnDette!=null? (double)totalEnDette : 0;	
+		   Double getTotalOutgo =depenseRepo.getTotalOutgo();
+		   double totalDepense= getTotalOutgo!=null? (double)getTotalOutgo : 0;
+		   Double totalBenefitInArchive=archivRepo.totalBenefitInArchive();
+		   double interetGeneral=totalBenefitInArchive !=null? totalBenefitInArchive : 0;		   
+		   double interetNet=(interetGeneral-totalDepense);
+		   Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+		   double totalContribution= getSommeSubscriptions !=null? getSommeSubscriptions : 0;
+		   Double totalPenalite=archivRepo.totalPenalite();
+		   double sommePenalite=totalPenalite!=null ? totalPenalite:0;		   
+		   double soldeTotal= (totalCapitauxInitiaux+totalContribution+sommePenalite);	  
 		 
 					  
 		   model.addAttribute("totalEnCaisse",String.format("%.3f",soldeTotal));
@@ -137,7 +145,7 @@ public class DashbordController {
 						
 					   if(btnEnd) {										
 							  
-				   			   interetParMem.partageInteret(payeRepo,interetRepo, eventRepo, depenseRepo, memberRepo,archivRepo, errorList);
+				   			   interetParMem.partageInteret(payeRepo,interetRepo, eventRepo, depenseRepo, memberRepo,userRepo,archivRepo, errorList);
 				   			   trt.archiveDataBase(payeRepo,memberRepo,prevarchiveRepo,archivRepo,errorList);							
 						}
 				      
@@ -147,15 +155,22 @@ public class DashbordController {
 				    	System.out.println("Mauvais mot de passe ou alors vous n avez pas les droits administarteurs");
 				    	
 				    }
+				   Double getTotalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux();
+				   double totalCapitauxInitiaux= getTotalCapitauxInitiaux !=null ? (double)getTotalCapitauxInitiaux : 0.00;
+				   Double totalEnDette=debiteurRepo.totalEnDette() ;
+				   double totalDette=totalEnDette!=null? (double)totalEnDette : 0;	
+				   Double getTotalOutgo =depenseRepo.getTotalOutgo();
+				   double totalDepense= getTotalOutgo!=null? (double)getTotalOutgo : 0;
+				   Double totalBenefitInArchive=archivRepo.totalBenefitInArchive();
+				   double interetGeneral=totalBenefitInArchive !=null? totalBenefitInArchive : 0;		   
+				   double interetNet=(interetGeneral-totalDepense);
+				   Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+				   double totalContribution= getSommeSubscriptions !=null? getSommeSubscriptions : 0;
+				   Double totalPenalite=archivRepo.totalPenalite();
+				   double sommePenalite=totalPenalite!=null ? totalPenalite:0;		   
+				   double soldeTotal= (totalCapitauxInitiaux+totalContribution+sommePenalite);
 			
-				   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0;				   
-				   double totalDette=debiteurRepo.totalEnDette() !=null? (double)debiteurRepo.totalEnDette() : 0;			   
-				   double totalDepense=depenseRepo.getTotalOutgo() !=null? (double)depenseRepo.getTotalOutgo() : 0;
-				   double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;	   
-				   double sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
-				   double interetNet=(interetGeneral-totalDepense);			   
-				   double totalContribution=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;
-				   double soldeTotal= (totalCapitauxInitiaux +totalContribution+sommePenalite);
+				   
 				   
 				    model.addAttribute("pageTitle","Authentification");
 				    model.addAttribute("totalEnCaisse",String.format("%.3f",soldeTotal));

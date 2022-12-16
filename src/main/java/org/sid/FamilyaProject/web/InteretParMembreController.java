@@ -51,8 +51,8 @@ public class InteretParMembreController {
 		 
 		Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));	
 		Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));		
-		
-		double totalInteretNet=interetRepo.totalInteretNet() !=null? interetRepo.totalInteretNet():0;			   
+		Double totalInteretNetFromDataBase =interetRepo.totalInteretNet();
+		double totalInteretNet=totalInteretNetFromDataBase !=null? totalInteretNetFromDataBase:0;			   
 	    
 	    	
 	    model.addAttribute("pageTitle","Interet");
@@ -82,8 +82,10 @@ public class InteretParMembreController {
 			  
 			   Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));
 			   Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));	
-			   double totalInteretNet=interetRepo.totalInteretNet() !=null? interetRepo.totalInteretNet() : 0;			   
 			   
+			   Double totalInteretNetFromDataBase =interetRepo.totalInteretNet();
+			   double totalInteretNet=totalInteretNetFromDataBase !=null? totalInteretNetFromDataBase:0;			   
+			    			   
 			   model.addAttribute("lst",trt.converter(interetList));	    
 			   model.addAttribute("pages",new int[interetList.getTotalPages()]);
 				
@@ -98,11 +100,12 @@ public class InteretParMembreController {
 	           return  "interet::containerMainInInteret";
 		   }else {
 			     
-			       Page <InteretParMembre> searchInteretList =interetRepo.findByMatriculeEnteredContains(mc,PageRequest.of(page,size));
+			       Page <InteretParMembre> searchInteretList =interetRepo.findMatriculeEnteredContains(mc,PageRequest.of(page,size));
 			       Page <Operation> searchOperaList =operaRepo.findByOperationContains(mc,PageRequest.of(pageOpera,size));
 
-				   double totalInteretNet=interetRepo.totalInteretNet() !=null? interetRepo.totalInteretNet() : 0;			   
-			       
+			         Double totalInteretNetFromDataBase =interetRepo.totalInteretNet();
+				    double totalInteretNet=totalInteretNetFromDataBase !=null? totalInteretNetFromDataBase:0;			   
+				    			       
 			       		           
 		             model.addAttribute("lst", trt.searchInteretConverter(searchInteretList));
 		             model.addAttribute("pages", new int[searchInteretList.getTotalPages()]);
@@ -139,7 +142,7 @@ public class InteretParMembreController {
 							        	 double reste=(interetRepo.getInteretDuMembreParMatricule(matricule)-montantRetrait);
 										 operaRepo.save(new Operation("Un membre de matricule "+matricule+" a effectue un retrait d''une somme de "+montantRetrait+" $", new Date()));	
 							        	 interetRepo.updateInteret(idWithD, trt.rounder(reste), new Date());			        	   
-							        	 InteretParMembre itm=interetRepo.getUserByMatricule(matricule);
+							        	 InteretParMembre itm=interetRepo.getInteretInstanceByMatricule(matricule);
 							        	 
 							        	 if(interetRepo.getInteretDuMembreParMatricule(matricule)!=null){
 							        		   
@@ -169,8 +172,9 @@ public class InteretParMembreController {
 		           
 	           Page <List<List<Object>>> interetList =interetRepo.interetParMembre(PageRequest.of(page,size));
 			   Page <List<List<Object>>> operaList =operaRepo.getAllOperation(PageRequest.of(pageOpera,size));	
-			   double totalInteretNet=interetRepo.totalInteretNet()!=null? interetRepo.totalInteretNet() : 0;	
-			  	
+			   Double totalInteretNetFromDataBase =interetRepo.totalInteretNet();
+			   double totalInteretNet=totalInteretNetFromDataBase !=null? totalInteretNetFromDataBase:0;			   
+			    			  	
 			   model.addAttribute("lst",trt.converter(interetList));	    
 			   model.addAttribute("pages",new int[interetList.getTotalPages()]);								
 	           model.addAttribute("lstOpera",trt.converter(operaList));
@@ -207,7 +211,7 @@ public class InteretParMembreController {
 				 	 return  trt.generatePDF(searchOperaList, jasperFileName, map, fileName);
 		 	   }
 		 	    
-		 	   List<InteretParMembre> searchInteretList =interetRepo.findByMatriculeEnteredContains(!mc.equals("all")? mc:"");
+		 	   List<InteretParMembre> searchInteretList =interetRepo.findMatriculeEnteredContains(!mc.equals("all")? mc:"");
 			   fileName="interets";
 			   jasperFileName="interet.jrxml";
 			   map.put("nameFor", "Israel");			 	 

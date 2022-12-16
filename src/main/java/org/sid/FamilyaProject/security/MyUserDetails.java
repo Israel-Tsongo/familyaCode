@@ -30,6 +30,7 @@ public class MyUserDetails implements UserDetails  {
 						}
 
 						public MyUserDetails(User user) {
+							System.out.println("3-------User Email-------"+user);
 							this.user=user;
 						}
 						
@@ -65,6 +66,7 @@ public class MyUserDetails implements UserDetails  {
 							// TODO Auto-generated method stub
 							Long roleId=0L;
 							for(Role r:user.getRoles()) {
+								System.out.println("-------User Role-------"+r);
 							    roleId=r.getRole_id();
 							}
 							return roleId;

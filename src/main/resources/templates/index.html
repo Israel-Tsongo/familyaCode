@@ -72,7 +72,7 @@
 									                                    </div>
 									                                    <div class="col-md-4">
 									                                        <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 300px; position:absolute;right:5%">
-									                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search  name">
+									                                              <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search  Matricule">
 									                                              <button id=searcher onclick ="searcher()" class="btn btn-primary col " style="height:32px;width: 120px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Chercher</button>                                        
 									                                        
 									                                        </div>
@@ -87,7 +87,7 @@
 									                                           
 									                                            <tr id="tab-header">
 									                                                <th style="width: 0px;padding: 0px;padding-top: 0px;font-size: 0px;height: 10px;"></th>
-									                                                <th>Nom</th>
+									                                                <th>Code</th>
 									                                                <th>Matricule</th>
 									                                                <th>Mandataire</th>
 									                                                <th>Capital</th>
@@ -168,7 +168,7 @@
 										<button type="button" id="menu" class="btn btn-main btn-primary has-tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
 								
 										<button type="button"   id="addBtn" th:onclick="javascript:setVariableAdd([[${pages}]]);" data-toggle="modal"  data-target="#addModal" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Ajouter"><i class="fa fa-plus"></i></button>
-										<button  type="button" id="updateBtn"  onclick="setVariableUpdate(idValue)" data-toggle="modal" data-target="#addModal" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Metre a jour"><i class="fa fa-refresh"></i></button>
+										<button  type="button" id="updateBtn"  onclick="setVariableUpdate(idValue)" data-toggle="modal" data-target="#addModal" class="btn btn-sub btn-danger has-tooltip" data-placement="left" title="Mettre a jour"><i class="fa fa-refresh"></i></button>
 								
 										<button type="button" id="deleteBtn"  onclick="setVariableDelete()" class="btn btn-sub btn-warning has-tooltip" data-placement="left" title="Supprimer"><i class="fa fa-remove"></i></button>
 									</div>
@@ -248,63 +248,41 @@
                    																 </div>
                    																 <form id="main-form" class="user" >
                        																	 <div class="form-group row all-forms">
+                            																		
                             																		<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;">
-                            																		       <input type="text" class="form-control form-control-user-left"  id="matricule" placeholder="Matricule" name="matricule" />
+                            																		       <input type="text" class="form-control form-control-user-left" disabled id="code" placeholder="code" name="code" />
                             																		</div>
-                           																			 <div class="col-auto col-sm-6 all-col-right" style="padding-right: 0px;padding-left: 0px;">
-                           																					 <input type="text" class="form-control form-control-user-right"  id="mandataire" placeholder="Mandateur" name="mandataire" />
-                           																			 </div>
+                            																		<div class="col-auto col-sm-6 all-col-right" style="padding-left: 0px;padding-right: 0px;">
+                            																		       <input type="text" class="form-control form-control-user-right"  id="matricule" placeholder="Matricule" name="matricule" />
+                            																		</div>
+                           																			 
                        																		</div>
                        																		<div class="form-group row all-forms" style="width: 525px;">
                        																		
                             																			<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-left: 0px;padding-right: 0px;width: 327px;">
                             																			       <input type="text" class="form-control form-control-user-left" id="capital-field" placeholder="Capital" name="capital" />
                             																			</div>
-                           																				<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">
+                            																			<div class="col-auto col-sm-6 all-col-right" style="padding-right: 0px;padding-left: 0px;">
+                           																					 <input type="text" class="form-control form-control-user-right"  id="mandataire" placeholder="Mandateur" name="mandataire" />
+                           																			    </div>
                            																				
-                           																				      <!--<input type="text" class="form-control form-control-user-right" id="fonction-field" placeholder="Fonction" name="fonction" />  -->
-                           																				      
-                           																				       <select name="fonction" class="form-control form-control-user-right" id="fonction-field" >
-                           																					      																		                                                
-																		                                                <option value="" disabled selected hidden >Fonction</option>
-																		                                                <option value="Membre">Membre</option>
-																		                                                <option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Gerant">Gerant</option>
-																		                                                <option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Financier">Financier</option>
-																			                                         	<option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="President">President</option>																		                                         	
-																			                                         	
-																			                                      
-																		                                   		 </select>
-																		                                   		 
-																		                                   		 
-                           																				       
-                           																				 </div>
                      																		</div>
                         																	 <div class="form-group row all-forms">
-                           																				<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-right: 0px;padding-left: 0px;">
                            																				
-                           																				        <!--<input type="text" class="form-control form-control-user-left" id="categorie-field" placeholder="Categorie" name="categorie" /> -->
-                           																				        
-                           																				        <select name="categorie" class="form-control form-control-user-left"  id="categorie-field" >
-                           																					      																		                                                
-																		                                                <option value="" disabled selected hidden >Categorie</option>
-																			                                         	<option value="Membre_effectif">Membre effectif</option>
-																			                                         	<option th:if="${#request.userPrincipal.principal.getRoleId()==1}" value="Fondateur">Fondateur</option>																			                                         	
-																		                                    
-																		                                   		 </select>
-                           																				  </div>
-                           																					<div class="col-sm-6 all-col all-col-right" style="padding-right: 0px;padding-left: 0px;">                           																					
+                           																					<div class="col-auto col-sm-6 d-flex justify-content-end mb-3 mb-sm-0 all-col-left" style="padding-right: 0px;padding-left: 0px;">                           																					
                            																					                              																					       
-                           																					      <select name="contrat" class="form-control form-control-user-right" id="contrat-field" >
+                           																					      <select name="contrat" class="form-control form-control-user-left" id="contrat-field" >
                            																					      																		                                                
 																		                                                <option value="" disabled selected hidden >Type de contrat</option>
 																			                                         	<option value="CDD">CDD</option>
 																			                                         	<option value="CDI">CDI</option>																			                                         	
 																		                                    
-																		                                   		 </select>
-                           																					     
-                           																					     
-                           																					       
+																		                                   		 </select>                   																					     
+                           																					                                																					       
                            																					</div>
+                           																					<div class="col-auto col-sm-6 all-col-right" style="padding-left: 0px;padding-right: 0px;width: 327px;">
+                            																			       <input type="date" class="form-control form-control-user-right" id="dateDadhesion" placeholder="Date d'adhesion" name="dateDadhesion" />
+                            																				</div>
                       																		  </div>                   																 
                    																   </form> 
 	                   																         <div class="text-center" id="div-button">
@@ -595,14 +573,13 @@ function actions(type){
         	       	document.querySelector("#addButton").style.display="block";
         	       	$(document).ready(function(){ 
         	       		
-        	          $("#nom-field").val("");
+        	          $("#code").val("");
  	    	    	  $("#matricule").val("");
+ 	    	    	 $("#matricule").prop('disabled',false);
  	    	    	  $("#mandataire").val("");
- 	    	    	  $("#capital-field").val("");
- 	    	    	  $("#fonction-field").val("");
- 	    	    	  $("#categorie-field").val("");
+ 	    	    	  $("#capital-field").val(""); 	    	    	  
  	    	    	  $("#contrat-field").val(""); 
- 	    	    	  
+ 	    	    	  $("#dateDadhesion").val("");
  	    	    	
  	    	    	 
         	       	  // Add Button
@@ -614,12 +591,11 @@ function actions(type){
                     				 url:remoteIp+"/indexPost",
                     				 type:"post",
                     				 data:{
-                    					 nom:       $("#nom-field").val(),
+                    					 code:       $("#code").val(),
                      	    	    	 matricule: $("#matricule").val(),
                      	    	    	 mandataire: $("#mandataire").val(),
-                     	    	    	 capital:   $("#capital-field").val(),
-                     	    	    	 fonction:  $("#fonction-field").val(),
-                     	    	    	 categorie: $("#categorie-field").val(),
+                     	    	    	 capital:   $("#capital-field").val(),                     	    	    	 
+                     	    	    	 dateDadhesion: $("#dateDadhesion").val(),
                      	    	    	 contrat:   $("#contrat-field").val(),
                      	    	    	 size:$("#pageSize").val(),
                      	    	    	 page:((pag.length-1) <= 0) ? 0:(pag.length-1),
@@ -646,13 +622,12 @@ function actions(type){
                     		 
 		                    		    $(".btn-close").click(function(){
 		              		    	    idValue=-10;
-		              		    	    $("#nom-field").val('');
+		              		    	    $("#code").val('');
 		              	    	    	$("#matricule").val('');
 		              	    	    	$("#mandataire").val('');
-		              	    	    	$("#capital-field").val('');
-		              	    	    	$("#fonction-field").val('');
-		              	    	    	$("#categorie-field").val('');
+		              	    	    	$("#capital-field").val('');		              	    	    	
 		              	    	    	$("#contrat-field").val('');
+		              	    	    	$("#dateDadhesion").val('')
 		              		    	   
               		       })
                     		 
@@ -681,19 +656,22 @@ function actions(type){
          	            
                       	    	var list =mainList;
         	        	       var dateAdhesion;
+        	        	       if(list.length==0){
+        	        	    	   alert("Veiller selection le membre enfin de modifier ses informations");
+        	        	       }
                       	       list.forEach(function(element){ 
                       	    	   
                       	    	    if(element[0]==idValue){
                       	    	    	
                       	    	    	 
-                      	    	    	$("#nom-field").val(element[1]);
+                      	    	    	$("#code").val(element[1]);
+                      	    	    	$("#code").prop('disabled',true);
                       	    	    	$("#matricule").val(element[2]);
                       	    	    	$("#matricule").prop('disabled',true);
                       	    	    	$("#mandataire").val(element[3]);
-                      	    	    	$("#capital-field").val(element[4]);                      	    	       
-                      	    	    	$("#categorie-field").val(element[5]).change();
-                      	    	    	$("#fonction-field").val(element[6]).change();                      	    	    	                      	    	    	                     	    	    	
+                      	    	    	$("#capital-field").val(element[4]);                 	    	    	                     	   	    	                      	    	    	                     	    	    	
                       	    	    	$("#contrat-field").val(element[7]).change();
+                      	    	    	$("#dateDadhesion").val(element[8]);
                       	    	    	dateAdhesion=element[8];
                       	    	    	
                       	    	    }
@@ -706,14 +684,12 @@ function actions(type){
                             				 type:"post",
                             				 data:{
                             					 idMember:  idValue,
-                            					 nom:       $("#nom-field").val(),
+                            					 code:      $("#code").val(),
                            	    	    	     matricule: $("#matricule").val(),
                            	    	    	     mandataire:$("#mandataire").val(),
-                           	    	    	     capital:   $("#capital-field").val(),
-                           	    	    	     fonction:  $("#fonction-field").val(),
-                           	    	    	     categorie: $("#categorie-field").val(),
+                           	    	    	     capital:   $("#capital-field").val(),                           	    	    	    
                            	    	    	     contrat:   $("#contrat-field").val(),
-                           	    	    	     date:      dateAdhesion,
+                           	    	    	     dateDadhesion: $("#dateDadhesion").val(),
                            	    	    	     size:      $("#pageSize").val(),
                             				  },
                             		 
@@ -724,13 +700,13 @@ function actions(type){
                  	                    	              $("#div-total").load(location.href+ " #div-total");
                  	                    	              $("#main-form").load(location.href+ " #main-form");
                                        	    	          idValue=-10;
-                                       	    	          $("#nom-field").val('');
+                                       	    	          $("#code").val('');
                                     	    	    	  $("#matricule").val('');
                                     	    	    	  $("#mandataire").val('');
-                                    	    	    	  $("#capital-field").val('');
-                                    	    	    	  $("#fonction-field").val('');
-                                    	    	    	  $("#categorie-field").val('');
-                                    	    	    	  $("#contrat-field").val(''); 
+                                    	    	    	  $("#capital-field").val('');                                    	    	    	 
+                                    	    	    	  $("#contrat-field").val('');
+                                    	    	    	  $("#dateDadhesion").val('')
+                                    	    	    	  
                             		        	          console.log("Tout s'est bien passe dans upda");
                             		        	          errorFonction(); 
                             		                      },        		          
@@ -747,8 +723,7 @@ function actions(type){
 			                            	    	       $("#matricule").val('');
 			                            	    	       $("#mandataire").val('');
 			                            	    	       $("#capital-field").val('');
-			                            	    	       $("#fonction-field").val('');
-			                            	    	       $("#categorie-field").val('');
+			                            	    	       $("#dateDadhesion").val('')
 			                            	    	       $("#contrat-field").val('');
                             		    	   
                             		       })

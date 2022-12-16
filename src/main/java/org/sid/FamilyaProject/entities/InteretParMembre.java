@@ -19,7 +19,9 @@ import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
+import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.metier.Traitement;
+import org.sid.FamilyaProject.users.User;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,7 +33,7 @@ public class InteretParMembre {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id_interet;	
-	private String matriculeEntered;	
+	
 	private double interetDuMembre;	
 	private Date dateInteret;
 	
@@ -44,7 +46,7 @@ public class InteretParMembre {
 	
 	
 	
-	public void partageInteret(PayementRepository payeRepo, InteretParMembreRepository interetRepo, EventsRepository eventRepo,DepenseRepository depenseRepo, MemberRepository memberRepo,ArchiveRepository archivRepo,List<String> errorList ) {
+	public void partageInteret(PayementRepository payeRepo, InteretParMembreRepository interetRepo, EventsRepository eventRepo,DepenseRepository depenseRepo, MemberRepository memberRepo,UserRepository userRepo,ArchiveRepository archivRepo,List<String> errorList ) {
 		     
 		     double interetTotalDansArchive;		     
 		     double interetTotal  = 0.00;
@@ -63,15 +65,23 @@ public class InteretParMembre {
 		     double partDuFondateur=0.00;
 		     Traitement trt= new Traitement();
 		     List<List<Object>> listCapitaux;
-		     
-		         totalContributions=payeRepo.getSommeSubscriptions() !=null? payeRepo.getSommeSubscriptions() : 0;
-  		         getTotalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? (double)memberRepo.getTotalCapitauxInitiaux() : 0.00;
+		         Double getSommeSubscriptions =payeRepo.getSommeSubscriptions();
+		         totalContributions= getSommeSubscriptions!=null? getSommeSubscriptions : 0;
+		         
+		         Double getTotalCapitauxInitiauxFromDatabase = memberRepo.getTotalCapitauxInitiaux();
+  		         getTotalCapitauxInitiaux= getTotalCapitauxInitiauxFromDatabase!=null? (double)getTotalCapitauxInitiauxFromDatabase : 0.00;
 
-		         interetTotalDansArchive=archivRepo.totalBenefitInArchive()!=null ? archivRepo.totalBenefitInArchive():0;
-		         sommePenalite=archivRepo.totalPenalite()!=null ? archivRepo.totalPenalite():0;
+		         Double totalBenefitInArchive=archivRepo.totalBenefitInArchive();
+  		         interetTotalDansArchive= totalBenefitInArchive!=null ? totalBenefitInArchive:0;
+  		         
+  		         Double totalPenalite=archivRepo.totalPenalite();
+		         sommePenalite=totalPenalite!=null ? totalPenalite:0;
 
 		         interetTotal=(interetTotalDansArchive+sommePenalite);
-		         totalDepense=depenseRepo.getTotalOutgo() !=null? depenseRepo.getTotalOutgo() : 0;
+		         
+		         Double getTotalOutgo =depenseRepo.getTotalOutgo();
+		         totalDepense= getTotalOutgo!=null? getTotalOutgo : 0;
+		         
 		         listCapitaux=memberRepo.getCapitalInitialParMembre();		         
                  interetNet=(interetTotal-totalDepense);
                  partDuFondateur=trt.rounder(interetNet*0.5);
@@ -87,6 +97,7 @@ public class InteretParMembre {
 		        	 
 				         for(List<Object> obj : listCapitaux) {		        	 
 				        	 
+				        	 InteretParMembre interet= interetRepo.getInteretInstanceByMatricule((String)obj.get(0));
 				        	
 				        	 if(interetRepo.interetDuMembreByMatricule((String)obj.get(0))==null) {
 				        		 
@@ -95,11 +106,14 @@ public class InteretParMembre {
 							           Set<InteretParMembre> setInteret =new HashSet<InteretParMembre> ();								
 								       setInteret.add(interetInstance);				        	     
 								       interetInstance.setDateInteret(new Date());
-					        	       currentMember = memberRepo.getUserByMatricule((String)obj.get(0));
-					        	       currentMemberTotalContrib=payeRepo.getSommeContribByMaticule((String)obj.get(0))!=null?payeRepo.getSommeContribByMaticule((String)obj.get(0)):0;
+					        	       currentMember = memberRepo.getMemberByMatricule((String)obj.get(0));
+					        	       
+					        	       Double getSommeContribByMaticule =payeRepo.getSommeContribByMaticule((String)obj.get(0));
+					        	       currentMemberTotalContrib=getSommeContribByMaticule !=null?getSommeContribByMaticule:0;
 
-					        	       interetInstance.setMatriculeEntered((String)obj.get(0));		        	      
-					        	       capitalInitialParMembre=memberRepo.getCapitalByMatricule((String) obj.get(0)) !=null ? memberRepo.getCapitalByMatricule((String)obj.get(0)):0;
+					        	       Double  getCapitalByMatricule =  memberRepo.getCapitalByMatricule((String) obj.get(0));   
+					        	       capitalInitialParMembre=getCapitalByMatricule !=null ? getCapitalByMatricule:0;
+					        	       
 					        	       capitalPlusTotalContributionsDuMembre=(capitalInitialParMembre+currentMemberTotalContrib);
 					        	       totalContributionPlusTotalCapitauxInitiaux=(getTotalCapitauxInitiaux+totalContributions);
 					        	       
@@ -118,20 +132,23 @@ public class InteretParMembre {
 				        		 
 				        		  double initialInteret=interetRepo.interetDuMembreByMatricule((String)obj.get(0));
 				        		  double newInteret=trt.rounder(((interetPartageable*capitalPlusTotalContributionsDuMembre)/(totalContributionPlusTotalCapitauxInitiaux)));
-				        		  interetRepo.updateInteretMembre((String)obj.get(0),(initialInteret+newInteret));
+				        		  interetRepo.updateInteretMembre(interet.getId_interet(),(initialInteret+newInteret));
 				        		 
 				        	 } 
 				        	 
-				        	 Member fondateur=memberRepo.getUserFondateur();
+				        	 User fondateur=userRepo.getUserFondateur();
 				        	 System.out.println("++++++++++++ fondateur==fondateur:"+fondateur);
 				        	 System.out.println("++++++++++++ matricule:"+(String)obj.get(0));
-				        	 System.out.println("++++++++++++ fondateur==fondateur:"+fondateur.equals(memberRepo.getUserByMatricule((String)obj.get(0))));
-				        	 System.out.println("++++++++++++ fondateur==fondateur:"+(fondateur==memberRepo.getUserByMatricule((String)obj.get(0))));
+				        	 System.out.println("++++++++++++ fondateur==fondateur:"+fondateur.equals(userRepo.getUserByMatricule((String)obj.get(0))));
+				        	 System.out.println("++++++++++++ fondateur==fondateur:"+(fondateur==userRepo.getUserByMatricule((String)obj.get(0))));
 				        	 
-				        	 if(fondateur!=null && fondateur.equals(memberRepo.getUserByMatricule((String)obj.get(0)))) {
+				        	 if(fondateur!=null && fondateur.equals(userRepo.getUserByMatricule((String)obj.get(0)))) {
 				        		  
 				        		  double initialInteretFondateur=interetRepo.interetDuMembreByMatricule((String)obj.get(0));
-				        		  interetRepo.updateInteretMembre((String)obj.get(0),(initialInteretFondateur+partDuFondateur));
+						        	 System.out.println("++++++++++++ initialInteretFondateur"+initialInteretFondateur);
+						        	 System.out.println("++++++++++++ partDuFondateur"+partDuFondateur);
+						        	 System.out.println("++++++++++++ interet.getId_interet()"+interet.getId_interet());
+				        		  interetRepo.updateInteretMembre(interet.getId_interet(),(initialInteretFondateur+partDuFondateur));
 				        		  
 				        	  }else {
 				        		  
@@ -199,17 +216,9 @@ public class InteretParMembre {
 
 
 
-
-
-
-
 	public void setId_interet(Long id_interet) {
 		this.id_interet = id_interet;
 	}
-
-
-
-
 
 
 
@@ -218,50 +227,11 @@ public class InteretParMembre {
 	}
 
 
-
-
-
-
-
 	public void setMembreDansInteret(Member membreDansInteret) {
 		this.membreDansInteret = membreDansInteret;
 	}
 
 
-
-
-
-
-
-	public String getMatriculeEntered() {
-		return matriculeEntered;
-	}
-
-
-
-
-
-
-
-	public void setMatriculeEntered(String matriculeEntered) {
-		this.matriculeEntered = matriculeEntered;
-	}
-
-
-
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 
 }

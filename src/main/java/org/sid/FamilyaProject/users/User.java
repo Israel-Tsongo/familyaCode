@@ -46,31 +46,34 @@ public class User implements Serializable {
 	@Email(message="Entrer une adresse mail valide")
 	private String email;
 	
+	@NotBlank(message="Le code est obligatoire" )
+	private String code;
+	
 	@NotBlank(message="Le genre est obligatoire" )
 	private String genre;
 	
 	//@UniqueNumeroFicheInterface
 	@NotBlank(message="Le numero du fiche d'adhesion est obligatoire" )
-	@Column(nullable=false , unique = true)	
+	//@Column(nullable=false , unique = true)	
 	private String numeroFiche;
 	
 	@NotBlank(message="Le type de la piece est obligatoire" )
 	private String typePiece;
 	
 	@NotBlank(message="Le numero de la piece d'identite est obligatoire")
-	@Column(nullable=false,unique = true)	
+	//@Column(nullable=false,unique = true)	
 	private String numeroPiece;
 	
 	@NotNull(message="Le montant de votre salaire est obligatoire")
-	@Column(nullable=false)
+	//@Column(nullable=false)
 	private BigDecimal salaire;
 	
 	@NotNull(message="Le pourcentage de retenu est obligatoire")
-	@Column(nullable=false)
+	//@Column(nullable=false)
 	private BigDecimal retenu;
 	
-	@Pattern(regexp="(^|[0-9]{10})",message="Votre numero doit contenir 10 chiffres")
-	@NotBlank(message="Le  numero de telephone est obligatoire" )
+	@Pattern(regexp="(^|[0-9]{10})",message="Votre numero doit contenir 10 chiffres (Ex 0978908909)")
+	@NotBlank(message="Le  numero de telephone est obligatoire " )
 	private String mobile;
 	
 	@NotBlank(message="L'adresse  est obligatoire" )
@@ -86,6 +89,10 @@ public class User implements Serializable {
 	@Column(nullable=false , unique = true)		
 	private String matricule;
 	
+	private String fonction; 
+	
+	private String categorieMembre;	
+	
 	
 	@ManyToMany(cascade = CascadeType.MERGE ,fetch = FetchType.EAGER)	
 	@OnDelete(action = OnDeleteAction.CASCADE)	
@@ -97,7 +104,7 @@ public class User implements Serializable {
 	
 	
 	
-	public User(String nom,BigDecimal retenu,BigDecimal salaire, String numeroFiche, String adresse,String numeroPiece, String typePiece, String postnom, String prenom, String email, String mobile, String password) {
+	public User(String nom,String code, BigDecimal retenu,BigDecimal salaire, String numeroFiche, String adresse,String numeroPiece, String typePiece, String postnom, String prenom, String email, String mobile, String password) {
 		
 		this.retenu=retenu;
 		this.salaire=salaire;
@@ -105,7 +112,8 @@ public class User implements Serializable {
 		this.adresse=adresse;
 		this.numeroPiece=numeroPiece;
 		this.typePiece=typePiece;
-		this.nom = nom;		
+		this.nom = nom;	
+		this.code=code;
 		this.email = email;
 		this.mobile=mobile;
 		this.password = password;
@@ -273,25 +281,25 @@ public class User implements Serializable {
 
 
 
-	public   @NotNull(message = "Le montant de votre salaire est obligatoire") BigDecimal getSalaire() {
+	public    BigDecimal getSalaire() {
 		return salaire;
 	}
 
 
 
-	public void setSalaire( @NotNull(message = "Le montant de votre salaire est obligatoire") BigDecimal salaire) {
+	public void setSalaire(BigDecimal salaire) {
 		this.salaire = salaire;
 	}
 
 
 
-	public   @NotNull(message = "Le pourcentage de retenu est obligatoire") BigDecimal getRetenu() {
+	public   BigDecimal getRetenu() {
 		return retenu;
 	}
 
 
 
-	public void setRetenu(@NotNull(message = "Le pourcentage de retenu est obligatoire") BigDecimal retenu) {
+	public void setRetenu(BigDecimal retenu) {
 		this.retenu = retenu;
 	}
 
@@ -305,6 +313,42 @@ public class User implements Serializable {
 
 	public void setAdresse(String adresse) {
 		this.adresse = adresse;
+	}
+
+
+
+	public String getCode() {
+		return code;
+	}
+
+
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+
+
+	public String getFonction() {
+		return fonction;
+	}
+
+
+
+	public void setFonction(String fonction) {
+		this.fonction = fonction;
+	}
+
+
+
+	public String getCategorieMembre() {
+		return categorieMembre;
+	}
+
+
+
+	public void setCategorieMembre(String categorieMembre) {
+		this.categorieMembre = categorieMembre;
 	}
 	
 	

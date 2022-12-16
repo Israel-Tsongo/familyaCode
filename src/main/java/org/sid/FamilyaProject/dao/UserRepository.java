@@ -3,6 +3,8 @@ package org.sid.FamilyaProject.dao;
 import java.util.List;
 import java.util.Optional;
 
+import org.sid.FamilyaProject.entities.Member;
+import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	@Query(value= "SELECT auth_user.auth_user_id, auth_role.auth_role_id, nom, matricule, email, mobile, password,role_name FROM `auth_user` INNER JOIN `auth_user_role` ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN `auth_role` ON auth_role.auth_role_id=auth_user_role.auth_role_id", nativeQuery=true )
+	@Query(value= "SELECT auth_user.auth_user_id, auth_role.auth_role_id, nom,code, matricule,fonction, email, mobile, password,role_name FROM `auth_user` INNER JOIN `auth_user_role` ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN `auth_role` ON auth_role.auth_role_id=auth_user_role.auth_role_id", nativeQuery=true )
 	public Page <List<List<Object>>> getAllUsers(org.springframework.data.domain.Pageable pageable);
 	
 	@Modifying
@@ -31,16 +33,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	
 	
-	@Query("SELECT u from User u Where u.email = :email")
+
+	@Query(value="SELECT * FROM auth_user INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id WHERE  categorie_membre='Fondateur' AND fonction='President' AND auth_role.role_name='SUPER_USER'", nativeQuery=true )
+	public User getUserFondateur();
+	
+		
+	@Query(value="SELECT * FROM auth_user INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id  WHERE categorie_membre='Membre_effectif' AND fonction='Financier' AND auth_role.role_name='ADMIN_USER'", nativeQuery=true )
+	public List<User> getFinancier();
+	
+	@Query(value="SELECT *  FROM auth_user INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id WHERE categorie_membre='Membre_effectif' AND fonction='Gerant' AND auth_role.role_name='ADMIN_USER'", nativeQuery=true )
+	public List<User> getGerant();
+	
+	
+	@Query("SELECT u from User u where u.email= :email")
 	public User getUserByEmail(@Param("email") String email);
 	
-	@Query("SELECT u from User u Where u.user_id = :id")
+	@Query("SELECT u from User u where u.user_id = :id")
 	public User getUserById(@Param("id") Long UserId);
 
-	@Query("SELECT u from User u Where u.mobile = :phoneNumber")
+	@Query("SELECT  u from User u where u.mobile = :phoneNumber")
 	public User getUserByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 	
-	@Query(value="SELECT * from auth_user" , nativeQuery=true)
+	@Query(value="SELECT * FROM auth_user" , nativeQuery=true)
 	public List<User>findAllAuthUser();
 	
 
@@ -50,10 +64,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value="SELECT matricule from auth_user ORDER BY auth_user_id Desc" , nativeQuery=true)
 	public List<String>getLatestMatricule();
 
+	
+	public Optional<User> findUserByEmail(@Param("email") String email);
 
-	public Optional<User> findUserByEmail(String email);
-
-    @Query(value="SELECT * From auth_user WHERE matricule=:matricula" , nativeQuery=true)
+    @Query(value="SELECT * FROM auth_user WHERE matricule=:matricula" , nativeQuery=true)
 	public User getUserByMatricule(@Param("matricula") String matricule);
 
 
@@ -63,17 +77,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
 	@Modifying
 	@Transactional
-	@Query(value="UPDATE auth_user  INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id  SET auth_user.nom=:nom,auth_user.matricule=:matricule,auth_user.email=:email, auth_user.mobile=:mobile, auth_user.password=:password, auth_user_role.auth_role_id=:role WHERE auth_user.auth_user_id=:auth_user_id AND auth_role.auth_role_id=:auth_role_id",nativeQuery=true)
-	public void updateUser(@Param("auth_user_id") Long idUser,@Param("auth_role_id") Long idRole, String nom,@Param("matricule") String matricule,@Param("email") String email,@Param("mobile") String mobile,  @Param("password") String password,@Param("role")	Long role);
+	@Query(value="UPDATE auth_user  INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id  SET auth_user.nom=:nom,auth_user.code=:code, auth_user.email=:email, auth_user.mobile=:mobile, auth_user.password=:password, auth_user_role.auth_role_id=:role WHERE auth_user.auth_user_id=:auth_user_id AND auth_role.auth_role_id=:auth_role_id",nativeQuery=true)
+	public void updateUser(@Param("auth_user_id") Long idUser,@Param("auth_role_id") Long idRole,@Param("nom") String nom,@Param("code") String code,@Param("email") String email,@Param("mobile") String mobile,  @Param("password") String password,@Param("role") Long role);
+	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE auth_user  INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id  SET  auth_user_role.auth_role_id=:role WHERE auth_user.auth_user_id=:auth_user_id",nativeQuery=true)
+	public void updateRoleUser(@Param("auth_user_id") Long idUser,@Param("role") Long role);
 
-	//DELETE messages , usersmessages  FROM messages  INNER JOIN usersmessages  
-	//WHERE messages.messageid= usersmessages.messageid and messages.messageid = '1'
+	
 
 	
 	@Modifying
 	@Transactional
-	@Query(value="UPDATE auth_user  SET auth_user.genre=:genre,auth_user.type_piece=:typePiece,auth_user.numero_piece=:numeroPiece, auth_user.salaire=:salaire, auth_user.retenu=:retenu, auth_user.adresse=:adresse WHERE auth_user.auth_user_id=:auth_user_id",nativeQuery=true)
-	public void updateOthersDetailsUser(@Param("auth_user_id") Long idUser, @Param("genre") String genre,@Param("typePiece") String typePiece,@Param("numeroPiece") String numeroPiece,  @Param("salaire") String salaire,@Param("retenu")	String retenu, @Param("adresse") String adresse);
+	@Query(value="UPDATE auth_user  SET auth_user.genre=:genre,auth_user.type_piece=:typePiece,auth_user.numero_piece=:numeroPiece, auth_user.salaire=:salaire, auth_user.retenu=:retenu, auth_user.adresse=:adresse, auth_user.matricule=:matricule, auth_user.fonction=:fonction, auth_user.categorie_membre=:categorie, auth_user.numero_fiche=:numeroFiche WHERE auth_user.auth_user_id=:auth_user_id",nativeQuery=true)
+	public void updateOthersDetailsUser(@Param("auth_user_id") Long idUser, @Param("genre") String genre,@Param("typePiece") String typePiece,@Param("numeroPiece") String numeroPiece,  @Param("salaire") String salaire,@Param("retenu")	String retenu, @Param("adresse") String adresse,@Param("matricule") String matricule, @Param("fonction") String fonction, @Param("categorie") String categorie,@Param("numeroFiche") String numeroFiche);
 
 	
 	@Query(value="SELECT auth_user.salaire FROM auth_user WHERE auth_user.matricule = ?1", nativeQuery=true )
@@ -91,15 +109,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	public List<User> getUserByPieceNumber(String pieceNumber);
 
 	
-	@Modifying
-	@Transactional
-	@Query(value="UPDATE auth_user  SET auth_user.nom=:nom,auth_user.mobile=:mobile,auth_user.password=:password WHERE auth_user.email=:email",nativeQuery=true)	
-	public void updateFinancePassword(@Param("email") String email,@Param("nom") String nom,@Param("mobile") String mobile, @Param("password") String password);
-	
-	@Modifying
-	@Transactional
-	@Query(value="UPDATE auth_user  SET auth_user.nom=:nom,auth_user.mobile=:mobile,auth_user.password=:password WHERE auth_user.email=:email",nativeQuery=true)	
-	public void updateGestionPassword(@Param("email") String email,@Param("nom") String nom,@Param("mobile") String mobile, @Param("password") String password);
-	
-	
+
 }

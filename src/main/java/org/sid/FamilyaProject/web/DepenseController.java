@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.sid.FamilyaProject.dao.ArchiveRepository;
+
 import org.sid.FamilyaProject.dao.DepenseRepository;
 import org.sid.FamilyaProject.entities.Depense;
 import org.sid.FamilyaProject.metier.Traitement;
@@ -33,8 +33,7 @@ public class DepenseController {
 	@Autowired
 	private DepenseRepository depRepo;
 	
-	@Autowired
-	private ArchiveRepository archivRepo;
+
 	
 	
 	
@@ -44,12 +43,11 @@ public class DepenseController {
 	public String depense(Model model, @RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc) {
 		
 		Traitement trt = new Traitement();		
-		double interetGeneral=archivRepo.totalBenefitInArchive() !=null? archivRepo.totalBenefitInArchive() : 0;
 		Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));
 		
 
-	   	 
-	   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
+	   Double getTotalOutgo=depRepo.getTotalOutgo();
+	   double totalDepense=getTotalOutgo !=null?getTotalOutgo : 0.00 ;
 	   
 	 
 	    model.addAttribute("lst",trt.converter(DepList));
@@ -78,8 +76,10 @@ public class DepenseController {
 				
 			  
 			   Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
-			   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
-			   		           
+			   
+			   Double getTotalOutgo=depRepo.getTotalOutgo();
+			   double totalDepense=getTotalOutgo !=null?getTotalOutgo : 0.00 ;
+			   
 	           model.addAttribute("lst", trt.converter(DepList));
 	           model.addAttribute("pages", new int[DepList.getTotalPages()]);	
 	           model.addAttribute("currentSize",size);
@@ -90,8 +90,10 @@ public class DepenseController {
 	           return "/depense::mainContainerInDep";
 		   }else {
 			       Page <Depense> depList =depRepo.findByMotifContains(mc,PageRequest.of(page,size));
-				   double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
-			       		           
+			       
+			       Double getTotalOutgo=depRepo.getTotalOutgo();
+				   double totalDepense=getTotalOutgo !=null?getTotalOutgo : 0.00 ;
+				   
 		             model.addAttribute("lst", trt.searchDepConverter(depList));
 		             model.addAttribute("pages", new int[depList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
@@ -129,8 +131,9 @@ public class DepenseController {
 		}
 		
 		Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
-		double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0.00 ;
-		   
+		
+		Double getTotalOutgo=depRepo.getTotalOutgo();
+		double totalDepense=getTotalOutgo !=null?getTotalOutgo : 0.00 ;		   
 							   
 		model.addAttribute("lst", trt.converter(DepList));
 		model.addAttribute("pages", new int[DepList.getTotalPages()]);	
@@ -160,8 +163,8 @@ public class DepenseController {
 		  }else  { System.out.println("Error lors de la suppression");}
 		  
 		 Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
-		 double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo():0 ;   
-		            
+		 Double getTotalOutgo=depRepo.getTotalOutgo();
+		 double totalDepense=getTotalOutgo !=null?getTotalOutgo : 0.00 ;		            
          		   
          model.addAttribute("lst", trt.converter(DepList));
          model.addAttribute("pages", new int[DepList.getTotalPages()]);
@@ -190,8 +193,9 @@ public class DepenseController {
 			  }else  { System.out.println("Rien a Update");}
 		
              Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
-		     double totalDepense=depRepo.getTotalOutgo() !=null?depRepo.getTotalOutgo() : 0 ;
-		 
+            
+             Double getTotalOutgo=depRepo.getTotalOutgo();
+      	    double totalDepense=getTotalOutgo !=null?getTotalOutgo : 0.00 ;		 
 		     								   
 		     model.addAttribute("lst", trt.converter(DepList));
 		     model.addAttribute("pages", new int[DepList.getTotalPages()]);

@@ -30,7 +30,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="20"/>
 				</textElement>
-				<text><![CDATA[Familya Transactions]]></text>
+				<text><![CDATA[Transactions Familia ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="160" y="44" width="252" height="30" uuid="d08a7cd5-d67e-4a0f-876f-a1322dd4770b"/>

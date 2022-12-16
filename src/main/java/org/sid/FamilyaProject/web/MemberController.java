@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 
@@ -21,6 +22,7 @@ import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,8 +50,7 @@ public class MemberController {
 	@Autowired
 	private UserRepository userRepository;
 	
-	@Autowired
-	private UserRepository userRepo;
+	
 	
 	
 	//************** ACCEUILLE************************
@@ -61,8 +62,8 @@ public class MemberController {
 		 
 		Page <List<List<Object>>> MemberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));		
 		
-	   
-	   double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
+		Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
+	    double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
        
 	    model.addAttribute("lst",trt.converter(MemberList));
 		model.addAttribute("pages",new int[MemberList.getTotalPages()]);
@@ -91,27 +92,29 @@ public class MemberController {
 		   if(pagin) {			   	
 			
 			   Page <List<List<Object>>> MemberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
-			   double totalCapitauxInitiaux1=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
-
+			   Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
+			   double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
+		       
 			   		           
 	           model.addAttribute("lst", trt.converter(MemberList));
 	           model.addAttribute("pages", new int[MemberList.getTotalPages()]);	
 	           model.addAttribute("currentPage",page);
 	           model.addAttribute("currentSize",size);
-	           model.addAttribute("totalCapitaux", totalCapitauxInitiaux1);	           
+	           model.addAttribute("totalCapitaux", totalCapitauxInitiaux);	           
 	           model.addAttribute("keyWord", mc);			   
 	           return "index::mainContainer";
 	           
 		   }else {
-			       Page <Member> searchMemberList =memberRepo.findByNomContains(mc,PageRequest.of(page,size));
-				   double totalCapitauxInitiaux2=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
-			       
+			       Page <Member> searchMemberList =memberRepo.findByUserMatriculeContains(mc,PageRequest.of(page,size));
+			       Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
+				   double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
+			       			       
 			       		           
 		             model.addAttribute("lst", trt.searchConverter(searchMemberList));
 		             model.addAttribute("pages", new int[searchMemberList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("currentSize",size);
-		             model.addAttribute("totalCapitaux", totalCapitauxInitiaux2);  
+		             model.addAttribute("totalCapitaux", totalCapitauxInitiaux);  
 		             model.addAttribute("keyWord", mc);            
 		
 		             return "index::mainContainer";
@@ -124,9 +127,9 @@ public class MemberController {
 	
 	
 	@PostMapping("/indexPost")
-	public String postIndexData(Model model,  @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandataire,			
-			                                  @RequestParam() double capital,@RequestParam() String fonction,
-			                                  @RequestParam() String categorie,@RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
+	public String postIndexData(Model model,@RequestParam(defaultValue=" ") String code,  @RequestParam() String matricule, @RequestParam(defaultValue=" ") String mandataire,			
+			                                  @RequestParam() double capital,@RequestParam() @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) Date dateDadhesion,
+			                                  @RequestParam() String contrat,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size		                                     
 			                                  ) {
 		
 		List<String> errorList = new ArrayList<String>();
@@ -136,24 +139,22 @@ public class MemberController {
 		 
 		try {
 			
-			if( memberRepo.getUserByMatricule(matricule)==null) {
-				
-				 if(!matricule.equals("122") && !matricule.equals("222") && !matricule.equals("322") ) {
+			if( memberRepo.getMemberByMatricule(matricule)==null) {				
+				 
 					 
-				     if(userRepository.getUserByMatricule(matricule) !=null  ) {
-				    	 
+				     				    	 
 				    	 BigDecimal salaire=userRepository.getUserByMatricule(matricule).getSalaire();
 				    	 BigDecimal retenu=userRepository.getUserByMatricule(matricule).getRetenu();
 				    			 
 				    	 if (capital>=(salaire.doubleValue()*(retenu.doubleValue()/100))) {
 				
 						  User usr=userRepository.getUserByMatricule(matricule);
-						  Member member =new Member(usr.getNom(),matricule,fonction, new Date(),contrat,categorie,capital,mandataire);
+						  Member member =new Member(dateDadhesion,contrat,capital,mandataire);
 					      
 					      member.setMemberUser(usr);
 					      usr.setMember(member);
 						  memberRepo.save(member );	
-						  trt.verifyGerantAndFinancier(memberRepo,userRepo,matricule,fonction,errorList);
+						 
 						  
 				    	 }else {
 				    		 
@@ -163,20 +164,7 @@ public class MemberController {
 				    		 
 				    	 }
 				     
-				     
-					     }else {				    	 
-					    	 
-							 errorList.add("Aucun utilisateur ne correspond au matricule entre");
-							 System.out.println("Aucun utilisateur ne correspond au matricule entre");
-					     }
-			         
-				     
-				    }else {
-					 
-				    	 errorList.add("Ce numero matricule ne pas utilisable");
-						 System.out.println("Ce numero matricule ne pas utilisable");
-					 
-				    }
+				   
 				 
 				 
 			}else {
@@ -194,10 +182,11 @@ public class MemberController {
 			System.out.println(exc.getMessage()   );
 			
 		}
-		trt.getGerantAndFinancier(memberRepo,userRepo);
+		
 		Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
-		double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
-		   
+		Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
+	    double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
+       		   
 		mv = "index::mainContainer";					   
 		model.addAttribute("lst", trt.converter(memberList));
 		model.addAttribute("pages",new int[memberList.getTotalPages()]);
@@ -222,11 +211,12 @@ public class MemberController {
 			  
 		   memberRepo.deleteById(idMember);	   
 		   
-		  }else  { System.out.println("Rien a foutre");}
+		  }else  { System.out.println("id invalid");}
 		  
 		     Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
-		     double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
-		            
+		     Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
+			 double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
+		       		            
 	         		   
 	         model.addAttribute("lst", trt.converter(memberList));
 	         model.addAttribute("pages", new int[memberList.getTotalPages()]);
@@ -242,26 +232,28 @@ public class MemberController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/update")
-	public String updateMember(Model model, @RequestParam() Long  idMember , @RequestParam(defaultValue="") String mandataire,  @RequestParam() String matricule,			
-            @RequestParam() String capital,@RequestParam() String fonction,
-            @RequestParam() String categorie,@RequestParam() String contrat, @RequestParam() String date, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
+	public String updateMember(Model model, @RequestParam() Long  idMember , @RequestParam(defaultValue="") String mandataire, @RequestParam() String code,  @RequestParam() String matricule,			
+            @RequestParam() String capital,@RequestParam() @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) Date dateDadhesion,
+            @RequestParam() String contrat,  @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
 		     List<String> errorList = new ArrayList<String>();
 		     Traitement trt=new Traitement();
-		     ModelAndView mv=null ;
+		     
 		     
 		     if(idMember>0) {
 			
-					 memberRepo.updateMember(idMember, matricule,mandataire,Double.parseDouble(capital) , fonction, categorie, contrat, new Date());
-					 trt.verifyGerantAndFinancier(memberRepo,userRepo,matricule,fonction,errorList);
+					 memberRepo.updateMember(idMember, mandataire,Double.parseDouble(capital), contrat, dateDadhesion);
+					 //trt.verifyGerantAndFinancier(memberRepo,userRepo,matricule,fonction,errorList);
 					
 			  }else  { 
-				  System.out.println("Error when updating");
+				  System.out.println("Error when updating (id invalid)");
 			  }
-		      trt.getGerantAndFinancier(memberRepo,userRepo);
+		      //trt.getGerantAndFinancier(memberRepo,userRepo);
 		      Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));
-			 double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null?memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
-					 
+		      
+		      Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
+			  double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
+		       					 
 			 								   
 			 model.addAttribute("lst", trt.converter(memberList));
 			 model.addAttribute("pages", new int[memberList.getTotalPages()]);
@@ -282,17 +274,20 @@ public class MemberController {
 		String matricule= memberRepo.getMatriculeById(idMember);
 		
     	List<List<Object>> detailMembre=payeRepo.getDetails(matricule);
-    	Double detteCourante = debiteurRepo.detteCouranteByMatricule(matricule)  !=null ? debiteurRepo.detteCouranteByMatricule(matricule): 0.0;
-    	Double interet = interetRepo.interetDuMembreByMatricule(matricule)  !=null ? interetRepo.interetDuMembreByMatricule(matricule) : 0.0;
+    	
+    	Double detteCouranteByMatricule=debiteurRepo.detteCouranteByMatricule(matricule);
+    	double detteCourante = detteCouranteByMatricule !=null ? detteCouranteByMatricule: 0.0;
+    	Double interetDuMembreByMatricule =interetRepo.interetDuMembreByMatricule(matricule);
+    	double interet = interetDuMembreByMatricule   !=null ? interetDuMembreByMatricule : 0.0;
     	
 		 
 		 
-		 if(memberRepo.getUserByMatricule(matricule)!=null) {
+		 if(memberRepo.getMemberByMatricule(matricule)!=null) {
 				
 		    	
 		    	if(payeRepo.getPayementByMatricule(matricule)==null || payeRepo.getPayementByMatricule(matricule).isEmpty() ) {
 		    		
-			    	 List<List<Object>> lst=memberRepo.getCapitalMatriculeNom(matricule);
+			    	 List<List<Object>> lst= memberRepo.getCapitalMatriculeNom(matricule);
 			    	 model.addAttribute("nom",lst.get(0).get(0));
 					 model.addAttribute("matricule",lst.get(0).get(1));
 					 model.addAttribute("capital",lst.get(0).get(2));
@@ -329,8 +324,8 @@ public class MemberController {
 		 	   String jasperFileName="membre.jrxml";	 	   
 		 	   
 		 	   String fileName="Membre";
-		       List <Member> searchMemberList =memberRepo.findByNomContains(!mc.equals("all")? mc:"");
-
+		       List <Member> searchMemberList =memberRepo.findByUserNomContains(!mc.equals("all")? mc:"");
+              
 		 	   map.put("membre", "Israel");			   
 			   
 			   

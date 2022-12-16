@@ -25,8 +25,7 @@ public class Debiteur  implements Serializable  {
 	private double sommeEmprunt;
 	private Date date_emprunt;
 	private double duree_echeance;
-	private double taux;
-	private String enteredMatric;	
+	private double taux;		
 	private double premierRemboursement;
 	private double detteCourante;
 	private double dettePlusInteret;
@@ -39,9 +38,9 @@ public class Debiteur  implements Serializable  {
 	private Member  member;
 	
 	
-	public Debiteur(String enteredMatric, double sommeEmprunt,  double duree_echeance, double taux,  double detteCourante , Date date_emprunt, double premierRemboursement, double dettePlusInteret, String typeInteret) {
+	public Debiteur( double sommeEmprunt,  double duree_echeance, double taux,  double detteCourante , Date date_emprunt, double premierRemboursement, double dettePlusInteret, String typeInteret) {
 		
-		this.enteredMatric=enteredMatric;
+		
 		this.sommeEmprunt = sommeEmprunt;
 		this.date_emprunt = date_emprunt;
 		this.duree_echeance = duree_echeance;
@@ -56,15 +55,7 @@ public class Debiteur  implements Serializable  {
 	}
 	
 	
-	public String getEnteredMatric() {
-		return enteredMatric;
-	}
 
-
-
-	public void setEnteredMatric(String enteredMatric) {
-		this.enteredMatric = enteredMatric;
-	}
 	
 	public double getSommeEmprunt() {
 		return sommeEmprunt;

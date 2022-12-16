@@ -17,7 +17,7 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="date_payement" class="java.util.Date"/>
-	<field name="enteredMatric" class="java.lang.String"/>
+	<field name="memberPaying" class="org.sid.FamilyaProject.entities.Member"/>
 	<field name="contribMensuel" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -31,7 +31,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="20"/>
 				</textElement>
-				<text><![CDATA[Familya Transactions]]></text>
+				<text><![CDATA[Transactions Familia ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="186" y="52" width="182" height="29" uuid="75959bf1-0f86-4b30-beb7-6588a97bbd82"/>
@@ -82,7 +82,7 @@
 				<textField>
 					<reportElement x="220" y="0" width="100" height="20" uuid="21046f4a-3987-4533-a36e-86b1635fafb5"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$F{enteredMatric}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{memberPaying}.getMemberUser().getMatricule()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="370" y="0" width="100" height="20" uuid="0827af27-ffb3-4805-a7fa-55d324a18356"/>

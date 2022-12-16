@@ -111,12 +111,12 @@ public List<List<Object>> searchConverter(Page <Member> searchMemberList ){
 							 newList= new ArrayList<Object>();
 							 
 							 newList.add(ob.getId_member());
-							 newList.add(ob.getNom());
-							 newList.add(ob.getMatricule());
+							 newList.add(ob.getMemberUser().getCode());
+							 newList.add(ob.getMemberUser().getMatricule());
 							 newList.add(ob.getMandataire());
 							 newList.add(rounder((double)ob.getCapital_Initial()));
-							 newList.add(ob.getCategorieMembre());
-							 newList.add(ob.getFonction());
+							 newList.add(ob.getMemberUser().getCategorieMembre());
+							 newList.add(ob.getMemberUser().getFonction());
 							 newList.add(ob.getTypeContrat());
 							 newList.add((ob.getDate_adhesion().toString()).substring(0, 10));
 							 
@@ -147,8 +147,8 @@ public List<List<Object>> searchConverterPaye(Page <Payement> searchPayeList ){
 							 newList= new ArrayList<Object>();
 							 
 							 newList.add(ob.getId_paye());
-							 newList.add(ob.getMemberPaying().getNom());
-							 newList.add(ob.getEnteredMatric());
+							 newList.add(ob.getMemberPaying().getMemberUser().getCode());
+							 newList.add(ob.getMemberPaying().getMemberUser().getMatricule());
 							 newList.add(rounder((double)ob.getContribMensuel()));													 
 							 newList.add((ob.getDate_payement().toString()).substring(0, 10));
 							 
@@ -174,8 +174,8 @@ public List<List<Object>> searchConverterPaye(Page <Payement> searchPayeList ){
 							 newList= new ArrayList<Object>();
 							 
 							 newList.add(ob.getId_debiteur());
-							 newList.add(ob.getMember().getNom());
-							 newList.add(ob.getEnteredMatric());
+							 newList.add(ob.getMember().getMemberUser().getCode());
+							 newList.add(ob.getMember().getMemberUser().getMatricule());
 							 newList.add(rounder((double)ob.getSommeEmprunt()));
 							 newList.add(ob.getTaux());
 							 newList.add(ob.getDettePlusInteret());							 
@@ -307,8 +307,8 @@ public List<List<Object>> searchRembourseConverter(Page <Events> searchList ){
 							 newList= new ArrayList<Object>();
 							 
 							 newList.add(ob.getId_event());
-							 newList.add(ob.getMembre().getNom());
-							 newList.add(ob.getEntered_matricule());	
+							 newList.add(ob.getMembre().getMemberUser().getCode());
+							 newList.add(ob.getMembre().getMemberUser().getMatricule());	
 							 newList.add(rounder((double)ob.getDette()));
 							 newList.add(rounder((double)ob.getRemboursement_courant()));
 							 newList.add(rounder((double)ob.getMontant_restant()));	
@@ -336,8 +336,8 @@ public List<List<Object>> searchInteretConverter(Page<InteretParMembre> searchIn
 							 newList= new ArrayList<Object>();
 							 
 							 newList.add(ob.getId_interet());
-							 newList.add(ob.getMembreDansInteret().getNom());
-							 newList.add(ob.getMatriculeEntered());	
+							 newList.add(ob.getMembreDansInteret().getMemberUser().getCode());
+							 newList.add(ob.getMembreDansInteret().getMemberUser().getMatricule());	
 							 newList.add(rounder((double)ob.getInteretDuMembre()));			 							 
 						 
 							 viewList.add(newList);		
@@ -387,7 +387,7 @@ public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberR
 		matricule= (String) obj.get(0);
 		solde=(double) obj.get(2);
 		 
-		memberRepo.updateCapitalInitialByMatricule(matricule,solde);
+		//memberRepo.updateCapitalInitialByMatricule(matricule,solde);
 		 
 	 }
 	 
@@ -417,6 +417,7 @@ public Object searchUserConverter(Page<User> searchUserList) {
 							 }
 							 
 							 newList.add(ob.getNom());
+							 newList.add(ob.getCode());
 							 newList.add(ob.getMatricule());
 							 newList.add(ob.getEmail());
 							 newList.add(ob.getMobile());
@@ -566,70 +567,36 @@ public List<List<Object>> converter(List<List<Object>> listMemb ){
  
 }
 
-	public void getGerantAndFinancier(MemberRepository memberRepo,UserRepository userRepo) {
-		
-		if(memberRepo.getGerantAndFinancier()!=null) {
-			
-			List<Member>membre=memberRepo.getGerantAndFinancier();			
-			
-			for(Member m: membre) {			
-				
-				if(m.getFonction().equals("Financier")) {
-					
-					User usr=userRepo.getUserByMatricule(m.getMatricule());
-					User fananceUser=userRepo.getUserByMatricule("222");					
-					String password=usr.getPassword();
-					
-					if(!usr.getPassword().equals(fananceUser.getPassword()))
-					  userRepo.updateFinancePassword("finance@gmail.com",usr.getNom(),usr.getMobile(),password);
-					
-				}else if(m.getFonction().equals("Gerant")) {
-					
-					User usr=userRepo.getUserByMatricule(m.getMatricule());
-					User gerantUser=userRepo.getUserByMatricule("322");
-					
-					String password=usr.getPassword();
-					if(!usr.getPassword().equals(gerantUser.getPassword()))
-						
-					userRepo.updateGestionPassword("gestion@gmail.com",usr.getNom(),usr.getMobile(),password);
-					
-				}
-			}
-		}
-	}
-
-	public void verifyGerantAndFinancier(MemberRepository memberRepo,UserRepository userRepo, String matricule, String fonction,List<String> errorList) {
 	
-		List<Member>membre_gerant=memberRepo.getGerant();
-		List<Member>membre_financier=memberRepo.getFinancier();
-		
-		if(membre_gerant.size()==0) {
-			  userRepo.updateGestionPassword("gestion@gmail.com","Default_gestion_name","0971338817","Familya_@_Password_Gerant");
-		}else if(membre_financier.size()==0) {
-			  userRepo.updateFinancePassword("finance@gmail.com","Default_finance_name","0971338817","Familya_@_Password_Finance");			
-		}
-		
-		
-		
-		if(membre_financier.size()>1) {			
-			    
-			    memberRepo.updateFonction(matricule,"Membre");
-			    errorList.add("Vous ne pouvez pas effectuer cette action tant qu'un autre membre a la fonction de Financier");
-			    errorList.add("Veillez lui demettre de ses fonctions avant d'effectuer cette operation");
 
-		}				
-				
-		if(membre_gerant.size()>1) {
+	public boolean financierNotPresent(UserRepository userRepo) {
+	
+		
+		List<User>membre_financier=userRepo.getFinancier();
+		
+        System.out.println("====>"+membre_financier);
+
+		if( membre_financier.size()==0) {
 			
-				memberRepo.updateFonction(matricule,"Membre");					
-				errorList.add("Vous ne pouvez pas effectuer cette action tant qu'un autre membre a la fonction de Gerant");
-			    errorList.add("Veillez lui demettre de ses fonctions avant d'effectuer cette operation");
-
-	    }
-        
+			return true;
+		}			
+		 
+		 return false;				
 		
+	
+	}
+public boolean gerantNotPresent(UserRepository userRepo) {
+	
 		
-  
+		List<User>membre_gerant=userRepo.getGerant();
+		System.out.println("====>"+membre_gerant);
+		if( membre_gerant.size()==0) {
+			
+			return true;
+		}			
+		 
+		 return false;				
+		
 	
 	}
 	

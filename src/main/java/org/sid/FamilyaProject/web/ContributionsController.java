@@ -62,7 +62,8 @@ public class ContributionsController {
 		
 		Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));		
 		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
-	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
+		Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+		double totalContribution=getSommeSubscriptions !=null?getSommeSubscriptions : 0.00 ;
 	   
 	    
 	    model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
@@ -90,7 +91,8 @@ public class ContributionsController {
 		 		  
 		   	   
 		 Page<List<List<Object>>> memberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));		   
-		 double totalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux() !=null? memberRepo.getTotalCapitauxInitiaux() : 0.00 ;
+		 Double getTotalCapitauxInitiaux=memberRepo.getTotalCapitauxInitiaux();
+		 double totalCapitauxInitiaux= getTotalCapitauxInitiaux !=null? getTotalCapitauxInitiaux : 0.00 ;
     
 					   
 			model.addAttribute("lst", trt.converter(memberList));
@@ -121,8 +123,9 @@ public class ContributionsController {
 			  Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
 			  Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 			  
-			  double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-			   	
+			   Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+			   double totalContribution=getSommeSubscriptions !=null?getSommeSubscriptions : 0.00 ;
+			   
 			   
 			   model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
 	           model.addAttribute("lst", trt.converter(contribList));
@@ -138,24 +141,28 @@ public class ContributionsController {
 			   
 			  
 	           return "contribution::mainContainerContrib";
-		   }else {
+		   }else { 
+			      
 			         Page <Payement> searchContribList = null;
 			         Page <List<List<Object>>>  searchByMatricContribList = null ;
 			         
-			         if(!mc.isEmpty() && dateKeyWord.isEmpty())			        	 
-					      searchContribList =payeRepo.findByenteredMatricContains(mc,PageRequest.of(page,size));
-
+			         if(!mc.isEmpty() && dateKeyWord.isEmpty()) {			        	 
+					      searchContribList =payeRepo.findByEnteredMatriculeOnlyContains(mc,PageRequest.of(page,size));
+			           
 			         
-			         else if(!dateKeyWord.isEmpty() && mc.isEmpty()  ) 
+			         }else if(!dateKeyWord.isEmpty() && mc.isEmpty()  ) { 
 			        	 searchContribList =payeRepo.findByDatePayementOnlyContains(dateKeyWord, PageRequest.of(page,size));
-			         
-			         else if(!dateKeyWord.isEmpty() && !mc.isEmpty()) {
-			        	  searchContribList =payeRepo.findByDatePayementContains(mc,dateKeyWord, PageRequest.of(page,size));
+			        	 
+			         }else if(!dateKeyWord.isEmpty() && !mc.isEmpty()) {
+			        	  searchContribList =payeRepo.findByDatePayementAndMatriculeContains(mc,dateKeyWord, PageRequest.of(page,size));
+			        	  
 			         }
 			         
 				     searchByMatricContribList =payeRepo.getByMaticuleSubscriptionsAndCapitalWithOwnerMember(mc,PageRequest.of(pageAllInfo,size));
-					 double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-					 
+				     
+				     Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+					 double totalContribution=getSommeSubscriptions !=null?getSommeSubscriptions : 0.00 ;
+					   					 
 			         model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(searchByMatricContribList,archivRepo));
 		             model.addAttribute("lst", trt.searchConverterPaye(searchContribList));
 		             model.addAttribute("pages", new int[searchContribList.getTotalPages()]);	
@@ -186,10 +193,10 @@ public class ContributionsController {
 		 
 		try {
 			
-			if( memberRepo.getUserByMatricule(matricule)!=null ) {
+			if( memberRepo.getMemberByMatricule(matricule)!=null ) {
 				
-		              Payement pay =new Payement(matricule,trt.rounder(contribution), new Date());
-		              Member membPay = memberRepo.getUserByMatricule(pay.getEnteredMatric());
+		              Payement pay =new Payement(trt.rounder(contribution), new Date());
+		              Member membPay = memberRepo.getMemberByMatricule(matricule);
 		              Set<Payement>setPay= new HashSet<Payement>();	
 		              setPay.add(pay);
 		              membPay.setPayements(setPay);
@@ -218,8 +225,9 @@ public class ContributionsController {
 		
 		Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
 		Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
-	    double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-		
+		Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+		double totalContribution=getSommeSubscriptions !=null?getSommeSubscriptions : 0.00 ;
+	   		
 	    model.addAttribute("lst",trt.converter(contribList));
 	    model.addAttribute("lstSolde", trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));		
 		model.addAttribute("pages2", new int[capitalContribList.getTotalPages()]);
@@ -251,8 +259,9 @@ public class ContributionsController {
 		   Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
 		   Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 
-	       double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-		   
+		   Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+		   double totalContribution=getSommeSubscriptions !=null?getSommeSubscriptions : 0.00 ;
+		   		   
 		            
 		             mv="contribution::mainContainerContrib";
 		             model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
@@ -287,13 +296,14 @@ public class ContributionsController {
 		      String mv="" ;
 		           if(idContrib>0) {
 			
-					     payeRepo.updateContribution(idContrib, matricule, trt.rounder(contribution), new Date());						   
+					     payeRepo.updateContribution(idContrib,  trt.rounder(contribution), new Date());						   
 					     Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
 						 Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 
 					     
-					      double totalContribution=payeRepo.getSommeSubscriptions() !=null?payeRepo.getSommeSubscriptions() : 0.00 ;
-						 
+						 Double getSommeSubscriptions=payeRepo.getSommeSubscriptions();
+						 double totalContribution=getSommeSubscriptions !=null?getSommeSubscriptions : 0.00 ;
+						   						 
 						  mv="contribution::mainContainerContrib";								   
 						  model.addAttribute("lst", trt.converter(contribList));
 						  model.addAttribute("lstSolde",trt.converterCalculInteretAlaSortie(capitalContribList,archivRepo));
@@ -342,17 +352,17 @@ public class ContributionsController {
 		 	   
 		 	  
 		 	 if(!matricule.isEmpty() && dateValue.isEmpty())			        	 
-			      searchContribList =payeRepo.findByenteredMatricContains(mc);
+			      searchContribList =payeRepo.findByEnteredMatriculeOnlyContains(mc);
 
 	         
 	         else if(!dateValue.isEmpty() && matricule.isEmpty()  ) 
 	        	 searchContribList =payeRepo.findByDatePayementOnlyContains(dateKeyWord);
 	         
 	         else if(!dateValue.isEmpty() && !matricule.isEmpty()) {
-	        	  searchContribList =payeRepo.findByDatePayementContains(mc,dateKeyWord);
+	        	  searchContribList =payeRepo.findByDatePayementAndMatriculeContains(mc,dateKeyWord);
 	         }
 	         else if(dateValue.isEmpty() && matricule.isEmpty()) {
-	        	  searchContribList =payeRepo.findByenteredMatricContains("");
+	        	  searchContribList =payeRepo.findByEnteredMatriculeOnlyContains("");
 	         }
 		 	    
 			   jasperFileName="contribution.jrxml";

@@ -1,15 +1,23 @@
 package org.sid.FamilyaProject.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.sid.FamilyaProject.dao.MemberRepository;
+import org.sid.FamilyaProject.dao.RoleRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.metier.Traitement;
+import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
+import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +31,8 @@ import net.sf.jasperreports.engine.JRException;
 @Controller
 public class ProfileController {
 	
-	
+    @Autowired
+	private UserDetailsServiceImpl userDetailsService ; 
 	
 	@Autowired
 	private MemberRepository memberRepo;
@@ -31,6 +40,9 @@ public class ProfileController {
 	
 	@Autowired
 	private UserRepository userRepo;
+	
+	@Autowired
+	private RoleRepository roleRepo;
 	
 	
 	//************** ACCEUILLE************************
@@ -149,22 +161,33 @@ public class ProfileController {
 	//************** UPDATE ************************
 	
 	@PostMapping("/updateUserProf")
-	public String updateUserProfile(Model model, @RequestParam() Long  idUser ,@RequestParam() Long  idRole ,@RequestParam() String nom,  @RequestParam() String matricule,			
+	public String updateUserProfile(Authentication authentication, Model model, @RequestParam() Long  idUser ,@RequestParam() Long  idRole ,@RequestParam() String nom, @RequestParam() String code, 			
             @RequestParam() String email,@RequestParam() String mobile,
             @RequestParam(defaultValue=" ") String password,@RequestParam(defaultValue=" ") String currentPassword, @RequestParam() Long role,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
-		     BCryptPasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
+		     
+			BCryptPasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
+			
+			String authenticatedUserEmail= authentication.getName();
+			User usr= userDetailsService.getUserByEmail(authenticatedUserEmail);
+			
+			Set<Role> currentRoles=usr.getRoles();
+			
 		     Traitement trt=new Traitement();
 		    
-		           if(idUser>0) {
-		        	   
-		        	    if(idUser !=1) {
-			             
-					     userRepo.updateUser(idUser,idRole, nom, matricule,email , mobile, password.isBlank() ? currentPassword:passwordEncoder.encode(password), role);						   
-					     memberRepo.updateName(matricule, nom);
-		        	    }else {
-		        	    	
-		        	    	System.out.println("Vous n ete pas autorise");
-		        	    }
+		           if(idUser>0 && authentication!=null) {
+		        	    
+		        	   for (Role rol : currentRoles) {
+							
+							if  (rol.getRole_name().equals("SUPER_USER")) {
+								
+								 userRepo.updateUser(idUser,idRole, nom,code, email , mobile, password.isBlank() ? currentPassword:passwordEncoder.encode(password), role);						   
+							     		       	    
+			             				    
+							}else {
+	        	    	
+								System.out.println("Vous n ete pas autorise");
+							}
+		        	   }
 			   
 			  }else  { System.out.println("error when updating");}
 		           
@@ -197,6 +220,8 @@ public class ProfileController {
 					model.addAttribute("adresse",usr.getAdresse());
 					model.addAttribute("genre",usr.getGenre());
 					model.addAttribute("typePiece",usr.getTypePiece());
+					model.addAttribute("fonction",usr.getFonction());
+					model.addAttribute("categorie",usr.getCategorieMembre());
 					model.addAttribute("numeroPiece",usr.getNumeroPiece());
 					model.addAttribute("salaire",usr.getSalaire());
 					model.addAttribute("retenu",usr.getRetenu());
@@ -215,24 +240,65 @@ public class ProfileController {
 	//************** UPDATE OTHER USER ************************
 	
 		@PostMapping("/updateOtherUserDetails")
-		public String updateUserOtherDetails(Model model, @RequestParam() Long  idUser ,@RequestParam() String genre,  @RequestParam() String typePiece,			
-	            @RequestParam() String numeroPiece,@RequestParam() String salaire,
-	            @RequestParam(defaultValue=" ") String retenu,@RequestParam(defaultValue=" ") String adresse,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
+		public String updateUserOtherDetails(Authentication authentication, Model model, @RequestParam() Long  idUser ,@RequestParam() String genre,  @RequestParam() String typePiece,			
+	            @RequestParam() String numeroPiece,@RequestParam() String salaire,@RequestParam() String matricule,@RequestParam() String numeroFiche,@RequestParam() String fonction,@RequestParam() String categorie,
+	            @RequestParam(defaultValue=" ") String retenu,@RequestParam(defaultValue=" ") String adresse, @RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 			     
+				String authenticatedUserEmail= authentication.getName();
+				User usr= userDetailsService.getUserByEmail(authenticatedUserEmail);
+				List<String> errorList = new ArrayList<String>();	
+				Set<Role> currentRoles=usr.getRoles();
+				List <String> rolesList=currentRoles.stream().map(s -> s.getRole_name()).collect(Collectors.toList());
+
 			     Traitement trt=new Traitement();
 			     
-			           if(idUser>0) {
-			        	   
-			        	    if(idUser !=0 ) {
-				             
-			        	    	userRepo.updateOthersDetailsUser(idUser, genre, typePiece,numeroPiece , salaire, retenu, adresse);						   
-						     
-			        	    }else {
+			           if(idUser>0 && authentication!=null && rolesList.contains("SUPER_USER")) {			        	   
+			        	  
+								User user = userRepo.getUserById(idUser);
+								if(!user.getFonction().equals(fonction)) {
+									
+									if(fonction.equals("Membre")) {
+										
+										
+										
+										userRepo.updateOthersDetailsUser(idUser, genre, typePiece,numeroPiece , salaire, retenu, adresse,matricule,fonction,categorie,numeroFiche);						   
+										
+										Role memberRole=roleRepo.findMemberRole();									    
+									    userRepo.updateRoleUser(idUser,memberRole.getRole_id());
+									    
+									}else if(trt.financierNotPresent(userRepo) && fonction.equals("Financier") ) {
+										
+										userRepo.updateOthersDetailsUser(idUser, genre, typePiece,numeroPiece , salaire, retenu, adresse,matricule,fonction,categorie,numeroFiche);						   
+									    
+										Role adminRole=roleRepo.findAdminRole();									    
+									    userRepo.updateRoleUser(idUser,adminRole.getRole_id());
+									    
+									}else if(trt.gerantNotPresent(userRepo) && fonction.equals("Gerant")) {
+										
+										userRepo.updateOthersDetailsUser(idUser, genre, typePiece,numeroPiece , salaire, retenu, adresse,matricule,fonction,categorie,numeroFiche);						   
+										
+										Role adminRole=roleRepo.findAdminRole();									    
+									    userRepo.updateRoleUser(idUser,adminRole.getRole_id());
+									}else {
+										
+										errorList.add("Vous ne pouvez pas effectuer cette action tant qu'un autre membre a cette meme fonction");
+										errorList.add("Veillez lui demettre de ses fonctions avant d'effectuer cette operation");
+                                        System.out.println("Veillez lui demettre de ses fonctions avant d'effectuer cette operation");
+									
+									}
+
+				        	    }else {
+				        	    	
+				        	    	userRepo.updateOthersDetailsUser(idUser, genre, typePiece,numeroPiece , salaire, retenu, adresse,matricule,fonction,categorie,numeroFiche);						   
+
+				        	    }
+			        	   }else {
+			        		   errorList.add("Vous n ete pas autorise a effectuer cette action");
+			        	    	System.out.println("Vous n ete pas autorise a effectuer cette action");
 			        	    	
-			        	    	System.out.println("Vous n ete pas autorise");
 			        	    }
 				   
-				  }else  { System.out.println("error when updating");}
+				  
 			           
 		           Page <List<List<Object>>> userList =userRepo.getAllUsers(PageRequest.of(page,size));		
 
@@ -240,8 +306,11 @@ public class ProfileController {
 					  model.addAttribute("lst", trt.converter(userList));
 					  model.addAttribute("pages", new int[userList.getTotalPages()]);
 					  model.addAttribute("currentSize",size);
-					  model.addAttribute("currentPage",page);				  
-		              
+					  model.addAttribute("currentPage",page);
+					  model.addAttribute("errorList",errorList);
+                    
+	        	      System.out.println("========>"+errorList);
+
 			 
 				return "userDetails::mainContainerProfile";
 		

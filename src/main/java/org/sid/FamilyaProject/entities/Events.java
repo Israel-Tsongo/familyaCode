@@ -35,7 +35,7 @@ public class Events {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id_event;
-	private String enteredMatricule;
+	
 	private double echeance_courant;	
 	private Date date_event;
 	private double dette;
@@ -51,9 +51,9 @@ public class Events {
 
  
 	
-	public Events( String entered_matricule,double remboursement_courant ,Date date_event ) {
+	public Events(double remboursement_courant ,Date date_event ) {
 		
-		this.enteredMatricule=entered_matricule;
+		
 		this.date_event=date_event;
 		this.remboursement_courant=remboursement_courant;
 		
@@ -61,7 +61,7 @@ public class Events {
 	}
 	
 
-	public void computing (String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo, ArchiveRepository archivRepo,List<String> errorList ) {
+	public void computing (String enteredMatricule, String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo, ArchiveRepository archivRepo,List<String> errorList ) {
 		Traitement trt = new Traitement ();
 		double montant_restant=0.00;
 		double dettePlusInteret=0.00;
@@ -79,11 +79,11 @@ public class Events {
 			     taux= obj.get(1);	
 			     echeance= obj.get(2);
 			     
-				if( eventRepo.matricIsExist(getEntered_matricule())){
+				if( eventRepo.matricIsExist(enteredMatricule)){
 					 
-					dette=eventRepo.getDetteByMatricule(getEntered_matricule()).get(eventRepo.getDetteByMatricule(getEntered_matricule()).size()-1);
-					montant_restant=eventRepo.getMontantRestantByMatricule(getEntered_matricule()).get(eventRepo.getDetteByMatricule(getEntered_matricule()).size()-1);
-					curent_echeance =eventRepo.getEcheanceCourantByMatricule(getEntered_matricule()).get(eventRepo.getEcheanceCourantByMatricule(getEntered_matricule()).size()-1);					
+					dette=eventRepo.getDetteByMatricule(enteredMatricule).get(eventRepo.getDetteByMatricule(enteredMatricule).size()-1);
+					montant_restant=eventRepo.getMontantRestantByMatricule(enteredMatricule).get(eventRepo.getDetteByMatricule(enteredMatricule).size()-1);
+					curent_echeance =eventRepo.getEcheanceCourantByMatricule(enteredMatricule).get(eventRepo.getEcheanceCourantByMatricule(enteredMatricule).size()-1);					
 					
 				    interetPartiel=((montant_restant*(taux/100)));
 				    dettePlusInteret=montant_restant+interetPartiel;				    
@@ -145,16 +145,16 @@ public class Events {
 						 					    	             Debiteur debit =debiteurRepo.getDebiteurByMatricule(enteredMatricule);								 						        	        
 			 						        	                 debiteurRepo.updateDetteCourante( debit.getId_debiteur(), getMontant_restant() ) ;
 						 					    	             eventRepo.save(e);
-								 						         double reste=eventRepo.getMontantRestantByMatricule(getEntered_matricule()).get(eventRepo.getDetteByMatricule(getEntered_matricule()).size()-1);
+								 						         double reste=eventRepo.getMontantRestantByMatricule(enteredMatricule).get(eventRepo.getDetteByMatricule(enteredMatricule).size()-1);
 								 						         
 								 						         if(reste==0) {
 								 						        	 
 								 						        	        
 								 						        	try { 
 								 						        	        Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(enteredMatricule);
-								 						        	        Member memb = memberRepo.getUserByMatricule(getEnteredMatricule());
-								 						        	        double interetGenere=eventRepo.totalBenefitByMatricule(getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(getEnteredMatricule()): 0;
-								 						        	        Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite() );
+								 						        	        Member memb = memberRepo.getMemberByMatricule(enteredMatricule);
+								 						        	        double interetGenere=eventRepo.totalBenefitByMatricule(enteredMatricule)!=null ? eventRepo.totalBenefitByMatricule(enteredMatricule): 0;
+								 						        	        Archive archiv =  new Archive(memb.getMemberUser().getNom(),debiteur.getMember().getMemberUser().getMatricule(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite() );
 								 						        	       								 						        	       
 								 						        	        archivRepo.save(archiv);
 								 						        	        
@@ -198,7 +198,7 @@ public class Events {
 	/////////////////////////////// INTERET CONSTANT ///////////////////////////////////////////////////		
 	
 	
-	public void interetConstant (String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,List<String> errorList ) {
+	public void interetConstant (String enteredMatricule,String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,List<String> errorList ) {
 		
 		
 		Traitement trt = new Traitement ();
@@ -213,17 +213,17 @@ public class Events {
 		double N=0.00;
 		
 	
-		List<List<Double>> detteInfo= debiteurRepo.getDetteByMatricule(e.enteredMatricule);
+		List<List<Double>> detteInfo= debiteurRepo.getDetteByMatricule(e.getMembre().getMemberUser().getMatricule());
 		             
 		for(List<Double> obj: detteInfo) {		
 			
 			    taux= obj.get(1);	
 			    echeance= obj.get(2);
-				if( eventRepo.matricIsExist(e.getEntered_matricule())){					
+				if( eventRepo.matricIsExist(e.getMembre().getMemberUser().getMatricule())){					
 					
-					dette=eventRepo.getDetteByMatricule(e.getEntered_matricule()).get(eventRepo.getDetteByMatricule(e.getEntered_matricule()).size()-1);
-					montant_restant=eventRepo.getMontantRestantByMatricule(e.getEntered_matricule()).get(eventRepo.getDetteByMatricule(e.getEntered_matricule()).size()-1);
-					curent_echeance =eventRepo.getEcheanceCourantByMatricule(getEntered_matricule()).get(eventRepo.getEcheanceCourantByMatricule(e.getEntered_matricule()).size()-1);					
+					dette=eventRepo.getDetteByMatricule(e.getMembre().getMemberUser().getMatricule()).get(eventRepo.getDetteByMatricule(e.getMembre().getMemberUser().getMatricule()).size()-1);
+					montant_restant=eventRepo.getMontantRestantByMatricule(e.getMembre().getMemberUser().getMatricule()).get(eventRepo.getDetteByMatricule(e.getMembre().getMemberUser().getMatricule()).size()-1);
+					curent_echeance =eventRepo.getEcheanceCourantByMatricule(enteredMatricule).get(eventRepo.getEcheanceCourantByMatricule(e.getMembre().getMemberUser().getMatricule()).size()-1);					
 					
 					interetGeneral=((obj.get(0)*taux)/100)*echeance;
 				    interetPartiel=((obj.get(0)*(taux/100)));
@@ -257,10 +257,10 @@ public class Events {
 		                  
 					   if(tabName.equals("Anticiper")) {
 						   
-			        		Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(e.enteredMatricule);
-			        		Member memb = memberRepo.getUserByMatricule(e.getEnteredMatricule());
+			        		Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(e.getMembre().getMemberUser().getMatricule());
+			        		Member memb = memberRepo.getMemberByMatricule(e.getMembre().getMemberUser().getMatricule());
 			        		
-						   if(!eventRepo.matricIsExist(e.getEntered_matricule())){	
+						   if(!eventRepo.matricIsExist(e.getMembre().getMemberUser().getMatricule())){	
 							   
 							      if(remboursement==trt.rounder((dette+((dette* echeance)/100)))) {
 							    	  
@@ -272,8 +272,8 @@ public class Events {
 							    	  debiteurRepo.updateDetteCourante(debiteur.getId_debiteur(), getMontant_restant() ) ;
 							    	  eventRepo.save(e);
 							    	  
-						        	 double interetGenere=eventRepo.totalBenefitByMatricule(e.getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getEnteredMatricule()): 0;
-						        	 Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
+						        	 double interetGenere=eventRepo.totalBenefitByMatricule(e.getMembre().getMemberUser().getMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getMembre().getMemberUser().getMatricule()): 0;
+						        	 Archive archiv =  new Archive(memb.getMemberUser().getNom(),debiteur.getMember().getMemberUser().getMatricule(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
 						        	 archivRepo.save(archiv);						        	 
 						        	 debiteurRepo.deleteById(debiteur.getId_debiteur()) ;		        	 						    	   			
 							    	 
@@ -314,8 +314,8 @@ public class Events {
 							    	  //setMontant_restant(0.0);
 							    	  setProchainMontant(0.0);
 							    	  eventRepo.save(e);
-							    	  double interetGenere=eventRepo.totalBenefitByMatricule(e.getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getEnteredMatricule()): 0;
-							          Archive archiv = new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
+							    	  double interetGenere=eventRepo.totalBenefitByMatricule(e.getMembre().getMemberUser().getMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getMembre().getMemberUser().getMatricule()): 0;
+							          Archive archiv = new Archive(memb.getMemberUser().getNom(),debiteur.getMember().getMemberUser().getMatricule(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
 							          archivRepo.save(archiv);						        	 
 							          debiteurRepo.deleteById(debiteur.getId_debiteur()) ;						          
 							          
@@ -370,16 +370,16 @@ public class Events {
 						 					    	 			 	     
 							        	                               debiteurRepo.updateDetteCourante(debit.getId_debiteur(), getMontant_restant() ) ;							 						  
 							 					    	               eventRepo.save(e);
-									 						           double reste=eventRepo.getMontantRestantByMatricule(e.getEntered_matricule()).get(eventRepo.getDetteByMatricule(e.getEntered_matricule()).size()-1);
+									 						           double reste=eventRepo.getMontantRestantByMatricule(e.getMembre().getMemberUser().getMatricule()).get(eventRepo.getDetteByMatricule(e.getMembre().getMemberUser().getMatricule()).size()-1);
 						 					    	                  
 									 						           if(reste==0) {
 										 						        	 
 										 						        	try { 								 						        		   
 										 						        		
-										 						        		Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(e.enteredMatricule);
-									 						        	        Member memb = memberRepo.getUserByMatricule(e.getEnteredMatricule());								 						        		
-										 						        		double interetGenere=eventRepo.totalBenefitByMatricule(e.getEnteredMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getEnteredMatricule()): 0;
-										 						        	        Archive archiv =  new Archive(memb.getNom(),debiteur.getEnteredMatric(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
+										 						        		Debiteur debiteur =debiteurRepo.getDebiteurByMatricule(e.getMembre().getMemberUser().getMatricule());
+									 						        	        Member memb = memberRepo.getMemberByMatricule(e.getMembre().getMemberUser().getMatricule());								 						        		
+										 						        		double interetGenere=eventRepo.totalBenefitByMatricule(e.getMembre().getMemberUser().getMatricule())!=null ? eventRepo.totalBenefitByMatricule(e.getMembre().getMemberUser().getMatricule()): 0;
+										 						        	        Archive archiv =  new Archive(memb.getMemberUser().getNom(),debiteur.getMember().getMemberUser().getMatricule(),debiteur.getSommeEmprunt(),debiteur.getDuree_echeance(),debiteur.getTaux(),debiteur.getDettePlusInteret(),debiteur.getTypeInteret(),debiteur.getDate_emprunt(),trt.rounder(interetGenere),debiteur.getFormerPenalite());
 										 						        	        archivRepo.save(archiv);					 						        		
 										 						        	        debiteurRepo.deleteById(debiteur.getId_debiteur()) ;
 										 						        	        errorList.add("Vous n avez plus de dettes");
@@ -435,13 +435,7 @@ public class Events {
 		this.id_event = id_event;
 	}
 
-	public String getEntered_matricule() {
-		return enteredMatricule;
-	}
-
-	public void setEntered_matricule(String entered_matricule) {
-		this.enteredMatricule = entered_matricule;
-	}
+	
 
 	public double getEcheance_courant() {
 		return echeance_courant;
@@ -498,25 +492,6 @@ public class Events {
 	public void setMembre(Member membre) {
 		this.membre = membre;
 	}
-
-
-
-
-
-	public String getEnteredMatricule() {
-		return enteredMatricule;
-	}
-
-
-
-
-
-	public void setEnteredMatricule(String enteredMatricule) {
-		this.enteredMatricule = enteredMatricule;
-	}
-
-
-
 
 
 	public double getProchainMontant() {
