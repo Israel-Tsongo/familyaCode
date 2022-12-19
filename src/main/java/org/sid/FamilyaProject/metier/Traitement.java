@@ -419,6 +419,7 @@ public Object searchUserConverter(Page<User> searchUserList) {
 							 newList.add(ob.getNom());
 							 newList.add(ob.getCode());
 							 newList.add(ob.getMatricule());
+							 newList.add(ob.getFonction());
 							 newList.add(ob.getEmail());
 							 newList.add(ob.getMobile());
 							 newList.add(ob.getPassword());

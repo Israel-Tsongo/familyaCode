@@ -17,13 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface EventsRepository extends JpaRepository<Events, Long>{
 	
-	@Query(value= "SELECT * FROM `events`  INNER JOIN member ON member.id_member=events.foreign_key_for_members INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule=:matricule", nativeQuery=true )
-	public Page<Events> getEventsByMatricule(@Param("matricule") String matricule, org.springframework.data.domain.Pageable pageable);
-	
-	
-	@Query(value= "SELECT * FROM `events` INNER JOIN member ON member.id_member=events.foreign_key_for_members INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule=:matricule", nativeQuery=true )
-	public List<Events> getEventByMatricule(@Param("matricule") String matricule);
-	
+		@Query(value= "SELECT * FROM `events`  INNER JOIN member ON member.id_member=events.foreign_key_for_members INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule=:matricule", nativeQuery=true )
+		public Page<Events> getEventsByMatricule(@Param("matricule") String matricule, org.springframework.data.domain.Pageable pageable);
+		
+		
+		@Query(value= "SELECT * FROM `events` INNER JOIN member ON member.id_member=events.foreign_key_for_members INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule=:matricule", nativeQuery=true )
+		public List<Events> getEventByMatricule(@Param("matricule") String matricule);
+		
+		@Query(value="SELECT * FROM events  WHERE id_event = ?1", nativeQuery=true )
+		public Events getRemboursementById(Long id);
 	
 	
 	   @Query(value="SELECT events.id_event, code, matricule, dette,echeance_courant,remboursement_courant,montant_restant, interet_partiel,date_event FROM events INNER JOIN member ON member.id_member IN  (events.foreign_key_for_members) INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id", nativeQuery=true)

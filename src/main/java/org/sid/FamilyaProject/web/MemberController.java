@@ -6,18 +6,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.sid.FamilyaProject.dao.DebiteurRepository;
-
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
+import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.dao.PayementRepository;
 import org.sid.FamilyaProject.dao.UserRepository;
 import org.sid.FamilyaProject.entities.Member;
-
+import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.metier.Traitement;
-
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
 import net.sf.jasperreports.engine.JRException;
 
 @Controller
@@ -49,6 +46,9 @@ public class MemberController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private OperationRepository operaRepo;
 	
 	
 	
@@ -154,6 +154,8 @@ public class MemberController {
 					      member.setMemberUser(usr);
 					      usr.setMember(member);
 						  memberRepo.save(member );	
+						  operaRepo.save(new Operation("Un utilisateur de matricule "+usr.getMatricule() +" vient d'etre ajouté comme Membre  de familia" ,new Date()));	
+
 						 
 						  
 				    	 }else {
@@ -208,8 +210,10 @@ public class MemberController {
 		 
 		 
 		  if (idMember>0) {
-			  
-		   memberRepo.deleteById(idMember);	   
+			Member membre =memberRepo.getMemberById(idMember) ;
+		   memberRepo.deleteById(idMember);	
+		  operaRepo.save(new Operation("Un Membre de matricule "+membre.getMemberUser().getMatricule() +" vient d'etre supprime de la liste des membres" ,new Date()));	
+
 		   
 		  }else  { System.out.println("id invalid");}
 		  
@@ -243,9 +247,11 @@ public class MemberController {
 		     if(idMember>0) {
 			
 					 memberRepo.updateMember(idMember, mandataire,Double.parseDouble(capital), contrat, dateDadhesion);
-					 //trt.verifyGerantAndFinancier(memberRepo,userRepo,matricule,fonction,errorList);
-					
-			  }else  { 
+					 operaRepo.save(new Operation("Un membre de matricule "+matricule+" vient d'etre mise à jour sur la liste de membres,nouvelles infos: capital: " +capital+" mandataire: "+mandataire+"contrat: "+contrat+"date d'adhesion :"+dateDadhesion,new Date()));	
+
+					 
+
+			  }else  {
 				  System.out.println("Error when updating (id invalid)");
 			  }
 		      //trt.getGerantAndFinancier(memberRepo,userRepo);

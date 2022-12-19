@@ -14,9 +14,11 @@ import org.sid.FamilyaProject.dao.DepenseRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
+import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
+import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,7 +36,8 @@ import net.sf.jasperreports.engine.JRException;
 @Controller
 public class RemboursementController {
 	
-	
+	@Autowired
+	private OperationRepository operaRepo;
 	
 
 	@Autowired
@@ -198,7 +201,7 @@ public class RemboursementController {
 													setterEvent.add(e);
 													curentMember.setEvents(setterEvent);
 													e.setMembre(curentMember);
-											        e.computing(matricule,tabName,interetRepo,e.getRemboursement_courant(), memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,errorList );				
+											        e.computing(matricule,tabName,interetRepo,e.getRemboursement_courant(), memberRepo, debiteurRepo, eventRepo ,e,depenseRepo, archivRepo,operaRepo,errorList );				
 													  
 											 }else{
 												 
@@ -206,7 +209,7 @@ public class RemboursementController {
 													setterEvent.add(e);
 													curentMember.setEvents(setterEvent);
 													e.setMembre(curentMember);
-											        e.interetConstant(matricule,tabName,interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,errorList );				
+											        e.interetConstant(matricule,tabName,interetRepo,e.getRemboursement_courant(),  memberRepo, debiteurRepo, eventRepo ,e,depenseRepo,archivRepo,operaRepo,errorList );				
 															  
 											 }
 						
@@ -260,10 +263,13 @@ public class RemboursementController {
 		  
 		 
 		  if (idRemb>0) {
-			  
-		   eventRepo.deleteById(idRemb);		   
+		   Events ev =eventRepo.getRemboursementById(idRemb);
+		   eventRepo.deleteById(idRemb);
+		   operaRepo.save(new Operation("Un Remboursement du membre de matricule "+ev.getMembre().getMemberUser().getMatricule()+" vient d'etre supprimé de la liste de remboursements", new Date()));	
+
+		   
 		          
-		  }else  { System.out.println("error lors de la suppression");}
+		  }else  { System.out.println("id invalid");}
 		  Page <List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));
 
 		  		   
@@ -286,11 +292,13 @@ public class RemboursementController {
 		      
 		      
 		       if(idRemb>0) {
-			
-				   eventRepo.updateRembourse(idRemb, remboursement, new Date());					   
+		    	  // Events ev =eventRepo.getRemboursementById(idRemb);
+				   eventRepo.updateRembourse(idRemb, remboursement, new Date());
+				   operaRepo.save(new Operation("Un Remboursement du membre de matricule "+matricule+" vient d'etre mise à jour sur la liste de remboursements,nouvelles infos: nouveau montant Rembourse: " +remboursement, new Date()));	
+
 				
 			   
-			  }else  { System.out.println("Rien a Update");}
+			  }else  { System.out.println("id invalid");}
 		           
 	              Page<List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));				 
 				 								   

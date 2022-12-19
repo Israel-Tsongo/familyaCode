@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -32,7 +33,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	public void removeUserById(@Param("Id_user") Long id_user);
 	
 	
-	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE auth_user   SET auth_user.nom=:nom,auth_user.email=:email, auth_user.mobile=:mobile, auth_user.password=:newPassword, auth_user.genre=:genre,auth_user.type_piece=:typePiece,auth_user.numero_piece=:numeroPiece,auth_user.adresse=:adresse WHERE auth_user.matricule=:matricule",nativeQuery=true)
+	public void updateUserProfile(@Param("matricule") String matricule,@Param("nom") String nom, @Param("email") String email,@Param("mobile") String mobile,@Param("newPassword") String newPassword, @Param("genre") String genre,  @Param("typePiece") String typePiece, @Param("numeroPiece") String numeroPiece, @Param("adresse") String adresse);
 
 	@Query(value="SELECT * FROM auth_user INNER JOIN auth_user_role ON auth_user.auth_user_id=auth_user_role.auth_user_id INNER JOIN auth_role ON auth_role.auth_role_id=auth_user_role.auth_role_id WHERE  categorie_membre='Fondateur' AND fonction='President' AND auth_role.role_name='SUPER_USER'", nativeQuery=true )
 	public User getUserFondateur();

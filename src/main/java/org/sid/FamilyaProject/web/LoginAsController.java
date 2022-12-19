@@ -1,9 +1,9 @@
 package org.sid.FamilyaProject.web;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.sid.FamilyaProject.dao.DebiteurRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
@@ -15,16 +15,14 @@ import org.sid.FamilyaProject.security.UserDetailsServiceImpl;
 import org.sid.FamilyaProject.users.Role;
 import org.sid.FamilyaProject.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -52,18 +50,50 @@ public class LoginAsController {
 	@Autowired
 	private UserRepository userRepo;
 	
+	@PostMapping("/updateCurrentUserData")
+	public String updateUserProfile(Authentication authentication,RedirectAttributes rd,Model model,@RequestParam() String nom,   @RequestParam() String email,@RequestParam() String mobile, @RequestParam(defaultValue="false") boolean setPassword, @RequestParam(defaultValue=" ") String currentPassword,  @RequestParam(defaultValue=" ") String testPassword,@RequestParam(defaultValue=" ") String newPassword	, @RequestParam() String genre,  @RequestParam() String typePiece,			
+            @RequestParam() String numeroPiece,@RequestParam() String matricule,@RequestParam(defaultValue=" ") String adresse) { 
+		
+		
+		 List<String> errorList = new ArrayList<String>();
+		 if(setPassword) {
+			 System.out.println("<====Inside======>");
+			 BCryptPasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
+			 System.out.println("====Password match===="+passwordEncoder.matches(testPassword, currentPassword));
+			    if(passwordEncoder.matches(testPassword, currentPassword)) {
+			    	System.out.println("<==== password mathes======>");
+					userRepo.updateUserProfile(matricule,nom, email, mobile, passwordEncoder.encode(newPassword), genre,  typePiece,numeroPiece, adresse);
+					return "redirect:/loginAsMember"; 
+			    }else {
+			    	System.out.println("<====Not match password======>");
+			    	errorList.add("le mot de passe entre n\'est pas correct");
+			    	
+			    	rd.addFlashAttribute("errorList",errorList);
+			    	
+			    	return "redirect:/loginAsMember";
+			    }
 
+			 
+		 }else{
+			 	System.out.println("<====Without password======>");
+				userRepo.updateUserProfile(matricule,nom, email, mobile, currentPassword, genre,  typePiece,numeroPiece, adresse);
+
+		 }
+		 
+		return "redirect:/loginAsMember"; 
+	}
 	
 	@GetMapping("/loginAsMember")
-	public String logAsMember(Authentication authentication,Model model ) { //,RedirectAttributes rd
+	public String logAsMember(Authentication authentication,Model model,@ModelAttribute("errorList") final ArrayList<String> errorList ) { //,RedirectAttributes rd
 		
 		
 		String email="";
 		String matricule="";		
 		User usr=null;
 		String modelAndView = "";
+		//List<String> mergedErrorsList = new ArrayList<String>();
 		
-		System.out.println("1=====> loginAsMember ");
+		System.out.println("1=====>"+errorList);
 		if(authentication !=null) {
 			
 			email= authentication.getName();
@@ -74,7 +104,7 @@ public class LoginAsController {
 			Member currentMember=memberRepo.getMemberByMatricule(matricule);
 			
 			//rd.addFlashAttribute("typeOnlogin","Member");		
-			System.out.println("2=====> loginAsMember ");
+			
 		
 		
 		 if(currentMember==null){
@@ -92,6 +122,8 @@ public class LoginAsController {
 	    	double detteCourante = detteCouranteByMatricule !=null ? detteCouranteByMatricule: 0.0;
 	    	Double interetDuMembreByMatricule=interetRepo.interetDuMembreByMatricule(matricule);
 	    	double interet = interetDuMembreByMatricule !=null ? interetDuMembreByMatricule : 0.0;
+	    	
+	    	model.addAttribute("errorList",errorList);
 	    	
 	    	if(!(payeRepo.getPayementByMatricule(matricule).isEmpty())) {
 	    		
@@ -120,7 +152,7 @@ public class LoginAsController {
 			     model.addAttribute("currentPage",0);
 			     model.addAttribute("currentPage2",0);
 			     model.addAttribute("currentSize",5);
-			     modelAndView="home"; // resources/template/home.html
+			     modelAndView= errorList.size()==0?"home":"home::homeContainer"; 
 
 	     	 }
 		 

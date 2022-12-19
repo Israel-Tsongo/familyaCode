@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.sid.FamilyaProject.dao.ArchiveRepository;
@@ -202,7 +203,7 @@ public class ContributionsController {
 		              membPay.setPayements(setPay);
 		              pay.setMemberPaying(membPay);	     
 					  payeRepo.save(pay);
-					  operaRepo.save(new Operation("Un membre de matricule "+matricule+" a contribuer 'une somme de "+contribution+" $", new Date()));	
+					  operaRepo.save(new Operation("Un membre de matricule "+matricule+" a contribue 'une somme de "+contribution+" $", new Date()));	
 
 					  
 			}else {
@@ -255,7 +256,11 @@ public class ContributionsController {
 		 
 		  if (idContrib>0) {
 			  
-		   payeRepo.deleteById(idContrib);		   
+		   Payement paye=payeRepo.getPayementById(idContrib);
+		   payeRepo.deleteById(idContrib);
+		   
+		   operaRepo.save(new Operation("Un membre de matricule "+paye.getMemberPaying().getMemberUser().getMatricule()+" vient d'etre supprimé de la liste de debiteurs", new Date()));	
+
 		   Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
 		   Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 
@@ -296,7 +301,9 @@ public class ContributionsController {
 		      String mv="" ;
 		           if(idContrib>0) {
 			
-					     payeRepo.updateContribution(idContrib,  trt.rounder(contribution), new Date());						   
+					     payeRepo.updateContribution(idContrib,  trt.rounder(contribution), new Date());
+						 operaRepo.save(new Operation("Un membre de matricule "+matricule+" vient d'etre mise à jour,sa nouvelle contribution est de "+contribution+"$", new Date()));	
+
 					     Page <List<List<Object>>> contribList =payeRepo.getSubscriptionsWithMembers(PageRequest.of(page,size));
 						 Page <List<List<Object>>> capitalContribList =payeRepo.getSubscriptionsAndCapitalWithOwnerMember(PageRequest.of(pageAllInfo,size));
 

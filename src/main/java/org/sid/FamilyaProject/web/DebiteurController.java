@@ -19,12 +19,14 @@ import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Events;
 import org.sid.FamilyaProject.entities.Member;
 import org.sid.FamilyaProject.entities.Operation;
+import org.sid.FamilyaProject.entities.Payement;
 import org.sid.FamilyaProject.entities.Prevarchive;
 
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -166,7 +168,7 @@ public class DebiteurController {
 		              deb.setMember(membDeb);         
 	              
 				      debitRepo.save(deb);
-					  operaRepo.save(new Operation("Un membre de matricule "+matricule+" s'est Empruntee une somme de "+montant+" $" ,new Date()));	
+					  operaRepo.save(new Operation("Un membre de matricule "+matricule+" s'est Emprunté une somme de "+montant+" $" ,new Date()));	
                       
 					  if(eventRepo.matricIsExist(matricule)) {
                     	  
@@ -238,8 +240,11 @@ public class DebiteurController {
 		  
 		 
 		  if (idDeb>0) {
-			  
-		   debitRepo.deleteById(idDeb);           
+		   
+		   Debiteur debit=debitRepo.getDebiteurById(idDeb);
+		   debitRepo.deleteById(idDeb); 
+		   operaRepo.save(new Operation("Un membre de matricule "+debit.getMember().getMemberUser().getMatricule()+" vient d'etre supprimé de la liste de debiteurs", new Date()));	
+
 		             
 		  }else  {
 			  System.out.println("error on delete");
@@ -276,7 +281,8 @@ public class DebiteurController {
 			      List<Double> debiteurEntry= trt.debiteurCalculMontant(montant,echeance,typeInteret);
 
 				 debitRepo.updateDebiteur(idDeb,montant , echeance ,typeInteret, new Date(),trt.rounder(debiteurEntry.get(0)),trt.rounder(debiteurEntry.get(0)),trt.rounder(debiteurEntry.get(1)));						   
-					    
+				 operaRepo.save(new Operation("Un membre de matricule "+matricule+" vient d'etre mise à jour sur la liste de debiteurs,nouvelles infos: montant: " +montant+" Echeance: "+echeance+"typeInteret: "+typeInteret+"dettePlusInteret :"+trt.rounder(debiteurEntry.get(0))+"premierRemboursement: "+trt.rounder(debiteurEntry.get(1)), new Date()));	
+
 			   
 			  }else  { System.out.println("error on update");}
 		    

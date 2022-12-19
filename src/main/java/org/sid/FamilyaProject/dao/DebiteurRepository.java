@@ -6,6 +6,7 @@ import java.util.List;
 import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.InteretParMembre;
 import org.sid.FamilyaProject.entities.Member;
+import org.sid.FamilyaProject.entities.Payement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,6 +25,10 @@ public interface DebiteurRepository extends JpaRepository<Debiteur,Long>{
 	
 	@Query(value= "SELECT * FROM `debiteur` INNER JOIN member ON member.id_member=debiteur.foreign_key_member INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule=:matricule", nativeQuery=true )
 	public Debiteur getDebiteurByMatricule(@Param("matricule") String matricule);
+	
+	@Query(value="SELECT * FROM payement  WHERE id_debiteur = ?1", nativeQuery=true )
+	public Debiteur getDebiteurById(Long id);
+	
 	
 	@Query(value= "SELECT date_emprunt FROM `debiteur` INNER JOIN member ON member.id_member=debiteur.foreign_key_member INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule=:matricule", nativeQuery=true )
 	public String getDebiteurDateByMatricule(@Param("matricule") String matricule);

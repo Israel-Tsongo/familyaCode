@@ -7,7 +7,9 @@ import java.util.List;
 
 
 import org.sid.FamilyaProject.dao.DepenseRepository;
+import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.entities.Depense;
+import org.sid.FamilyaProject.entities.Operation;
 import org.sid.FamilyaProject.metier.Traitement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +30,8 @@ import net.sf.jasperreports.engine.JRException;
 @Controller
 public class DepenseController {
 	
-	
+	@Autowired
+	private OperationRepository operaRepo;
 	
 	@Autowired
 	private DepenseRepository depRepo;
@@ -121,7 +124,11 @@ public class DepenseController {
 		 
 		try {
 		
+		 	
 		 depRepo.save(new Depense(depenseMontant,motif, new Date()));
+		  operaRepo.save(new Operation("Une depense ayant pour motif "+motif +"de montant :"+depenseMontant+" vient d'etre ajouté sur la liste" ,new Date()));	
+
+
 			
 		}catch(Exception exc) {			
 		    errorList.add("Une erreur s'est produite lors de l'enregistrement d une nouvelle depense");
@@ -157,7 +164,10 @@ public class DepenseController {
 		 
 		  if (idDep>0) {
 			  
-		   depRepo.deleteById(idDep);		   
+			Depense depense =depRepo.getDepenseById(idDep);
+		   depRepo.deleteById(idDep);	
+		  operaRepo.save(new Operation("Une depense avec pour motif"+depense.getMotif()+"vient d etre supprime ", new Date()));	
+
 		             
 		             
 		  }else  { System.out.println("Error lors de la suppression");}
@@ -186,11 +196,14 @@ public class DepenseController {
 		     Traitement trt=new Traitement();
 		      
 		      if(idDep>0) {
-			
-					     depRepo.updateDepense(idDep,depenseMontant,motif, new Date());	
+		    	  		
+		    	     Depense depense =depRepo.getDepenseById(idDep);
+					 depRepo.updateDepense(idDep,depenseMontant,motif, new Date());	
+					 operaRepo.save(new Operation("Une depense du "+depense.getDate()+" vient d'etre mise à jour sur la liste de depenses,nouvelles infos: montant depense: " +depenseMontant+" Motif: "+motif, new Date()));	
+
 					     
 					    
-			  }else  { System.out.println("Rien a Update");}
+			  }else  { System.out.println("Id invalid");}
 		
              Page <List<List<Object>>> DepList =depRepo.getAllDep(PageRequest.of(page,size));			
             

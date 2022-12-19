@@ -19,8 +19,9 @@ import org.sid.FamilyaProject.dao.DepenseRepository;
 import org.sid.FamilyaProject.dao.EventsRepository;
 import org.sid.FamilyaProject.dao.InteretParMembreRepository;
 import org.sid.FamilyaProject.dao.MemberRepository;
+import org.sid.FamilyaProject.dao.OperationRepository;
 import org.sid.FamilyaProject.metier.Traitement;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString; 
@@ -61,7 +62,7 @@ public class Events {
 	}
 	
 
-	public void computing (String enteredMatricule, String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo, ArchiveRepository archivRepo,List<String> errorList ) {
+	public void computing (String enteredMatricule, String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo, ArchiveRepository archivRepo,OperationRepository operaRepo,List<String> errorList ) {
 		Traitement trt = new Traitement ();
 		double montant_restant=0.00;
 		double dettePlusInteret=0.00;
@@ -110,11 +111,11 @@ public class Events {
 				}
 	
 	     	}		
-		System.out.println("======Avec N : ========="+N +"++++++++++++");
-		System.out.println("=======dettePlusInteret: ========"+dettePlusInteret +"++++++++++++");
-		 System.out.println("==============="+echeance +"++++++++++++");
-		 System.out.println("==============="+curent_echeance +"++++++++++++");
-		 System.out.println("==============="+(dettePlusInteret/N) +"++++++++++++");
+//		System.out.println("======Avec N : ========="+N +"++++++++++++");
+//		System.out.println("=======dettePlusInteret: ========"+dettePlusInteret +"++++++++++++");
+//		 System.out.println("==============="+echeance +"++++++++++++");
+//		 System.out.println("==============="+curent_echeance +"++++++++++++");
+//		 System.out.println("==============="+(dettePlusInteret/N) +"++++++++++++");
 		 
 		                  if(tabName.equals("Anticiper")) {
 		                	  
@@ -161,6 +162,7 @@ public class Events {
 								 						        	        debiteurRepo.deleteById(debiteur.getId_debiteur()) ;
 								 						        	        errorList.add("Vous n avez plus de dettes");
 								 						        	        errorList.add("Merci d'avoir tout rembourse");
+								 						  				    operaRepo.save(new Operation("Un membre de matricule "+debiteur.getMember().getMemberUser().getMatricule()+" vient de finir le remboursement de sa dette qui etait de "+debiteur.getDettePlusInteret()+" Echeance :"+debiteur.getDuree_echeance(), new Date()));	
 
 								 						    	   			System.out.println( "Vous n avez plus de dettes " );
 								 						    	   		    
@@ -198,7 +200,7 @@ public class Events {
 	/////////////////////////////// INTERET CONSTANT ///////////////////////////////////////////////////		
 	
 	
-	public void interetConstant (String enteredMatricule,String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,List<String> errorList ) {
+	public void interetConstant (String enteredMatricule,String tabName,InteretParMembreRepository interetRepo, double remboursement, MemberRepository memberRepo, DebiteurRepository debiteurRepo, EventsRepository eventRepo, Events e, DepenseRepository depenseRepo,ArchiveRepository archivRepo,OperationRepository operaRepo,List<String> errorList ) {
 		
 		
 		Traitement trt = new Traitement ();
@@ -249,11 +251,11 @@ public class Events {
 				}
 	
 	     	}		
-							 System.out.println("======Avec N : ========="+N +"++++++++++++");
-							 System.out.println("=======dettePlusInteret: ========"+dettePlusInteret +"++++++++++++");
-							 System.out.println("==============="+echeance +"++++++++++++");
-							 System.out.println("==============="+curent_echeance +"++++++++++++");
-							 System.out.println("==============="+(dettePlusInteret/echeance) +"++++++++++++");
+//							 System.out.println("======Avec N : ========="+N +"++++++++++++");
+//							 System.out.println("=======dettePlusInteret: ========"+dettePlusInteret +"++++++++++++");
+//							 System.out.println("==============="+echeance +"++++++++++++");
+//							 System.out.println("==============="+curent_echeance +"++++++++++++");
+//							 System.out.println("==============="+(dettePlusInteret/echeance) +"++++++++++++");
 		                  
 					   if(tabName.equals("Anticiper")) {
 						   
@@ -280,6 +282,9 @@ public class Events {
 							    	 errorList.add("Vous n avez plus de dettes");
 						        	 errorList.add("Merci d'avoir tout rembourse");
 						        	 
+					  				 operaRepo.save(new Operation("Un membre de matricule "+debiteur.getMember().getMemberUser().getMatricule()+" vient de finir le remboursement de sa dette qui etait de "+debiteur.getDettePlusInteret()+" Echeance :"+debiteur.getDuree_echeance(), new Date()));	
+
+						        	 
 							    	 errorList.add("Merci d'avoir rembourcer toute la dette en un seul coup");
 							    	 errorList.add("sur ce vous avez eu une reduction de "+ (interetGeneral-((dette* echeance)/100)) +" $ dans votre montant a rembourser suite a cet acte");
 							    	  
@@ -297,12 +302,12 @@ public class Events {
 							   double interetAnticipative=trt.rounder((detteAnticipative/10));
 							   
 							   
-							     System.out.println("montant_restant=="+montant_restant);
-							     System.out.println("interePartiel=="+interetPartiel);
-							     System.out.println("current_echeance=="+curent_echeance);
-							     System.out.println("N=="+N);
-							     System.out.println("detteAnticipative=="+detteAnticipative);
-							     System.out.println("interetAnticipative=="+interetAnticipative);
+//							     System.out.println("montant_restant=="+montant_restant);
+//							     System.out.println("interePartiel=="+interetPartiel);
+//							     System.out.println("current_echeance=="+curent_echeance);
+//							     System.out.println("N=="+N);
+//							     System.out.println("detteAnticipative=="+detteAnticipative);
+//							     System.out.println("interetAnticipative=="+interetAnticipative);
 							     
 							     
 							   if(remboursement==(detteAnticipative+interetAnticipative)) {
@@ -321,7 +326,8 @@ public class Events {
 							          
 								      errorList.add("Vous n avez plus de dettes");
 							          errorList.add("Merci d'avoir tout rembourse");
-							          
+					  				  operaRepo.save(new Operation("Un membre de matricule "+debiteur.getMember().getMemberUser().getMatricule()+" vient de finir le remboursement de sa dette qui etait de "+debiteur.getDettePlusInteret()+" Echeance :"+debiteur.getDuree_echeance(), new Date()));	
+
 							    	  errorList.add("Merci d'avoir rembourcer toute la dette en un seul coup");
 							    	  errorList.add("sur ce vous avez eu une reduction"+ ((interetPartiel*N)-interetAnticipative)+ " $ dans votre dette a rembourser suite a cet acte");
 							    	  
@@ -352,11 +358,11 @@ public class Events {
 		                	   		    double currentPenalty=debiteurRepo.getCurrentPenaliteByMatricule(enteredMatricule) ;
 		                	   		    Debiteur debit =debiteurRepo.getDebiteurByMatricule(enteredMatricule);
 		                	   		    
-		                	   		   System.out.println(" ================currentPenalty====================="+currentPenalty);
-		                	   		   System.out.println(" =============debit.getPremierRemboursement()=========="+debit.getPremierRemboursement());
-		                	   		   System.out.println(" ===========remboursement==============="+remboursement);
-		                	   		   System.out.println(" ==========(debit.getPremierRemboursement()+currentPenalty)============"+(debit.getPremierRemboursement()+currentPenalty));
-		                	   		   System.out.println(" ===========(remboursement==debit.getPremierRemboursement()+currentPenalty)============="+(remboursement==debit.getPremierRemboursement()+currentPenalty));
+//		                	   		   System.out.println(" ================currentPenalty====================="+currentPenalty);
+//		                	   		   System.out.println(" =============debit.getPremierRemboursement()=========="+debit.getPremierRemboursement());
+//		                	   		   System.out.println(" ===========remboursement==============="+remboursement);
+//		                	   		   System.out.println(" ==========(debit.getPremierRemboursement()+currentPenalty)============"+(debit.getPremierRemboursement()+currentPenalty));
+//		                	   		   System.out.println(" ===========(remboursement==debit.getPremierRemboursement()+currentPenalty)============="+(remboursement==debit.getPremierRemboursement()+currentPenalty));
 		                	   		   
 		                	   		    if((remboursement < ((trt.rounder((dettePlusInteret/echeance)))+2))) {
 		                	   		    	 
@@ -384,6 +390,8 @@ public class Events {
 										 						        	        debiteurRepo.deleteById(debiteur.getId_debiteur()) ;
 										 						        	        errorList.add("Vous n avez plus de dettes");
 										 						        	        errorList.add("Merci d'avoir tout rembourse");
+										 						  				    operaRepo.save(new Operation("Un membre de matricule "+debiteur.getMember().getMemberUser().getMatricule()+" vient de finir le remboursement de sa dette qui etait de "+debiteur.getDettePlusInteret()+" Echeance :"+debiteur.getDuree_echeance(), new Date()));	
+
 										 						    	   			System.out.println("Vous n avez plus de dettes " );										 						    	   		    
 										 										   
 										 											   

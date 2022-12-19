@@ -3,6 +3,7 @@ package org.sid.FamilyaProject.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Member;
 
 
@@ -19,6 +20,8 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 
 	@Query(value= "SELECT * FROM member INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id WHERE matricule = ?1", nativeQuery=true )
 	public Member getMemberByMatricule(String matric);
+	@Query(value="SELECT * FROM member  WHERE id_member = ?1", nativeQuery=true )
+	public Member getMemberById(Long id);
 	
 	@Query(value= "SELECT capital_initial FROM member INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id  WHERE matricule = ?1", nativeQuery=true )
 	public Double getCapitalByMatricule(String matric);
@@ -63,7 +66,7 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 	@Modifying
 	@Transactional
 	@Query(value="UPDATE member m SET m.capital_initial=:newSolde WHERE m.id_member=:idMember",nativeQuery=true)
-	public void updateCapitalInitialByMatricule(@Param("idMember") Long idMember, @Param("newSolde") double solde);
+	public void updateCapitalInitialByMatriculess(@Param("idMember") Long idMember, @Param("newSolde") double solde);
 	
 
 	

@@ -22,6 +22,9 @@ public interface PayementRepository extends JpaRepository<Payement ,Long> {
 	@Query(value="SELECT * FROM payement JOIN member ON member.id_member=payement.foreign_key_member_paying INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id WHERE matricule = ?1", nativeQuery=true )
 	public List<Payement> getPayementByMatricule(String matric);
 	
+	@Query(value="SELECT * FROM payement  WHERE id_paye = ?1", nativeQuery=true )
+	public Payement getPayementById(Long id);
+	
 	
 	@Query(value="SELECT SUM(contrib_mensuel) FROM payement JOIN member ON member.id_member=payement.foreign_key_member_paying INNER JOIN auth_user ON member.user_foreign_key_in_member =auth_user.auth_user_id WHERE matricule = ?1", nativeQuery=true )
 	public Double getSommeContribByMaticule(String matricule);

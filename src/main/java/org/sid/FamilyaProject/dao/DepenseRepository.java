@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+
+import org.sid.FamilyaProject.entities.Debiteur;
 import org.sid.FamilyaProject.entities.Depense;
 
 public interface DepenseRepository extends JpaRepository <Depense,Long> {
@@ -16,6 +18,9 @@ public interface DepenseRepository extends JpaRepository <Depense,Long> {
 	
 	@Query(value="SELECT  SUM(`montant_depense`) AS Somme_depense FROM `depense`",nativeQuery=true)
     Double getTotalOutgo();
+	
+	@Query(value="SELECT * FROM depense  WHERE id = ?1", nativeQuery=true )
+	public Depense getDepenseById(Long id);
 	
 	public Page <Depense> findByMotifContains(String mc, org.springframework.data.domain.Pageable pageable  );
 	

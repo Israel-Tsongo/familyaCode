@@ -165,7 +165,8 @@ public class ProfileController {
             @RequestParam() String email,@RequestParam() String mobile,
             @RequestParam(defaultValue=" ") String password,@RequestParam(defaultValue=" ") String currentPassword, @RequestParam() Long role,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size   )  {	
 		     
-			BCryptPasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
+		 	
+		    BCryptPasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
 			
 			String authenticatedUserEmail= authentication.getName();
 			User usr= userDetailsService.getUserByEmail(authenticatedUserEmail);
