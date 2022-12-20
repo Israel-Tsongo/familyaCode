@@ -138,9 +138,7 @@ public class DashbordController {
 					 
 				   }
 				 
-//			       System.out.println("==role:====>"+role);
-//			       System.out.println("==Btn:====>"+btnEnd);
-//			       System.out.println("==role:====>"+enc.matches(password, userPassword));
+
 			       
 				   if(role.equals("SUPER_USER") && enc.matches(password, userPassword)) {
 						
