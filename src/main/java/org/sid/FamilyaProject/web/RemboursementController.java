@@ -29,7 +29,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import net.sf.jasperreports.engine.JRException;
 
 
@@ -84,7 +83,7 @@ public class RemboursementController {
 	//************** RECHERCHER PAR NOM************************
 	
 	@PostMapping("/rembourseSearcher")
-	public ModelAndView searchByName(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
+	public String searchByName(Model model ,@RequestParam(name="pagination",defaultValue = "false") boolean pagin,@RequestParam(name="page",defaultValue = "0") int page, @RequestParam(name="size",defaultValue = "5") int size,@RequestParam(name="keyWord", defaultValue = "") String mc)  {
 		
 		 Traitement trt = new Traitement();
 		  
@@ -95,26 +94,26 @@ public class RemboursementController {
 				
 			   Page <List<List<Object>>> eventList =eventRepo.RemboursementDetteTable(PageRequest.of(page,size));
 			   
-			   ModelAndView mv = new ModelAndView();		           
+			   		           
 	           model.addAttribute("lst", trt.converter(eventList));
 	           model.addAttribute("pages", new int[eventList.getTotalPages()]);	
 	           model.addAttribute("currentPage",page);
 	           model.addAttribute("currentSize",size);
 	           model.addAttribute("keyWord", mc);
-			   mv.setViewName("/remboursement::mainContainerInRembourse");
-	           return  mv;
+			  
+	           return "remboursement::mainContainerInRembourse";
 		   }else {
 			       
 			       Page <Events> searchEventList =eventRepo.findEnteredMatriculeContains(mc,PageRequest.of(page,size));
 			       
-			       ModelAndView mv = new ModelAndView("/remboursement::mainContainerInRembourse");		           
+			       	           
 		             model.addAttribute("lst", trt.searchRembourseConverter(searchEventList));
 		             model.addAttribute("pages", new int[searchEventList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("currentSize",size);	
 		             model.addAttribute("keyWord", mc);
 		
-		             return  mv;
+		             return  "remboursement::mainContainerInRembourse";
 		   
 		   }
 	}

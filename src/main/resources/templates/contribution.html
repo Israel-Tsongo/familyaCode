@@ -68,11 +68,12 @@
                                     
                                     <p  th:text="${#request.getParameter('errorList')}">Aucune error</p>
                                     
-                                    <div class="col-md-4 text-nowrap">
+                                    <div class="col-md-3 d-flex justify-content-center text-nowrap">
                                          <button id="soldes-button" onclick ="soldeMembres()" class="btn btn-primary col " style="height:32px;width: 250px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Solde par membre</button>                                        
                                     </div>
+                                    <span style="display:inline-block;width:7%"></span>
                                     <div class="col-md-4">
-                                        <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 450px; position:absolute;right:5%">
+                                        <div class="text-md-right dataTables_filter form-group row" id="dataTable_filter"  style="height:35px;width: 450px; position:absolute;right:3%">
                                               <input  type="text" id="dateKeyWord"  name="dateKeyWord" th:value="${dateKeyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by date" style="margin-right:5px">
                                               <input  type="text" id="keyWord"  name="keyWord" th:value="${keyWord}" class="form-control form-control-sm col" aria-controls="dataTable" placeholder="Search by matricule" style="width:20px" >
                                               <button id=searcher onclick ="searcherInContrib()" class="btn btn-primary col " style="height:32px;width: 120px;margin-left:7px;font-style:italique;padding:0px;font-weight:bold" >Chercher</button>                                        

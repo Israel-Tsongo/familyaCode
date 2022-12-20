@@ -373,28 +373,12 @@ public List<List<Object>> searchOperaConverter(Page<Operation> searchOperaList) 
 
 public void archiveDataBase(PayementRepository payeRepo,MemberRepository memberRepo,PrevarchiveRepository prevarchiveRepo,ArchiveRepository archiveRepo,List<String> errorList) {
 	
-	 String matricule="" ;
-	 double solde;
-	 ArchiveDataBase arch= new ArchiveDataBase(); 
-	 List<List<Object>> soldeList = payeRepo.getSoldes();
+	
+	 ArchiveDataBase arch= new ArchiveDataBase(); 	
 	 
 	 arch.createDb(errorList);
 	 arch.moveTablesInDb(errorList);
 	 arch.managePreviewsArchive(prevarchiveRepo,archiveRepo);
-	 
-	 for(List<Object> obj:soldeList) {
-		 
-		matricule= (String) obj.get(0);
-		solde=(double) obj.get(2);
-		 
-		//memberRepo.updateCapitalInitialByMatricule(matricule,solde);
-		 
-	 }
-	 
-	 
-	 arch.clearDb(errorList);
-	
-	
 	
 	
 	

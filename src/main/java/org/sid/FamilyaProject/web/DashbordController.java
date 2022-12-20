@@ -105,6 +105,7 @@ public class DashbordController {
 			     
 			      List<String> errorList = new ArrayList<String>();			      
 			      Traitement trt = new Traitement();
+			      ArchiveDataBase arch= new ArchiveDataBase(); 
 			      
 			      InteretParMembre interetParMem=new  InteretParMembre();
 			      BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
@@ -137,16 +138,17 @@ public class DashbordController {
 					 
 				   }
 				 
-			       System.out.println("==role:====>"+role);
-			       System.out.println("==Btn:====>"+btnEnd);
-			       System.out.println("==role:====>"+enc.matches(password, userPassword));
+//			       System.out.println("==role:====>"+role);
+//			       System.out.println("==Btn:====>"+btnEnd);
+//			       System.out.println("==role:====>"+enc.matches(password, userPassword));
 			       
 				   if(role.equals("SUPER_USER") && enc.matches(password, userPassword)) {
 						
 					   if(btnEnd) {										
 							  
+						       trt.archiveDataBase(payeRepo,memberRepo,prevarchiveRepo,archivRepo,errorList);
 				   			   interetParMem.partageInteret(payeRepo,interetRepo, eventRepo, depenseRepo, memberRepo,userRepo,archivRepo, errorList);
-				   			   trt.archiveDataBase(payeRepo,memberRepo,prevarchiveRepo,archivRepo,errorList);							
+				   			   arch.clearDb(errorList);
 						}
 				      
 				    }else {

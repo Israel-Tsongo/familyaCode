@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.sid</groupId>
 	<artifactId>FamilyaProject</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.5</version>
 	<name>FamilyaProject</name>
 	<description>Familya project for Spring Boot</description>
 	<properties>

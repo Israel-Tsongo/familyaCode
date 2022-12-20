@@ -66,7 +66,7 @@ public interface MemberRepository extends JpaRepository<Member ,Long> {
 	@Modifying
 	@Transactional
 	@Query(value="UPDATE member m SET m.capital_initial=:newSolde WHERE m.id_member=:idMember",nativeQuery=true)
-	public void updateCapitalInitialByMatriculess(@Param("idMember") Long idMember, @Param("newSolde") double solde);
+	public void updateCapitalInitialById(@Param("idMember") Long idMember, @Param("newSolde") double solde);
 	
 
 	

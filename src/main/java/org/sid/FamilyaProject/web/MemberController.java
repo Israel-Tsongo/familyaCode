@@ -63,14 +63,14 @@ public class MemberController {
 		Page <List<List<Object>>> MemberList =memberRepo.getAllFromMembersTable(PageRequest.of(page,size));		
 		
 		Double getTotalCapitauxInitiaux = memberRepo.getTotalCapitauxInitiaux();
-	    double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux : 0.00 ;
+	    double totalCapitauxInitiaux=getTotalCapitauxInitiaux !=null?getTotalCapitauxInitiaux: 0.00 ;
        
 	    model.addAttribute("lst",trt.converter(MemberList));
 		model.addAttribute("pages",new int[MemberList.getTotalPages()]);
 		model.addAttribute("currentPage",page);
 		model.addAttribute("currentSize",size);
 		model.addAttribute("pageTitle","Membre");
-		model.addAttribute("totalCapitaux",totalCapitauxInitiaux);
+		model.addAttribute("totalCapitaux",String.format("%.3f",totalCapitauxInitiaux));
 		model.addAttribute("keyWord", mc);		
 		return "index";
 	   
@@ -100,7 +100,7 @@ public class MemberController {
 	           model.addAttribute("pages", new int[MemberList.getTotalPages()]);	
 	           model.addAttribute("currentPage",page);
 	           model.addAttribute("currentSize",size);
-	           model.addAttribute("totalCapitaux", totalCapitauxInitiaux);	           
+	           model.addAttribute("totalCapitaux",String.format("%.3f",totalCapitauxInitiaux));	           
 	           model.addAttribute("keyWord", mc);			   
 	           return "index::mainContainer";
 	           
@@ -114,7 +114,7 @@ public class MemberController {
 		             model.addAttribute("pages", new int[searchMemberList.getTotalPages()]);	
 		             model.addAttribute("currentPage",page);
 		             model.addAttribute("currentSize",size);
-		             model.addAttribute("totalCapitaux", totalCapitauxInitiaux);  
+		             model.addAttribute("totalCapitaux",String.format("%.3f",totalCapitauxInitiaux));  
 		             model.addAttribute("keyWord", mc);            
 		
 		             return "index::mainContainer";
@@ -226,7 +226,7 @@ public class MemberController {
 	         model.addAttribute("pages", new int[memberList.getTotalPages()]);
 	         model.addAttribute("currentSize",size);
 	         model.addAttribute("currentPage",page);
-	         model.addAttribute("totalCapitaux", totalCapitauxInitiaux);
+	         model.addAttribute("totalCapitaux",String.format("%.3f",totalCapitauxInitiaux));
 	         
 		    return  "index::mainContainer";
 	}
@@ -265,7 +265,7 @@ public class MemberController {
 			 model.addAttribute("pages", new int[memberList.getTotalPages()]);
 			 model.addAttribute("currentSize",size);
 		     model.addAttribute("currentPage",page);
-		     model.addAttribute("totalCapitaux", totalCapitauxInitiaux);
+		     model.addAttribute("totalCapitaux",String.format("%.3f",totalCapitauxInitiaux));
 		     model.addAttribute("errorList",errorList);
 		 
 			return "index::mainContainer";
@@ -296,18 +296,18 @@ public class MemberController {
 			    	 List<List<Object>> lst= memberRepo.getCapitalMatriculeNom(matricule);
 			    	 model.addAttribute("nom",lst.get(0).get(0));
 					 model.addAttribute("matricule",lst.get(0).get(1));
-					 model.addAttribute("capital",lst.get(0).get(2));
+					 model.addAttribute("capital",String.format("%.3f",lst.get(0).get(2)));
 					 model.addAttribute("pageTitle","Authentification");
 					 model.addAttribute("contributions",0.0);
-					 model.addAttribute("solde",lst.get(0).get(2));
+					 model.addAttribute("solde",String.format("%.3f",lst.get(0).get(2)));
 		    		
 		    		
 		    	}else {
 		    		 model.addAttribute("nom",detailMembre.get(0).get(0));
 					 model.addAttribute("matricule",detailMembre.get(0).get(1));
-					 model.addAttribute("capital",detailMembre.get(0).get(2));
-					 model.addAttribute("contributions",detailMembre.get(0).get(3));
-					 model.addAttribute("solde",detailMembre.get(0).get(4));
+					 model.addAttribute("capital",String.format("%.3f",detailMembre.get(0).get(2)));
+					 model.addAttribute("contributions",String.format("%.3f",detailMembre.get(0).get(3)));
+					 model.addAttribute("solde",String.format("%.3f",detailMembre.get(0).get(4)));
 					 
 		    	}
 				 						
